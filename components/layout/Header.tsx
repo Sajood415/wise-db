@@ -60,7 +60,7 @@ const Header = () => {
             >
               Sign In
             </Link>
-            <Link href="/register" className="btn-primary text-sm">
+            <Link href="/signup" className="btn-primary text-sm">
               Get Started
             </Link>
           </div>
@@ -127,7 +127,7 @@ const Header = () => {
                   Sign In
                 </Link>
                 <Link
-                  href="/register"
+                  href="/signup"
                   className="btn-primary block text-center mt-2 mx-3"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >

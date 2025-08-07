@@ -403,7 +403,7 @@ export default function Home() {
               Enterprise Solutions
             </Link>
           </div>
-        </div>
+    </div>
       </section>
     </>
   );
