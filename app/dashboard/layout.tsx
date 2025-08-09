@@ -44,82 +44,7 @@ const DashboardHeader = ({ user, onLogout }: { user: any, onLogout: () => void }
   )
 }
 
-// Dashboard Sidebar Component
-const DashboardSidebar = ({ user }: { user: any }) => {
-  const router = useRouter()
-  
-  const getMenuItems = () => {
-    const baseItems = [
-      { name: 'Dashboard', href: '/dashboard', icon: '📊' }
-    ]
-    
-    switch (user?.role) {
-      case 'super_admin':
-        return [
-          ...baseItems,
-          { name: 'User Management', href: '/admin/users', icon: '👥' },
-          { name: 'Fraud Management', href: '/admin/frauds', icon: '🛡️' },
-          { name: 'Analytics', href: '/admin/analytics', icon: '📈' },
-          { name: 'Settings', href: '/admin/settings', icon: '⚙️' }
-        ]
-      
-      case 'sub_admin':
-        return [
-          ...baseItems,
-          { name: 'Review Frauds', href: '/manage/frauds', icon: '🔍' },
-          { name: 'Reports', href: '/manage/reports', icon: '📋' }
-        ]
-      
-      case 'enterprise_admin':
-        return [
-          ...baseItems,
-          { name: 'Team Management', href: '/enterprise/team', icon: '👥' },
-          { name: 'Search History', href: '/enterprise/searches', icon: '🔍' },
-          { name: 'Analytics', href: '/enterprise/analytics', icon: '📈' },
-          { name: 'Settings', href: '/enterprise/settings', icon: '⚙️' }
-        ]
-      
-      case 'enterprise_user':
-        return [
-          ...baseItems,
-          { name: 'Search Database', href: '/search', icon: '🔍' },
-          { name: 'My Searches', href: '/searches', icon: '📋' }
-        ]
-      
-      case 'individual':
-      case 'paid_individual':
-        return [
-          ...baseItems,
-          { name: 'Search Database', href: '/search', icon: '🔍' },
-          { name: 'Report Fraud', href: '/report-fraud', icon: '⚠️' },
-          { name: 'My Reports', href: '/my-reports', icon: '📋' },
-          { name: 'Subscription', href: '/subscription', icon: '💳' }
-        ]
-      
-      default:
-        return baseItems
-    }
-  }
-
-  const menuItems = getMenuItems()
-
-  return (
-    <aside className="w-64 bg-gray-50 border-r border-gray-200 min-h-screen">
-      <nav className="p-4 space-y-2">
-        {menuItems.map((item) => (
-          <button
-            key={item.name}
-            onClick={() => router.push(item.href)}
-            className="w-full flex items-center space-x-3 px-4 py-3 text-left text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200"
-          >
-            <span className="text-lg">{item.icon}</span>
-            <span className="font-medium">{item.name}</span>
-          </button>
-        ))}
-      </nav>
-    </aside>
-  )
-}
+// Sidebar removed per requirements
 
 export default function DashboardLayout({
   children,
@@ -176,12 +101,9 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-gray-50">
       <DashboardHeader user={user} onLogout={handleLogout} />
-      <div className="flex">
-        <DashboardSidebar user={user} />
-        <main className="flex-1 p-6">
-          {children}
-        </main>
-      </div>
+      <main className="p-6">
+        {children}
+      </main>
     </div>
   )
 }
