@@ -1,0 +1,292 @@
+[
+    {
+        "_id": "df_1001",
+        "title": "Phishing email claiming account suspension",
+        "description": "Received an email impersonating a bank requesting login verification.",
+        "type": "email",
+        "status": "approved",
+        "fraudDetails": {
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-07-01T00:00:00.000Z"
+        },
+        "location": {
+            "country": "US",
+            "city": "Austin",
+            "region": "TX"
+        },
+        "contact": {
+            "phone": "+1-512-555-1200",
+            "email": "security@fakebank.example",
+            "website": "fakebank-verify.example"
+        },
+        "tags": [
+            "phishing",
+            "bank"
+        ],
+        "severity": "low",
+        "createdAt": "2025-07-02T10:00:00.000Z",
+        "updatedAt": "2025-07-02T10:00:00.000Z"
+    },
+    {
+        "_id": "df_1002",
+        "title": "Tech support scam via phone",
+        "description": "Caller claimed to be from Microsoft asking for remote access.",
+        "type": "phone",
+        "status": "approved",
+        "fraudDetails": {
+            "amount": 200,
+            "currency": "USD",
+            "date": "2025-06-15T00:00:00.000Z"
+        },
+        "location": {
+            "country": "US",
+            "city": "Seattle",
+            "region": "WA"
+        },
+        "contact": {
+            "phone": "+1-206-555-0173",
+            "email": "support@ms-secure.example",
+            "website": "ms-secure.example"
+        },
+        "tags": [
+            "tech support",
+            "remote access"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-06-16T09:00:00.000Z",
+        "updatedAt": "2025-06-16T09:00:00.000Z"
+    },
+    {
+        "_id": "df_1003",
+        "title": "Fake online store - non-delivery",
+        "description": "Paid for electronics, website disappeared after purchase.",
+        "type": "website",
+        "status": "approved",
+        "fraudDetails": {
+            "amount": 349.99,
+            "currency": "USD",
+            "date": "2025-05-20T00:00:00.000Z"
+        },
+        "location": {
+            "country": "CA",
+            "city": "Toronto",
+            "region": "ON"
+        },
+        "contact": {
+            "phone": "+1-416-555-0102",
+            "email": "orders@shop-electro.example",
+            "website": "shop-electro.example"
+        },
+        "tags": [
+            "ecommerce",
+            "non-delivery"
+        ],
+        "severity": "high",
+        "createdAt": "2025-05-21T14:30:00.000Z",
+        "updatedAt": "2025-05-21T14:30:00.000Z"
+    },
+    {
+        "_id": "df_1004",
+        "title": "Identity theft via data breach reuse",
+        "description": "Unauthorized credit account opened using leaked info.",
+        "type": "identity",
+        "status": "approved",
+        "fraudDetails": {
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-03-12T00:00:00.000Z"
+        },
+        "location": {
+            "country": "US",
+            "city": "Chicago",
+            "region": "IL"
+        },
+        "contact": {
+            "phone": "+1-312-555-2230",
+            "email": "identity@breach-alerts.example",
+            "website": "breach-alerts.example"
+        },
+        "tags": [
+            "identity theft",
+            "breach"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-03-13T08:00:00.000Z",
+        "updatedAt": "2025-03-13T08:00:00.000Z"
+    },
+    {
+        "_id": "df_1005",
+        "title": "Investment scam promising high returns",
+        "description": "Crypto investment platform promised 20% weekly returns.",
+        "type": "financial",
+        "status": "approved",
+        "fraudDetails": {
+            "amount": 1500,
+            "currency": "USD",
+            "date": "2025-04-05T00:00:00.000Z"
+        },
+        "location": {
+            "country": "GB",
+            "city": "London",
+            "region": "ENG"
+        },
+        "contact": {
+            "phone": "+44 20 7946 0958",
+            "email": "hello@cryptogains.fake",
+            "website": "cryptogains.fake"
+        },
+        "tags": [
+            "investment",
+            "crypto"
+        ],
+        "severity": "high",
+        "createdAt": "2025-04-06T11:45:00.000Z",
+        "updatedAt": "2025-04-06T11:45:00.000Z"
+    },
+    {
+        "_id": "df_1006",
+        "title": "Romance scam on social media",
+        "description": "Scammer built trust over weeks and requested gift cards.",
+        "type": "financial",
+        "status": "approved",
+        "fraudDetails": {
+            "amount": 600,
+            "currency": "USD",
+            "date": "2025-02-14T00:00:00.000Z"
+        },
+        "location": {
+            "country": "AU",
+            "city": "Sydney",
+            "region": "NSW"
+        },
+        "contact": {
+            "phone": "+61 2 5550 0130",
+            "email": "contact@romance-help.example",
+            "website": "romance-help.example"
+        },
+        "tags": [
+            "romance",
+            "gift cards"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-02-15T16:00:00.000Z",
+        "updatedAt": "2025-02-15T16:00:00.000Z"
+    },
+    {
+        "_id": "df_1007",
+        "title": "Business email compromise invoice fraud",
+        "description": "Vendor invoice details were altered leading to mispayment.",
+        "type": "email",
+        "status": "approved",
+        "fraudDetails": {
+            "amount": 9200,
+            "currency": "USD",
+            "date": "2025-01-30T00:00:00.000Z"
+        },
+        "location": {
+            "country": "US",
+            "city": "New York",
+            "region": "NY"
+        },
+        "contact": {
+            "phone": "+1-212-555-4420",
+            "email": "ap@vendor-payments.example",
+            "website": "vendor-payments.example"
+        },
+        "tags": [
+            "BEC",
+            "invoice"
+        ],
+        "severity": "critical",
+        "createdAt": "2025-01-31T10:15:00.000Z",
+        "updatedAt": "2025-01-31T10:15:00.000Z"
+    },
+    {
+        "_id": "df_1008",
+        "title": "Lottery scam message",
+        "description": "SMS claimed I won a prize, requested processing fee.",
+        "type": "phone",
+        "status": "approved",
+        "fraudDetails": {
+            "amount": 50,
+            "currency": "USD",
+            "date": "2025-06-01T00:00:00.000Z"
+        },
+        "location": {
+            "country": "IN",
+            "city": "Mumbai",
+            "region": "MH"
+        },
+        "contact": {
+            "phone": "+91 22 5550 1200",
+            "email": "claims@lotto-prize.example",
+            "website": "lotto-prize.example"
+        },
+        "tags": [
+            "lottery",
+            "sms"
+        ],
+        "severity": "low",
+        "createdAt": "2025-06-01T12:00:00.000Z",
+        "updatedAt": "2025-06-01T12:00:00.000Z"
+    },
+    {
+        "_id": "df_1009",
+        "title": "Fake charity after natural disaster",
+        "description": "Donation site turned out to be fraudulent.",
+        "type": "website",
+        "status": "approved",
+        "fraudDetails": {
+            "amount": 120,
+            "currency": "USD",
+            "date": "2025-05-10T00:00:00.000Z"
+        },
+        "location": {
+            "country": "US",
+            "city": "Denver",
+            "region": "CO"
+        },
+        "contact": {
+            "phone": "+1-303-555-0142",
+            "email": "donate@relief-aid.example",
+            "website": "relief-aid.example"
+        },
+        "tags": [
+            "charity",
+            "donation"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-05-11T09:00:00.000Z",
+        "updatedAt": "2025-05-11T09:00:00.000Z"
+    },
+    {
+        "_id": "df_1010",
+        "title": "Wire transfer fraud via spoofed email",
+        "description": "Finance team received spoofed CEO email to wire funds.",
+        "type": "email",
+        "status": "approved",
+        "fraudDetails": {
+            "amount": 15000,
+            "currency": "USD",
+            "date": "2025-03-22T00:00:00.000Z"
+        },
+        "location": {
+            "country": "US",
+            "city": "San Francisco",
+            "region": "CA"
+        },
+        "contact": {
+            "phone": "+1-415-555-0901",
+            "email": "ceo@company-wire.example",
+            "website": "company-wire.example"
+        },
+        "tags": [
+            "spoofing",
+            "wire"
+        ],
+        "severity": "critical",
+        "createdAt": "2025-03-23T08:30:00.000Z",
+        "updatedAt": "2025-03-23T08:30:00.000Z"
+    }
+]

@@ -17,10 +17,6 @@ export default async function DashboardReportSuccessPage({ params }: { params: P
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Report Submitted</h1>
           <p className="text-gray-600 mb-6">Thank you. Your report has been received and will be reviewed by our team shortly.</p>
 
-          <div className="bg-gray-50 rounded-lg p-4 text-left mb-6">
-            <p className="text-sm text-gray-700"><span className="font-medium">Reference ID:</span> <span className="font-mono">{id}</span></p>
-          </div>
-
           <div className="flex items-center justify-center gap-3">
             <Link href="/dashboard/report-fraud" className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200">Submit Another</Link>
             <Link href="/dashboard" className="btn-primary">Go to Dashboard</Link>
