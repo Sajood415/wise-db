@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import dbConnect from '@/lib/mongodb';
 import Fraud from '@/models/Fraud';
 
@@ -8,6 +9,7 @@ export async function GET(request: NextRequest) {
         await dbConnect();
 
         const userId = request.headers.get('x-user-id');
+        const userEmail = request.headers.get('x-user-email');
         if (!userId) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
@@ -17,7 +19,14 @@ export async function GET(request: NextRequest) {
         const pageSize = Math.min(50, Math.max(1, Number(searchParams.get('pageSize') || 10)));
         const status = searchParams.get('status');
 
-        const filter: Record<string, unknown> = { submittedBy: userId };
+        const or: any[] = []
+        if (userId && mongoose.Types.ObjectId.isValid(userId)) {
+            or.push({ submittedBy: new mongoose.Types.ObjectId(userId) })
+        }
+        if (userEmail) {
+            or.push({ 'guestSubmission.email': userEmail })
+        }
+        const filter: Record<string, unknown> = or.length ? { $or: or } : { submittedBy: userId };
         if (status) {
             filter.status = status;
         }

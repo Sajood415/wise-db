@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useToast } from '@/contexts/ToastContext'
+import { useRouter, usePathname } from 'next/navigation'
 import Link from "next/link";
 
 export default function ReportFraudForm() {
@@ -44,6 +46,25 @@ export default function ReportFraudForm() {
     additionalComments: "",
     agreeToTerms: false,
   });
+  const { showToast } = useToast()
+  const router = useRouter()
+  const pathname = usePathname()
+
+  const isValidEmail = (value: string) => {
+    if (!value) return false
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+  }
+
+  const isValidPhone = (value: string) => {
+    if (!value) return true // optional
+    return /^\+?[0-9\s()\-]{7,20}$/.test(value)
+  }
+
+  const isValidAmount = (value: string) => {
+    if (value === '' || value === undefined || value === null) return false
+    const n = Number(value)
+    return Number.isFinite(n) && n >= 0
+  }
 
   const fraudTypes = [
     "Investment Scam",
@@ -110,6 +131,12 @@ export default function ReportFraudForm() {
     }
   };
 
+  const handlePhoneChange = (raw: string) => {
+    // Allow +, digits, spaces, dashes, and parentheses only
+    const sanitized = raw.replace(/[^0-9+\-()\s]/g, '')
+    handleInputChange("reporterPhone", sanitized)
+  }
+
   const removeFile = (index: number) => {
     setFormData((prev) => ({
       ...prev,
@@ -126,14 +153,19 @@ export default function ReportFraudForm() {
           formData.reportTitle &&
           formData.reporterType &&
           formData.reporterName &&
-          formData.reporterEmail
+          isValidEmail(formData.reporterEmail) &&
+          isValidPhone(formData.reporterPhone)
         );
       case 2:
-        return formData.victimName && formData.victimType;
+        return (
+          !!formData.victimName &&
+          !!formData.victimType &&
+          (!formData.victimEmail || isValidEmail(formData.victimEmail))
+        );
       case 3:
-        return formData.actualLoss !== "" && formData.currency;
+        return isValidAmount(formData.actualLoss) && !!formData.currency;
       case 4:
-        return formData.detailedDescription.length >= 50;
+        return formData.detailedDescription.length > 0 && formData.detailedDescription.length <= 50;
       case 5:
         return formData.agreeToTerms;
       default:
@@ -153,14 +185,60 @@ export default function ReportFraudForm() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isStepValid(5)) {
-      // Here you would submit the form data
-      console.log("Form submitted:", formData);
-      alert(
-        "Thank you for your report. We will review it and take appropriate action."
-      );
+    if (!isStepValid(5)) return
+    try {
+      const res = await fetch('/api/fraud', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          // Basic
+          fraudType: formData.fraudType,
+          incidentDate: formData.incidentDate,
+          reportTitle: formData.reportTitle,
+          // Reporter
+          reporterType: formData.reporterType,
+          reporterName: formData.reporterName,
+          reporterEmail: formData.reporterEmail,
+          reporterPhone: formData.reporterPhone,
+          // Victim
+          victimName: formData.victimName,
+          victimType: formData.victimType,
+          victimCompany: formData.victimCompany,
+          victimEmail: formData.victimEmail,
+          victimGender: formData.victimGender,
+          victimContact: formData.victimContact,
+          victimAddress: formData.victimAddress,
+          victimDescription: formData.victimDescription,
+          // Financial
+          actualLoss: formData.actualLoss,
+          attemptedLoss: formData.attemptedLoss,
+          currency: formData.currency,
+          paymentMethods: formData.paymentMethods,
+          transactionDetails: formData.transactionDetails,
+          // Evidence
+          detailedDescription: formData.detailedDescription,
+          websitesSocialMedia: formData.websitesSocialMedia,
+          evidenceDescription: formData.evidenceDescription,
+        }),
+      })
+      const data = await res.json()
+      if (res.ok) {
+        const id = data?.id
+        if (id) {
+          const isDashboard = pathname?.startsWith('/dashboard')
+          const target = isDashboard ? `/dashboard/report-fraud/success/${id}` : `/report-fraud/success/${id}`
+          router.push(target)
+          return
+        }
+        // Fallback if no id returned
+        router.push('/report-fraud')
+      } else {
+        showToast(data.error || 'Failed to submit report', 'error')
+      }
+    } catch (err) {
+      showToast('Network error. Please try again.', 'error')
     }
   };
 
@@ -338,14 +416,14 @@ export default function ReportFraudForm() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Type of Fraud *
+                    Type of Fraud <span className="text-red-600">*</span>
                   </label>
                   <select
                     value={formData.fraudType}
                     onChange={(e) =>
                       handleInputChange("fraudType", e.target.value)
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
                     required
                   >
                     <option value="" className="text-gray-500">
@@ -361,7 +439,7 @@ export default function ReportFraudForm() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Date of Incident *
+                    Date of Incident <span className="text-red-600">*</span>
                   </label>
                   <input
                     type="date"
@@ -369,7 +447,7 @@ export default function ReportFraudForm() {
                     onChange={(e) =>
                       handleInputChange("incidentDate", e.target.value)
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
                     required
                   />
                 </div>
@@ -377,7 +455,7 @@ export default function ReportFraudForm() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Report Title *
+                  Report Title <span className="text-red-600">*</span>
                 </label>
                 <input
                   type="text"
@@ -386,21 +464,21 @@ export default function ReportFraudForm() {
                     handleInputChange("reportTitle", e.target.value)
                   }
                   placeholder="Brief title describing the fraud incident"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
                   required
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Reporter Type *
+                  Reporter Type <span className="text-red-600">*</span>
                 </label>
                 <select
                   value={formData.reporterType}
                   onChange={(e) =>
                     handleInputChange("reporterType", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
                   required
                 >
                   <option value="" className="text-gray-500">
@@ -417,7 +495,7 @@ export default function ReportFraudForm() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Your Name *
+                    Your Name <span className="text-red-600">*</span>
                   </label>
                   <input
                     type="text"
@@ -426,14 +504,14 @@ export default function ReportFraudForm() {
                       handleInputChange("reporterName", e.target.value)
                     }
                     placeholder="Your full name"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
                     required
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Your Email *
+                    Your Email <span className="text-red-600">*</span>
                   </label>
                   <input
                     type="email"
@@ -442,7 +520,7 @@ export default function ReportFraudForm() {
                       handleInputChange("reporterEmail", e.target.value)
                     }
                     placeholder="your.email@example.com"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
                     required
                   />
                 </div>
@@ -455,12 +533,12 @@ export default function ReportFraudForm() {
                   </label>
                   <input
                     type="tel"
+                    inputMode="tel"
+                    pattern="[0-9()+\-\s]{7,20}"
                     value={formData.reporterPhone}
-                    onChange={(e) =>
-                      handleInputChange("reporterPhone", e.target.value)
-                    }
+                    onChange={(e) => handlePhoneChange(e.target.value)}
                     placeholder="+1 (555) 123-4567"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
                   />
                 </div>
 
@@ -473,7 +551,7 @@ export default function ReportFraudForm() {
                     onChange={(e) =>
                       handleInputChange("reporterGender", e.target.value)
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
                   >
                     <option value="" className="text-gray-500">
                       Select gender
@@ -502,7 +580,7 @@ export default function ReportFraudForm() {
                     handleInputChange("reporterLocation", e.target.value)
                   }
                   placeholder="City, State/Province, Country"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
                 />
               </div>
             </div>
@@ -514,7 +592,7 @@ export default function ReportFraudForm() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Victim Name *
+                    Victim Name <span className="text-red-600">*</span>
                   </label>
                   <input
                     type="text"
@@ -523,21 +601,21 @@ export default function ReportFraudForm() {
                       handleInputChange("victimName", e.target.value)
                     }
                     placeholder="Name of person or organization targeted"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
                     required
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Victim Type *
+                    Victim Type <span className="text-red-600">*</span>
                   </label>
                   <select
                     value={formData.victimType}
                     onChange={(e) =>
                       handleInputChange("victimType", e.target.value)
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
                     required
                   >
                     <option value="" className="text-gray-500">
@@ -564,7 +642,7 @@ export default function ReportFraudForm() {
                       handleInputChange("victimCompany", e.target.value)
                     }
                     placeholder="Company or organization name"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
                   />
                 </div>
 
@@ -579,7 +657,7 @@ export default function ReportFraudForm() {
                       handleInputChange("victimEmail", e.target.value)
                     }
                     placeholder="victim@example.com"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
                   />
                 </div>
               </div>
@@ -638,7 +716,7 @@ export default function ReportFraudForm() {
                     handleInputChange("victimAddress", e.target.value)
                   }
                   placeholder="Full address of the victim"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
                 />
               </div>
 
@@ -653,7 +731,7 @@ export default function ReportFraudForm() {
                     handleInputChange("victimDescription", e.target.value)
                   }
                   placeholder="Additional details about the victim (demographics, vulnerabilities, etc.)"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
                 />
               </div>
             </div>
@@ -665,7 +743,7 @@ export default function ReportFraudForm() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Actual Loss Amount *
+                    Actual Loss Amount <span className="text-red-600">*</span>
                   </label>
                   <input
                     type="number"
@@ -675,7 +753,7 @@ export default function ReportFraudForm() {
                       handleInputChange("actualLoss", e.target.value)
                     }
                     placeholder="0.00"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
                     required
                   />
                 </div>
@@ -692,21 +770,21 @@ export default function ReportFraudForm() {
                       handleInputChange("attemptedLoss", e.target.value)
                     }
                     placeholder="0.00"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
                   />
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Currency *
+                  Currency <span className="text-red-600">*</span>
                 </label>
                 <select
                   value={formData.currency}
                   onChange={(e) =>
                     handleInputChange("currency", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white"
                   required
                 >
                   {currencies.map((currency) => (
@@ -732,7 +810,7 @@ export default function ReportFraudForm() {
                     handleInputChange("paymentMethods", e.target.value)
                   }
                   placeholder="How was the payment made? (credit card, wire transfer, cryptocurrency, gift cards, cash, etc.)"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
                 />
               </div>
 
@@ -747,7 +825,7 @@ export default function ReportFraudForm() {
                     handleInputChange("transactionDetails", e.target.value)
                   }
                   placeholder="Provide transaction IDs, account numbers, wallet addresses, or other relevant payment details"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
                 />
               </div>
             </div>
@@ -758,7 +836,7 @@ export default function ReportFraudForm() {
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Detailed Description *
+                  Detailed Description <span className="text-red-600">*</span>
                 </label>
                 <textarea
                   rows={8}
@@ -767,12 +845,12 @@ export default function ReportFraudForm() {
                     handleInputChange("detailedDescription", e.target.value)
                   }
                   placeholder="Provide a detailed description of the fraud incident. Include timeline, what happened, how it unfolded, and any communication details..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
+                  maxLength={50}
                   required
                 />
                 <p className="text-sm text-gray-500 mt-1">
-                  Minimum 50 characters required (
-                  {formData.detailedDescription.length}/50)
+                  Max 50 characters ({formData.detailedDescription.length}/50)
                 </p>
               </div>
 
@@ -787,7 +865,7 @@ export default function ReportFraudForm() {
                     handleInputChange("websitesSocialMedia", e.target.value)
                   }
                   placeholder="List any websites, social media profiles, or online platforms used by the scammer"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
                 />
               </div>
 
@@ -873,7 +951,7 @@ export default function ReportFraudForm() {
                     handleInputChange("evidenceDescription", e.target.value)
                   }
                   placeholder="Describe the evidence you have or uploaded (screenshots, emails, phone records, documents, etc.)"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
                 />
               </div>
             </div>
@@ -886,52 +964,79 @@ export default function ReportFraudForm() {
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
                   Report Summary
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                  {/* Basic Information */}
                   <div>
-                    <span className="font-medium text-gray-700">
-                      Report Title:
-                    </span>
-                    <span className="ml-2 text-gray-600">
-                      {formData.reportTitle || "Not specified"}
-                    </span>
+                    <p className="text-xs uppercase tracking-wide text-gray-500 mb-2">Basic Information</p>
+                    <div className="space-y-1">
+                      <div><span className="font-medium text-gray-700">Report Title:</span> <span className="text-gray-800">{formData.reportTitle || '—'}</span></div>
+                      <div><span className="font-medium text-gray-700">Fraud Type:</span> <span className="text-gray-800">{formData.fraudType || '—'}</span></div>
+                      <div><span className="font-medium text-gray-700">Incident Date:</span> <span className="text-gray-800">{formData.incidentDate || '—'}</span></div>
+                    </div>
                   </div>
+                  {/* Financial */}
                   <div>
-                    <span className="font-medium text-gray-700">
-                      Fraud Type:
-                    </span>
-                    <span className="ml-2 text-gray-600">
-                      {formData.fraudType || "Not specified"}
-                    </span>
+                    <p className="text-xs uppercase tracking-wide text-gray-500 mb-2">Financial</p>
+                    <div className="space-y-1">
+                      <div><span className="font-medium text-gray-700">Actual Loss:</span> <span className="text-gray-800">{formData.actualLoss !== '' ? `${formData.currency} ${formData.actualLoss}` : '—'}</span></div>
+                      <div><span className="font-medium text-gray-700">Attempted Loss:</span> <span className="text-gray-800">{formData.attemptedLoss !== '' ? `${formData.currency} ${formData.attemptedLoss}` : '—'}</span></div>
+                      <div><span className="font-medium text-gray-700">Currency:</span> <span className="text-gray-800">{formData.currency || '—'}</span></div>
+                    </div>
                   </div>
+                  {/* Reporter */}
                   <div>
-                    <span className="font-medium text-gray-700">
-                      Incident Date:
-                    </span>
-                    <span className="ml-2 text-gray-600">
-                      {formData.incidentDate || "Not specified"}
-                    </span>
+                    <p className="text-xs uppercase tracking-wide text-gray-500 mb-2">Reporter</p>
+                    <div className="space-y-1">
+                      <div><span className="font-medium text-gray-700">Type:</span> <span className="text-gray-800">{formData.reporterType || '—'}</span></div>
+                      <div><span className="font-medium text-gray-700">Name:</span> <span className="text-gray-800">{formData.reporterName || '—'}</span></div>
+                      <div><span className="font-medium text-gray-700">Email:</span> <span className="text-gray-800">{formData.reporterEmail || '—'}</span></div>
+                      <div><span className="font-medium text-gray-700">Phone:</span> <span className="text-gray-800">{formData.reporterPhone || '—'}</span></div>
+                      <div><span className="font-medium text-gray-700">Gender:</span> <span className="text-gray-800">{formData.reporterGender || '—'}</span></div>
+                      <div><span className="font-medium text-gray-700">Location:</span> <span className="text-gray-800">{formData.reporterLocation || '—'}</span></div>
+                    </div>
                   </div>
+                  {/* Victim */}
                   <div>
-                    <span className="font-medium text-gray-700">
-                      Actual Loss:
-                    </span>
-                    <span className="ml-2 text-gray-600">
-                      {formData.actualLoss
-                        ? `${formData.currency} ${formData.actualLoss}`
-                        : "Not specified"}
-                    </span>
+                    <p className="text-xs uppercase tracking-wide text-gray-500 mb-2">Victim Details</p>
+                    <div className="space-y-1">
+                      <div><span className="font-medium text-gray-700">Name:</span> <span className="text-gray-800">{formData.victimName || '—'}</span></div>
+                      <div><span className="font-medium text-gray-700">Type:</span> <span className="text-gray-800">{formData.victimType || '—'}</span></div>
+                      <div><span className="font-medium text-gray-700">Company/Org:</span> <span className="text-gray-800">{formData.victimCompany || '—'}</span></div>
+                      <div><span className="font-medium text-gray-700">Email:</span> <span className="text-gray-800">{formData.victimEmail || '—'}</span></div>
+                      <div><span className="font-medium text-gray-700">Gender:</span> <span className="text-gray-800">{formData.victimGender || '—'}</span></div>
+                      <div><span className="font-medium text-gray-700">Contact:</span> <span className="text-gray-800">{formData.victimContact || '—'}</span></div>
+                      <div><span className="font-medium text-gray-700">Address:</span> <span className="text-gray-800">{formData.victimAddress || '—'}</span></div>
+                      <div><span className="font-medium text-gray-700">Description:</span> <span className="text-gray-800">{formData.victimDescription || '—'}</span></div>
+                    </div>
                   </div>
+                  {/* Payments */}
                   <div>
-                    <span className="font-medium text-gray-700">Reporter:</span>
-                    <span className="ml-2 text-gray-600">
-                      {formData.reporterName || "Not specified"}
-                    </span>
+                    <p className="text-xs uppercase tracking-wide text-gray-500 mb-2">Payments</p>
+                    <div className="space-y-1">
+                      <div><span className="font-medium text-gray-700">Methods Used:</span> <span className="text-gray-800">{formData.paymentMethods || '—'}</span></div>
+                      <div><span className="font-medium text-gray-700">Transaction Details:</span> <span className="text-gray-800">{formData.transactionDetails || '—'}</span></div>
+                    </div>
                   </div>
-                  <div>
-                    <span className="font-medium text-gray-700">Victim:</span>
-                    <span className="ml-2 text-gray-600">
-                      {formData.victimName || "Not specified"}
-                    </span>
+                  {/* Evidence */}
+                  <div className="md:col-span-2">
+                    <p className="text-xs uppercase tracking-wide text-gray-500 mb-2">Evidence</p>
+                    <div className="space-y-1">
+                      <div><span className="font-medium text-gray-700">Detailed Description:</span> <span className="text-gray-800">{formData.detailedDescription || '—'}</span></div>
+                      <div><span className="font-medium text-gray-700">Websites/Social:</span> <span className="text-gray-800">{formData.websitesSocialMedia || '—'}</span></div>
+                      <div><span className="font-medium text-gray-700">Evidence Description:</span> <span className="text-gray-800">{formData.evidenceDescription || '—'}</span></div>
+                      <div>
+                        <span className="font-medium text-gray-700">Files:</span>
+                        {formData.evidenceFiles.length ? (
+                          <ul className="list-disc ml-6 text-gray-800">
+                            {formData.evidenceFiles.map((f, i) => (
+                              <li key={i}>{f.name}</li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <span className="ml-2 text-gray-800">—</span>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -947,7 +1052,7 @@ export default function ReportFraudForm() {
                     handleInputChange("additionalComments", e.target.value)
                   }
                   placeholder="Any additional information you'd like to include..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
                 />
               </div>
 

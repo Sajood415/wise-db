@@ -13,9 +13,11 @@ export async function middleware(request: NextRequest) {
         '/help',
         '/how-it-works',
         '/services',
+        '/report-fraud',
         '/forgot-password',
         '/api/auth/login',
-        '/api/auth/signup'
+        '/api/auth/signup',
+        '/api/fraud'
     ];
 
     // Check if the current path is public

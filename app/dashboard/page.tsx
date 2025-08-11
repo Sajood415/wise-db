@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
+import { useToast } from '@/contexts/ToastContext'
 
 type OverviewResponse = {
   totals: { totalReports: number; approvedReports: number; pendingReports: number; rejectedReports: number }
@@ -30,6 +31,7 @@ export default function DashboardPage() {
   const [recent, setRecent] = useState<FraudItem[]>([])
   const [myReports, setMyReports] = useState<MyReportsResponse | null>(null)
   const [activeTab, setActiveTab] = useState<"overview" | "my_reports" | "search">("overview")
+  const { showToast } = useToast()
 
   useEffect(() => {
     let isMounted = true
@@ -172,9 +174,28 @@ export default function DashboardPage() {
           <h3 className="text-lg font-semibold text-gray-900">Quick Actions</h3>
           <p className="text-sm text-gray-500 mb-4">Common tasks and shortcuts</p>
           <div className="space-y-3">
-            <Link href="/report-fraud" className="btn-primary inline-flex items-center">
-              Report New Fraud
+            <Link href="/dashboard/report-fraud" className="w-full inline-flex items-center gap-3 rounded-lg border border-gray-200 px-4 py-3 bg-gray-900 text-white hover:bg-gray-800 transition">
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <path d="M14 2v6h6"/>
+              </svg>
+              <span className="font-medium">Report New Fraud</span>
             </Link>
+            <button onClick={() => setActiveTab('search')} className="w-full flex items-center gap-3 rounded-lg border border-gray-200 px-4 py-3 hover:bg-gray-50 text-gray-900 transition">
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <span className="font-medium">Search Database</span>
+            </button>
+            <button onClick={() => showToast('Export will be available soon', 'info')} className="w-full flex items-center gap-3 rounded-lg border border-gray-200 px-4 py-3 hover:bg-gray-50 text-gray-900 transition">
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              <span className="font-medium">Export My Data</span>
+            </button>
           </div>
         </section>
 
@@ -245,7 +266,7 @@ export default function DashboardPage() {
                   >
                     {r.status}
                   </span>
-                  <Link href={`/reports/${r._id}`} className="text-sm text-blue-600 hover:underline">
+                  <Link href={`/dashboard/reports/${r._id}`} className="text-sm text-blue-600 hover:underline">
                     View
                   </Link>
                 </div>
