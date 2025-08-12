@@ -10,13 +10,15 @@ import SearchLog from '@/models/SearchLog'
 type SearchQuery = {
     q?: string
     type?: string
+    severity?: 'low' | 'medium' | 'high' | 'critical'
+    email?: string
+    phone?: string
     minAmount?: number
     maxAmount?: number
-    country?: string
-    status?: string
+    // removed: country, status from UI
 }
 
-function buildFilter({ q, type, minAmount, maxAmount, country, status }: SearchQuery) {
+function buildFilter({ q, type, severity, email, phone, minAmount, maxAmount }: SearchQuery) {
     const filter: any = {}
     const and: any[] = []
     if (q) {
@@ -24,8 +26,9 @@ function buildFilter({ q, type, minAmount, maxAmount, country, status }: SearchQ
         and.push({ $or: [{ title: rx }, { description: rx }, { tags: rx }] })
     }
     if (type) and.push({ type })
-    if (status) and.push({ status })
-    if (country) and.push({ 'location.country': country })
+    if (severity) and.push({ severity })
+    if (email) and.push({ $or: [{ 'fraudDetails.suspiciousEmail': new RegExp(email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') }] })
+    if (phone) and.push({ $or: [{ 'fraudDetails.suspiciousPhone': new RegExp(phone.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') }] })
     if (typeof minAmount === 'number') and.push({ 'fraudDetails.amount': { $gte: minAmount } })
     if (typeof maxAmount === 'number') and.push({ 'fraudDetails.amount': { ...(filter['fraudDetails.amount'] || {}), $lte: maxAmount } })
     if (and.length) filter.$and = and
@@ -44,7 +47,7 @@ export async function POST(request: NextRequest) {
         if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
         const body = await request.json()
-        const { q, type, minAmount, maxAmount, country, status } = (body || {}) as SearchQuery
+        const { q, type, severity, email, phone, minAmount, maxAmount } = (body || {}) as SearchQuery
 
         const isUnlimited = user.subscription.searchLimit === -1
         const trialExpired = user.isTrialExpired()
@@ -55,7 +58,7 @@ export async function POST(request: NextRequest) {
         let results: any[] = []
 
         if (canUseReal) {
-            const filter = buildFilter({ q, type, minAmount, maxAmount, country, status })
+            const filter = buildFilter({ q, type, severity, email, phone, minAmount, maxAmount })
             results = await Fraud.find(filter).sort({ createdAt: -1 }).limit(50).lean()
         } else {
             // Dummy data
@@ -63,13 +66,16 @@ export async function POST(request: NextRequest) {
             const raw = await fs.readFile(filePath, 'utf8')
             const all: any[] = JSON.parse(raw)
             const rx = q ? new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') : null
+            const emailRx = email ? new RegExp(email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') : null
+            const phoneRx = phone ? new RegExp(phone.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') : null
             results = all.filter((r) => {
                 if (type && r.type !== type) return false
-                if (status && r.status !== status) return false
-                if (country && (r.location?.country || '').toLowerCase() !== country.toLowerCase()) return false
+                if (severity && r.severity !== severity) return false
                 if (typeof minAmount === 'number' && (r.fraudDetails?.amount ?? 0) < minAmount) return false
                 if (typeof maxAmount === 'number' && (r.fraudDetails?.amount ?? 0) > maxAmount) return false
                 if (rx && !(rx.test(r.title) || rx.test(r.description) || (r.tags || []).some((t: string) => rx!.test(t)))) return false
+                if (emailRx && !(emailRx.test(r.fraudDetails?.suspiciousEmail || '') || emailRx.test((r as any).contact?.email || ''))) return false
+                if (phoneRx && !(phoneRx.test(r.fraudDetails?.suspiciousPhone || '') || phoneRx.test((r as any).contact?.phone || ''))) return false
                 return true
             }).slice(0, 50)
         }
@@ -83,7 +89,9 @@ export async function POST(request: NextRequest) {
         // Log search action
         await SearchLog.create({
             user: user._id,
-            q, type, status, country,
+            q: q || '',
+            type,
+            // status and country not used in current UI; omit
             minAmount: typeof minAmount === 'number' ? minAmount : undefined,
             maxAmount: typeof maxAmount === 'number' ? maxAmount : undefined,
             source: canUseReal ? 'real' : 'dummy',

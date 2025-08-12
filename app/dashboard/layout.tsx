@@ -7,6 +7,22 @@ import { useRouter, usePathname } from 'next/navigation'
 // Dashboard Header Component
 const DashboardHeader = ({ user, onLogout }: { user: any, onLogout: () => void }) => {
   const pathname = usePathname()
+
+  const trialEndsAt = user?.subscription?.trialEndsAt ? new Date(user.subscription.trialEndsAt) : null
+  const now = new Date()
+  const msLeft = trialEndsAt ? (trialEndsAt.getTime() - now.getTime()) : null
+  const daysLeft = typeof msLeft === 'number' ? Math.ceil(msLeft / (1000 * 60 * 60 * 24)) : null
+  const trialActive = user?.subscription?.type === 'free_trial' && user?.subscription?.status === 'active'
+
+  function formatDate(d?: Date | null) {
+    if (!d) return ''
+    try {
+      return d.toLocaleDateString()
+    } catch {
+      return ''
+    }
+  }
+
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
@@ -25,6 +41,22 @@ const DashboardHeader = ({ user, onLogout }: { user: any, onLogout: () => void }
             </div>
             <span className="text-xl font-bold text-gray-900">Wise DB</span>
           </div>
+
+          {trialActive && (
+            <div className="hidden md:flex items-center ml-4">
+              {typeof daysLeft === 'number' && daysLeft > 0 ? (
+                <span className="inline-flex items-center gap-2 text-xs px-3 py-1 rounded-full border bg-amber-50 text-amber-700 border-amber-200">
+                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                  <span>Free trial: {daysLeft} day{daysLeft === 1 ? '' : 's'} left · Ends {formatDate(trialEndsAt)}</span>
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-2 text-xs px-3 py-1 rounded-full border bg-rose-50 text-rose-700 border-rose-200">
+                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                  <span>Free trial expired</span>
+                </span>
+              )}
+            </div>
+          )}
         </div>
         
         <div className="flex items-center space-x-4">
