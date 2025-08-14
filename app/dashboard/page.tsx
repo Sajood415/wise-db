@@ -34,6 +34,16 @@ type MyReportsResponse = {
   pagination: { page: number; pageSize: number; total: number; totalPages: number }
 }
 
+type SearchStatus = {
+  type?: 'free_trial' | 'paid_package' | 'enterprise_package'
+  status?: 'active' | 'expired' | 'canceled'
+  canAccessRealData?: boolean
+  searchesUsed: number
+  searchLimit: number
+  remainingSearches: number | -1
+  isTrialExpired: boolean
+}
+
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
   const [overview, setOverview] = useState<OverviewResponse | null>(null)
@@ -44,6 +54,7 @@ export default function DashboardPage() {
   const [searchForm, setSearchForm] = useState({ q: "", type: "", severity: "", email: "", phone: "", minAmount: "", maxAmount: "" })
   const [searchResults, setSearchResults] = useState<FraudItem[] | null>(null)
   const [searchMeta, setSearchMeta] = useState<{ source: 'real' | 'dummy'; searchesUsed: number; searchLimit: number } | null>(null)
+  const [searchStatus, setSearchStatus] = useState<SearchStatus | null>(null)
   const { showToast } = useToast()
 
   function formatCurrency(amount?: number, code?: string) {
@@ -87,15 +98,17 @@ export default function DashboardPage() {
     let isMounted = true
     async function load() {
       try {
-        const [o, r, m] = await Promise.all([
+        const [o, r, m, s] = await Promise.all([
           fetch("/api/dashboard/overview").then((res) => res.json()),
           fetch("/api/dashboard/recent-activity?limit=5").then((res) => res.json()),
           fetch("/api/dashboard/my-reports?page=1&pageSize=5").then((res) => res.json()),
+          fetch("/api/search/status").then((res) => res.json()),
         ])
         if (!isMounted) return
         setOverview(o)
         setRecent(r.items || [])
         setMyReports(m)
+        setSearchStatus(s)
       } catch (err) {
         console.error("Failed to load dashboard data", err)
       } finally {
@@ -137,8 +150,16 @@ export default function DashboardPage() {
     ]
   }, [overview])
 
+  const searchBlocked = useMemo(() => {
+    return !!(searchStatus && searchStatus.type === 'free_trial' && searchStatus.isTrialExpired)
+  }, [searchStatus])
+
   async function handleSearchSubmit(e: React.FormEvent) {
     e.preventDefault()
+    if (searchBlocked) {
+      showToast('Your free trial has expired. Upgrade to continue searching.', 'error')
+      return
+    }
     setSearchLoading(true)
     setSearchResults(null)
     try {
@@ -357,14 +378,19 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-gray-900">Search Database</h3>
           </div>
+          {searchBlocked && (
+            <div className="mb-4 rounded-md border border-rose-200 bg-rose-50 p-3 text-rose-700 text-sm">
+              Your free trial has expired. Upgrade your plan to continue searching.
+            </div>
+          )}
           <form onSubmit={handleSearchSubmit} className="mt-4 grid grid-cols-1 lg:grid-cols-12 gap-3">
             <div className="lg:col-span-3">
               <label className="block text-xs text-gray-600 mb-1">Keyword</label>
-              <input value={searchForm.q} onChange={(e)=>setSearchForm(s=>({...s,q:e.target.value}))} placeholder="Title, description, tags..." className="w-full border rounded-md px-3 py-2 text-sm text-black bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-200" />
+              <input disabled={searchBlocked} value={searchForm.q} onChange={(e)=>setSearchForm(s=>({...s,q:e.target.value}))} placeholder="Title, description, tags..." className="w-full border rounded-md px-3 py-2 text-sm text-black bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:opacity-60 disabled:cursor-not-allowed" />
             </div>
             <div className="lg:col-span-2">
               <label className="block text-xs text-gray-600 mb-1">Type of fraud</label>
-              <select value={searchForm.type} onChange={(e)=>setSearchForm(s=>({...s,type:e.target.value}))} className="w-full border rounded-md px-3 py-2 text-sm text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200">
+              <select disabled={searchBlocked} value={searchForm.type} onChange={(e)=>setSearchForm(s=>({...s,type:e.target.value}))} className="w-full border rounded-md px-3 py-2 text-sm text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:opacity-60 disabled:cursor-not-allowed">
                 <option value="">Any</option>
                 <option value="email">Email</option>
                 <option value="phone">Phone</option>
@@ -376,7 +402,7 @@ export default function DashboardPage() {
             </div>
             <div className="lg:col-span-2">
               <label className="block text-xs text-gray-600 mb-1">Risk level</label>
-              <select value={searchForm.severity} onChange={(e)=>setSearchForm(s=>({...s,severity:e.target.value}))} className="w-full border rounded-md px-3 py-2 text-sm text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200">
+              <select disabled={searchBlocked} value={searchForm.severity} onChange={(e)=>setSearchForm(s=>({...s,severity:e.target.value}))} className="w-full border rounded-md px-3 py-2 text-sm text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:opacity-60 disabled:cursor-not-allowed">
                 <option value="">Any</option>
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
@@ -386,23 +412,23 @@ export default function DashboardPage() {
             </div>
             <div className="lg:col-span-2">
               <label className="block text-xs text-gray-600 mb-1">Email</label>
-              <input value={searchForm.email} onChange={(e)=>setSearchForm(s=>({...s,email:e.target.value}))} placeholder="Email address" className="w-full border rounded-md px-3 py-2 text-sm text-black bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-200" />
+              <input disabled={searchBlocked} value={searchForm.email} onChange={(e)=>setSearchForm(s=>({...s,email:e.target.value}))} placeholder="Email address" className="w-full border rounded-md px-3 py-2 text-sm text-black bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:opacity-60 disabled:cursor-not-allowed" />
             </div>
             <div className="lg:col-span-3">
               <label className="block text-xs text-gray-600 mb-1">Phone</label>
-              <input value={searchForm.phone} onChange={(e)=>setSearchForm(s=>({...s,phone:e.target.value}))} placeholder="Phone number" className="w-full border rounded-md px-3 py-2 text-sm text-black bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-200" />
+              <input disabled={searchBlocked} value={searchForm.phone} onChange={(e)=>setSearchForm(s=>({...s,phone:e.target.value}))} placeholder="Phone number" className="w-full border rounded-md px-3 py-2 text-sm text-black bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:opacity-60 disabled:cursor-not-allowed" />
             </div>
             <div className="lg:col-span-2">
               <label className="block text-xs text-gray-600 mb-1">Min amount</label>
-              <input value={searchForm.minAmount} onChange={(e)=>setSearchForm(s=>({...s,minAmount:e.target.value.replace(/[^\d.]/g,'')}))} placeholder="0.00" className="w-full border rounded-md px-3 py-2 text-sm text-black bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-200" />
+              <input disabled={searchBlocked} value={searchForm.minAmount} onChange={(e)=>setSearchForm(s=>({...s,minAmount:e.target.value.replace(/[^\d.]/g,'')}))} placeholder="0.00" className="w-full border rounded-md px-3 py-2 text-sm text-black bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:opacity-60 disabled:cursor-not-allowed" />
             </div>
             <div className="lg:col-span-2">
               <label className="block text-xs text-gray-600 mb-1">Max amount</label>
-              <input value={searchForm.maxAmount} onChange={(e)=>setSearchForm(s=>({...s,maxAmount:e.target.value.replace(/[^\d.]/g,'')}))} placeholder="1000.00" className="w-full border rounded-md px-3 py-2 text-sm text-black bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-200" />
+              <input disabled={searchBlocked} value={searchForm.maxAmount} onChange={(e)=>setSearchForm(s=>({...s,maxAmount:e.target.value.replace(/[^\d.]/g,'')}))} placeholder="1000.00" className="w-full border rounded-md px-3 py-2 text-sm text-black bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:opacity-60 disabled:cursor-not-allowed" />
             </div>
             <div className="lg:col-span-3 flex items-end justify-end gap-3">
               <button type="button" onClick={()=>{setSearchForm({q:"",type:"",severity:"",email:"",phone:"",minAmount:"",maxAmount:""}); setSearchResults(null);}} className="px-4 py-2 rounded-md border text-gray-700">Reset</button>
-              <button type="submit" disabled={searchLoading} className="px-4 py-2 rounded-md bg-gray-900 text-white disabled:opacity-60">{searchLoading? 'Searching...' : 'Search'}</button>
+              <button type="submit" disabled={searchLoading || searchBlocked} className="px-4 py-2 rounded-md bg-gray-900 text-white disabled:opacity-60">{searchLoading? 'Searching...' : 'Search'}</button>
             </div>
           </form>
 

@@ -43,13 +43,15 @@ function LoginPageInner() {
       if (response.ok) {
         showToast('Login successful!', 'success')
         
-        // Redirect based on user role or redirect parameter
+        // Redirect based on user role
         if (data.user.role === 'super_admin') {
           router.push('/admin/dashboard')
         } else if (data.user.role === 'enterprise_admin') {
           router.push('/enterprise/dashboard')
+        } else if (data.user.role === 'sub_admin') {
+          router.push('/manage')
         } else {
-          // Use redirect parameter for regular users, default to dashboard
+          // Use redirect parameter for individual users, default to dashboard
           router.push(redirectTo)
         }
       } else {

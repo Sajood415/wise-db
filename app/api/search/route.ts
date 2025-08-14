@@ -52,6 +52,12 @@ export async function POST(request: NextRequest) {
         const isUnlimited = user.subscription.searchLimit === -1
         const trialExpired = user.isTrialExpired()
 
+        // Block searches for individual users whose free trial is expired
+        const isFreeTrial = user.subscription?.type === 'free_trial'
+        if (user.role === 'individual' && isFreeTrial && trialExpired) {
+            return NextResponse.json({ error: 'Your free trial has expired. Upgrade to continue searching.' }, { status: 403 })
+        }
+
         // Determine data source
         const canUseReal = user.subscription.canAccessRealData && !trialExpired
 

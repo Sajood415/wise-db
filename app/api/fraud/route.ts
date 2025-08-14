@@ -34,18 +34,44 @@ export async function POST(req: NextRequest) {
         const body = await req.json()
 
         const {
+            // Basic Information
             reportTitle,
             detailedDescription,
             fraudType,
             incidentDate,
-            currency,
-            actualLoss,
-            attemptedLoss,
-            websitesSocialMedia,
-            evidenceDescription,
+
+            // Reporter Information
+            reporterType,
             reporterName,
             reporterEmail,
             reporterPhone,
+            reporterGender,
+            reporterLocation,
+
+            // Victim Details
+            victimName,
+            victimType,
+            victimCompany,
+            victimEmail,
+            victimGender,
+            victimContact,
+            victimAddress,
+            victimDescription,
+
+            // Financial Impact
+            actualLoss,
+            attemptedLoss,
+            currency,
+            paymentMethods,
+            transactionDetails,
+
+            // Evidence & Documentation
+            websitesSocialMedia,
+            evidenceDescription,
+            evidenceFiles, // This will be an array of file data
+
+            // Additional
+            additionalComments,
         } = body || {}
 
         if (!reportTitle || !detailedDescription) {
@@ -67,11 +93,39 @@ export async function POST(req: NextRequest) {
             }
         }
 
+        // Process evidence files - convert to URLs or base64 strings
+        const uploadedFiles = body.evidenceFiles || []
+        const screenshots: string[] = []
+        const documents: string[] = []
+
+        uploadedFiles.forEach((file: any) => {
+            if (file.type && file.type.startsWith('image/')) {
+                screenshots.push(file.data || file.url || '')
+            } else {
+                documents.push(file.data || file.url || '')
+            }
+        })
+
+        // Build additional info from various fields
+        const additionalInfoParts = [
+            websitesSocialMedia ? `Websites/Social Media: ${websitesSocialMedia}` : '',
+            evidenceDescription ? `Evidence Description: ${evidenceDescription}` : '',
+            attemptedLoss ? `Attempted Loss: ${attemptedLoss}` : '',
+            paymentMethods ? `Payment Methods: ${paymentMethods}` : '',
+            transactionDetails ? `Transaction Details: ${transactionDetails}` : '',
+            additionalComments ? `Additional Comments: ${additionalComments}` : '',
+        ].filter(Boolean)
+
         const doc = await Fraud.create({
             title: reportTitle,
             description: detailedDescription,
             type: mapFraudType(fraudType),
             fraudDetails: {
+                suspiciousEmail: victimEmail,
+                suspiciousPhone: victimContact,
+                suspiciousWebsite: websitesSocialMedia,
+                suspiciousName: victimName,
+                suspiciousCompany: victimCompany,
                 amount: actualLoss ? Number(actualLoss) : undefined,
                 currency: currency || 'USD',
                 date: incidentDate ? new Date(incidentDate) : undefined,
@@ -86,16 +140,15 @@ export async function POST(req: NextRequest) {
                 }
                 : undefined,
             evidence: {
-                screenshots: [],
-                documents: [],
-                additionalInfo: [
-                    websitesSocialMedia ? `Web/Profiles: ${websitesSocialMedia}` : '',
-                    evidenceDescription ? `Evidence: ${evidenceDescription}` : '',
-                    attemptedLoss ? `Attempted loss: ${attemptedLoss}` : '',
-                ]
-                    .filter(Boolean)
-                    .join(' | '),
+                screenshots: screenshots,
+                documents: documents,
+                additionalInfo: additionalInfoParts.join(' | '),
             },
+            location: reporterLocation ? {
+                country: reporterLocation,
+                city: '',
+                region: '',
+            } : undefined,
             tags: fraudType ? [String(fraudType).toLowerCase()] : [],
             severity: 'medium',
             reportedAt: new Date(),

@@ -189,6 +189,24 @@ export default function ReportFraudForm() {
     e.preventDefault();
     if (!isStepValid(5)) return
     try {
+      // Convert files to base64
+      const evidenceFilesData = await Promise.all(
+        formData.evidenceFiles.map(async (file) => {
+          return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+              resolve({
+                name: file.name,
+                type: file.type,
+                size: file.size,
+                data: reader.result as string
+              });
+            };
+            reader.readAsDataURL(file);
+          });
+        })
+      );
+
       const res = await fetch('/api/fraud', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -202,6 +220,8 @@ export default function ReportFraudForm() {
           reporterName: formData.reporterName,
           reporterEmail: formData.reporterEmail,
           reporterPhone: formData.reporterPhone,
+          reporterGender: formData.reporterGender,
+          reporterLocation: formData.reporterLocation,
           // Victim
           victimName: formData.victimName,
           victimType: formData.victimType,
@@ -221,6 +241,9 @@ export default function ReportFraudForm() {
           detailedDescription: formData.detailedDescription,
           websitesSocialMedia: formData.websitesSocialMedia,
           evidenceDescription: formData.evidenceDescription,
+          evidenceFiles: evidenceFilesData,
+          // Additional
+          additionalComments: formData.additionalComments,
         }),
       })
       const data = await res.json()
