@@ -22,7 +22,9 @@ export async function GET(
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
         }
 
-        const report = await Fraud.findById(id).lean()
+        const report = await Fraud.findById(id)
+            .populate('reviewedBy', 'firstName lastName email role')
+            .lean()
         if (!report) {
             return NextResponse.json({ error: 'Report not found' }, { status: 404 })
         }
@@ -59,6 +61,11 @@ export async function PUT(
         const report = await Fraud.findById(id)
         if (!report) {
             return NextResponse.json({ error: 'Report not found' }, { status: 404 })
+        }
+
+        // Only allow edits while pending
+        if (report.status !== 'pending') {
+            return NextResponse.json({ error: 'Only pending reports can be edited' }, { status: 400 })
         }
 
         // Update all editable fields

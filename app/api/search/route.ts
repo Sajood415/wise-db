@@ -51,6 +51,10 @@ export async function POST(request: NextRequest) {
 
         const isUnlimited = user.subscription.searchLimit === -1
         const trialExpired = user.isTrialExpired()
+        if (user.subscription?.type === 'free_trial' && user.subscription?.trialEndsAt && trialExpired && user.subscription.status !== 'expired') {
+            user.subscription.status = 'expired'
+            try { await user.save() } catch { }
+        }
 
         // Block searches for individual users whose free trial is expired
         const isFreeTrial = user.subscription?.type === 'free_trial'

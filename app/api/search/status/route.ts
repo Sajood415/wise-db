@@ -10,8 +10,19 @@ export async function GET(request: NextRequest) {
         const userId = request.headers.get('x-user-id')
         if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-        const user: any = await User.findById(userId).lean()
+        const user: any = await User.findById(userId)
         if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
+
+        // Auto-expire free trial if past trialEndsAt
+        if (
+            user.subscription?.type === 'free_trial' &&
+            user.subscription?.trialEndsAt &&
+            new Date() > new Date(user.subscription.trialEndsAt) &&
+            user.subscription.status !== 'expired'
+        ) {
+            user.subscription.status = 'expired'
+            try { await user.save() } catch { }
+        }
 
         const sub = user.subscription || {}
         const remaining = typeof sub.searchLimit === 'number' && sub.searchLimit >= 0

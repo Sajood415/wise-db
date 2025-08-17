@@ -174,6 +174,8 @@ export default function ReportDetailPage() {
     )
   }
 
+  const isEditable = report.status === 'pending'
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -182,17 +184,41 @@ export default function ReportDetailPage() {
           <p className="text-gray-600 mt-1">Report ID: {report._id}</p>
         </div>
         <div className="flex items-center gap-3">
-          <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusPill(report.status)}`}>
-            {report.status}
-          </span>
+          <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusPill(report.status)}`}>{report.status}</span>
           <button
             onClick={() => setEditing(!editing)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            disabled={!isEditable}
+            className={`px-4 py-2 rounded-lg transition-colors ${isEditable ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-200 text-gray-500 cursor-not-allowed'}`}
           >
             {editing ? 'Cancel Edit' : 'Edit Report'}
           </button>
         </div>
       </div>
+
+      {/* Review Banner (top of page, above Basic Information and Fraud Details) */}
+      {report.status !== 'pending' && (
+        <div className={`rounded-lg border ${report.status === 'approved' ? 'border-emerald-200 bg-emerald-50' : 'border-rose-200 bg-rose-50'} p-4`}>
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex items-center gap-2">
+              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${report.status === 'approved' ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'}`}>
+                {report.status === 'approved' ? 'Approved' : 'Rejected'}
+              </span>
+              <span className="text-sm text-gray-700">
+                {(() => {
+                  const anyReport: any = report
+                  const rb = anyReport.reviewedBy
+                  const name = rb && typeof rb !== 'string' ? [rb.firstName, rb.lastName].filter(Boolean).join(' ') || rb.email : rb || 'Reviewer'
+                  return `by ${name}`
+                })()}
+              </span>
+            </div>
+            <div className="text-xs text-gray-600">{report.reviewedAt ? new Date(report.reviewedAt).toLocaleString() : ''}</div>
+          </div>
+          {report.status === 'rejected' && (
+            <p className="mt-2 text-sm text-gray-800"><span className="font-medium">Reason:</span> {report.reviewNotes || 'No notes provided'}</p>
+          )}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Basic Information */}
@@ -770,7 +796,7 @@ export default function ReportDetailPage() {
         </div>
       </div>
 
-      {/* Review Information */}
+      {/* Review Information (detailed card) */}
       {report.status !== 'pending' && (
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Review Information</h3>
@@ -788,7 +814,17 @@ export default function ReportDetailPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">Reviewed By</label>
-                <p className="mt-1 text-sm text-gray-900">Sub Admin</p>
+                <p className="mt-1 text-sm text-gray-900">
+                  {(() => {
+                    const anyReport: any = report
+                    const rb = anyReport.reviewedBy
+                    if (!rb) return 'N/A'
+                    if (typeof rb === 'string') return rb
+                    const name = [rb.firstName, rb.lastName].filter(Boolean).join(' ')
+                    const role = rb.role?.replace('_', ' ')
+                    return `${name || rb.email || 'Reviewer'}${role ? ` (${role})` : ''}`
+                  })()}
+                </p>
               </div>
             </div>
           </div>

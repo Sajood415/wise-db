@@ -121,12 +121,6 @@ const Footer = () => {
               <span className="text-gray-400 text-sm">
                 Trusted by 10,000+ businesses worldwide
               </span>
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-green-500 text-sm">
-                  All systems operational
-                </span>
-              </div>
             </div>
           </div>
         </div>

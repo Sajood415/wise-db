@@ -7,6 +7,14 @@ import { useRouter, usePathname } from 'next/navigation'
 // Dashboard Header Component
 const DashboardHeader = ({ user, onLogout }: { user: any, onLogout: () => void }) => {
   const pathname = usePathname()
+  const role = user?.role as string | undefined
+  const homePath = role === 'super_admin'
+    ? '/admin/dashboard'
+    : role === 'sub_admin'
+    ? '/manage'
+    : role === 'enterprise_admin'
+    ? '/enterprise/dashboard'
+    : '/dashboard'
 
   const trialEndsAt = user?.subscription?.trialEndsAt ? new Date(user.subscription.trialEndsAt) : null
   const now = new Date()
@@ -27,12 +35,12 @@ const DashboardHeader = ({ user, onLogout }: { user: any, onLogout: () => void }
     <header className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          {pathname !== '/dashboard' && (
-            <Link href="/dashboard" className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900">
+          {pathname !== homePath && (
+            <Link href={homePath} className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900">
               <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="15 18 9 12 15 6"></polyline>
               </svg>
-              <span className="font-medium">Dashboard</span>
+              <span className="font-medium">{role === 'super_admin' ? 'Admin' : 'Dashboard'}</span>
             </Link>
           )}
           <div className="flex items-center space-x-2">
