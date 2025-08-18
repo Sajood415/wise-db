@@ -8,8 +8,8 @@ export const metadata = {
 export default async function DashboardReportSuccessPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   return (
-    <div className="py-2">
-      <div className="max-w-2xl">
+    <div className="py-6">
+      <div className="max-w-2xl mx-auto px-4">
         <div className="bg-white rounded-xl shadow p-8 text-center">
           <div className="mx-auto mb-4 w-14 h-14 rounded-full bg-green-100 flex items-center justify-center">
             <span className="text-2xl">✅</span>

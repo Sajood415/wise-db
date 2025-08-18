@@ -16,7 +16,6 @@ export default function ConditionalLayout({
     '/dashboard',
     '/admin',
     '/manage', 
-    '/enterprise',
     '/search',
     '/searches',
     '/my-reports',

@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from '@/contexts/ToastContext'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from "next/link";
 
 export default function ReportFraudForm() {
+  const FORM_STORAGE_KEY = 'reportFraudFormData'
+  const STEP_STORAGE_KEY = 'reportFraudCurrentStep'
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     // Basic Information
@@ -46,13 +48,124 @@ export default function ReportFraudForm() {
     additionalComments: "",
     agreeToTerms: false,
   });
+  const [submitting, setSubmitting] = useState(false)
+  const [touched, setTouched] = useState<Record<string, boolean>>({})
   const { showToast } = useToast()
   const router = useRouter()
   const pathname = usePathname()
 
+  // Restore saved progress on mount
+  useEffect(() => {
+    try {
+      const raw = typeof window !== 'undefined' ? localStorage.getItem(FORM_STORAGE_KEY) : null
+      if (raw) {
+        const saved = JSON.parse(raw)
+        // Do not attempt to restore File objects; keep current evidenceFiles
+        const { evidenceFiles: _ignored, ...rest } = saved || {}
+        setFormData(prev => ({ ...prev, ...rest }))
+      }
+      const savedStep = typeof window !== 'undefined' ? localStorage.getItem(STEP_STORAGE_KEY) : null
+      if (savedStep) {
+        const num = parseInt(savedStep, 10)
+        if (!Number.isNaN(num) && num >= 1 && num <= 5) setCurrentStep(num)
+      }
+    } catch {}
+  }, [])
+
+  // Persist progress whenever it changes (excluding files)
+  useEffect(() => {
+    try {
+      const { evidenceFiles: _ignored, ...toSave } = formData
+      localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(toSave))
+    } catch {}
+  }, [formData])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STEP_STORAGE_KEY, String(currentStep))
+    } catch {}
+  }, [currentStep])
+
+  const markTouched = (field: string) => {
+    setTouched(prev => ({ ...prev, [field]: true }))
+  }
+
+  const getError = (field: string): string => {
+    switch (field) {
+      // Step 1
+      case 'fraudType':
+        return touched.fraudType && !formData.fraudType ? 'Fraud type is required' : ''
+      case 'incidentDate':
+        if (!touched.incidentDate) return ''
+        if (!formData.incidentDate) return 'Date of incident is required'
+        return isFutureDate(formData.incidentDate) ? 'Date cannot be in the future' : ''
+      case 'reportTitle':
+        return touched.reportTitle && !formData.reportTitle ? 'Report title is required' : ''
+      case 'reporterType':
+        return touched.reporterType && !formData.reporterType ? 'Reporter type is required' : ''
+      case 'reporterName':
+        return touched.reporterName && !formData.reporterName ? 'Your name is required' : ''
+      case 'reporterEmail':
+        if (!touched.reporterEmail) return ''
+        if (!formData.reporterEmail) return 'Email is required'
+        return isValidEmail(formData.reporterEmail) ? '' : 'Enter a valid email address'
+      case 'reporterPhone':
+        if (!touched.reporterPhone) return ''
+        return formData.reporterPhone && !isValidPhone(formData.reporterPhone) ? 'Enter a valid phone number' : ''
+      // Step 2
+      case 'victimName':
+        return touched.victimName && !formData.victimName ? 'Victim name is required' : ''
+      case 'victimType':
+        return touched.victimType && !formData.victimType ? 'Victim type is required' : ''
+      case 'victimEmail':
+        if (!touched.victimEmail) return ''
+        return formData.victimEmail && !isValidEmail(formData.victimEmail) ? 'Enter a valid email address' : ''
+      // Step 3
+      case 'actualLoss':
+        if (!touched.actualLoss) return ''
+        return isValidAmount(formData.actualLoss) ? '' : 'Enter a valid amount'
+      case 'attemptedLoss':
+        if (!touched.attemptedLoss) return ''
+        return formData.attemptedLoss !== '' && !isValidAmount(formData.attemptedLoss) ? 'Enter a valid amount' : ''
+      case 'currency':
+        return touched.currency && !formData.currency ? 'Currency is required' : ''
+      // Step 4
+      case 'detailedDescription':
+        if (!touched.detailedDescription) return ''
+        if (!formData.detailedDescription) return 'Description is required'
+        return formData.detailedDescription.length > 50 ? 'Max 50 characters allowed' : ''
+      default:
+        return ''
+    }
+  }
+
+  const markStepTouched = (step: number) => {
+    const fieldsByStep: Record<number, string[]> = {
+      1: ['fraudType', 'incidentDate', 'reportTitle', 'reporterType', 'reporterName', 'reporterEmail', 'reporterPhone'],
+      2: ['victimName', 'victimType', 'victimEmail'],
+      3: ['actualLoss', 'attemptedLoss', 'currency'],
+      4: ['detailedDescription']
+    }
+    const fields = fieldsByStep[step] || []
+    setTouched(prev => fields.reduce((acc, f) => ({ ...acc, [f]: true }), { ...prev }))
+  }
+
   const isValidEmail = (value: string) => {
     if (!value) return false
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+  }
+
+  const getTodayDateString = () => {
+    const d = new Date()
+    const yyyy = d.getFullYear()
+    const mm = String(d.getMonth() + 1).padStart(2, '0')
+    const dd = String(d.getDate()).padStart(2, '0')
+    return `${yyyy}-${mm}-${dd}`
+  }
+
+  const isFutureDate = (value: string) => {
+    if (!value) return false
+    return value > getTodayDateString()
   }
 
   const isValidPhone = (value: string) => {
@@ -122,12 +235,54 @@ export default function ReportFraudForm() {
   };
 
   const handleFileUpload = (files: FileList | null) => {
-    if (files) {
-      const fileArray = Array.from(files);
+    if (!files) return
+
+    const MAX_BYTES = 10 * 1024 * 1024 // 10MB
+    const allowedMimeTypes = new Set([
+      'application/pdf',
+      'image/png',
+      'image/jpeg',
+    ])
+
+    const allowedExtensions = new Set(['.pdf', '.png', '.jpg', '.jpeg'])
+
+    const isAllowed = (file: File) => {
+      if (allowedMimeTypes.has(file.type)) return true
+      const name = file.name.toLowerCase()
+      for (const ext of allowedExtensions) {
+        if (name.endsWith(ext)) return true
+      }
+      return false
+    }
+
+    const invalidType: string[] = []
+    const tooLarge: string[] = []
+    const accepted: File[] = []
+
+    Array.from(files).forEach(file => {
+      if (!isAllowed(file)) {
+        invalidType.push(file.name)
+        return
+      }
+      if (file.size > MAX_BYTES) {
+        tooLarge.push(`${file.name} (${(file.size / (1024*1024)).toFixed(1)}MB)`) 
+        return
+      }
+      accepted.push(file)
+    })
+
+    if (invalidType.length) {
+      showToast(`Unsupported file type: ${invalidType.join(', ')}. Allowed: PDF, PNG, JPG, JPEG.`, 'error')
+    }
+    if (tooLarge.length) {
+      showToast(`File(s) exceed 10MB: ${tooLarge.join(', ')}`, 'error')
+    }
+
+    if (accepted.length) {
       setFormData((prev) => ({
         ...prev,
-        evidenceFiles: [...prev.evidenceFiles, ...fileArray],
-      }));
+        evidenceFiles: [...prev.evidenceFiles, ...accepted],
+      }))
     }
   };
 
@@ -150,6 +305,7 @@ export default function ReportFraudForm() {
         return (
           formData.fraudType &&
           formData.incidentDate &&
+          !isFutureDate(formData.incidentDate) &&
           formData.reportTitle &&
           formData.reporterType &&
           formData.reporterName &&
@@ -174,7 +330,11 @@ export default function ReportFraudForm() {
   };
 
   const nextStep = () => {
-    if (currentStep < 5 && isStepValid(currentStep)) {
+    if (currentStep < 5) {
+      if (!isStepValid(currentStep)) {
+        markStepTouched(currentStep)
+        return
+      }
       setCurrentStep(currentStep + 1);
     }
   };
@@ -187,7 +347,11 @@ export default function ReportFraudForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isStepValid(5)) return
+    if (!isStepValid(5)) {
+      markStepTouched(5)
+      return
+    }
+    setSubmitting(true)
     try {
       // Convert files to base64
       const evidenceFilesData = await Promise.all(
@@ -252,6 +416,11 @@ export default function ReportFraudForm() {
         if (id) {
           const isDashboard = pathname?.startsWith('/dashboard')
           const target = isDashboard ? `/dashboard/report-fraud/success/${id}` : `/report-fraud/success/${id}`
+          // Clear saved progress on successful submit
+          try {
+            localStorage.removeItem(FORM_STORAGE_KEY)
+            localStorage.removeItem(STEP_STORAGE_KEY)
+          } catch {}
           router.push(target)
           return
         }
@@ -259,9 +428,11 @@ export default function ReportFraudForm() {
         router.push('/report-fraud')
       } else {
         showToast(data.error || 'Failed to submit report', 'error')
+        setSubmitting(false)
       }
     } catch (err) {
       showToast('Network error. Please try again.', 'error')
+      setSubmitting(false)
     }
   };
 
@@ -446,7 +617,8 @@ export default function ReportFraudForm() {
                     onChange={(e) =>
                       handleInputChange("fraudType", e.target.value)
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
+                    onBlur={() => markTouched('fraudType')}
+                    className={`w-full px-3 py-2 border ${getError('fraudType') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
                     required
                   >
                     <option value="" className="text-gray-500">
@@ -458,6 +630,9 @@ export default function ReportFraudForm() {
                       </option>
                     ))}
                   </select>
+                  {getError('fraudType') && (
+                    <p className="mt-1 text-sm text-red-600">{getError('fraudType')}</p>
+                  )}
                 </div>
 
                 <div>
@@ -470,9 +645,14 @@ export default function ReportFraudForm() {
                     onChange={(e) =>
                       handleInputChange("incidentDate", e.target.value)
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
+                    onBlur={() => markTouched('incidentDate')}
+                    max={getTodayDateString()}
+                    className={`w-full px-3 py-2 border ${getError('incidentDate') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
                     required
                   />
+                  {getError('incidentDate') && (
+                    <p className="mt-1 text-sm text-red-600">{getError('incidentDate')}</p>
+                  )}
                 </div>
               </div>
 
@@ -486,10 +666,14 @@ export default function ReportFraudForm() {
                   onChange={(e) =>
                     handleInputChange("reportTitle", e.target.value)
                   }
+                  onBlur={() => markTouched('reportTitle')}
                   placeholder="Brief title describing the fraud incident"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
+                  className={`w-full px-3 py-2 border ${getError('reportTitle') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
                   required
                 />
+                {getError('reportTitle') && (
+                  <p className="mt-1 text-sm text-red-600">{getError('reportTitle')}</p>
+                )}
               </div>
 
               <div>
@@ -501,7 +685,8 @@ export default function ReportFraudForm() {
                   onChange={(e) =>
                     handleInputChange("reporterType", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
+                  onBlur={() => markTouched('reporterType')}
+                  className={`w-full px-3 py-2 border ${getError('reporterType') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
                   required
                 >
                   <option value="" className="text-gray-500">
@@ -513,6 +698,9 @@ export default function ReportFraudForm() {
                     </option>
                   ))}
                 </select>
+                {getError('reporterType') && (
+                  <p className="mt-1 text-sm text-red-600">{getError('reporterType')}</p>
+                )}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -526,10 +714,14 @@ export default function ReportFraudForm() {
                     onChange={(e) =>
                       handleInputChange("reporterName", e.target.value)
                     }
+                    onBlur={() => markTouched('reporterName')}
                     placeholder="Your full name"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
+                    className={`w-full px-3 py-2 border ${getError('reporterName') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
                     required
                   />
+                  {getError('reporterName') && (
+                    <p className="mt-1 text-sm text-red-600">{getError('reporterName')}</p>
+                  )}
                 </div>
 
                 <div>
@@ -542,10 +734,14 @@ export default function ReportFraudForm() {
                     onChange={(e) =>
                       handleInputChange("reporterEmail", e.target.value)
                     }
+                    onBlur={() => markTouched('reporterEmail')}
                     placeholder="your.email@example.com"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
+                    className={`w-full px-3 py-2 border ${getError('reporterEmail') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
                     required
                   />
+                  {getError('reporterEmail') && (
+                    <p className="mt-1 text-sm text-red-600">{getError('reporterEmail')}</p>
+                  )}
                 </div>
               </div>
 
@@ -560,9 +756,13 @@ export default function ReportFraudForm() {
                     pattern="[0-9()+\-\s]{7,20}"
                     value={formData.reporterPhone}
                     onChange={(e) => handlePhoneChange(e.target.value)}
+                    onBlur={() => markTouched('reporterPhone')}
                     placeholder="+1 (555) 123-4567"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
+                    className={`w-full px-3 py-2 border ${getError('reporterPhone') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
                   />
+                  {getError('reporterPhone') && (
+                    <p className="mt-1 text-sm text-red-600">{getError('reporterPhone')}</p>
+                  )}
                 </div>
 
                 <div>
@@ -623,10 +823,14 @@ export default function ReportFraudForm() {
                     onChange={(e) =>
                       handleInputChange("victimName", e.target.value)
                     }
+                    onBlur={() => markTouched('victimName')}
                     placeholder="Name of person or organization targeted"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
+                    className={`w-full px-3 py-2 border ${getError('victimName') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
                     required
                   />
+                  {getError('victimName') && (
+                    <p className="mt-1 text-sm text-red-600">{getError('victimName')}</p>
+                  )}
                 </div>
 
                 <div>
@@ -638,7 +842,8 @@ export default function ReportFraudForm() {
                     onChange={(e) =>
                       handleInputChange("victimType", e.target.value)
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
+                    onBlur={() => markTouched('victimType')}
+                    className={`w-full px-3 py-2 border ${getError('victimType') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
                     required
                   >
                     <option value="" className="text-gray-500">
@@ -650,6 +855,9 @@ export default function ReportFraudForm() {
                       </option>
                     ))}
                   </select>
+                  {getError('victimType') && (
+                    <p className="mt-1 text-sm text-red-600">{getError('victimType')}</p>
+                  )}
                 </div>
               </div>
 
@@ -679,9 +887,13 @@ export default function ReportFraudForm() {
                     onChange={(e) =>
                       handleInputChange("victimEmail", e.target.value)
                     }
+                    onBlur={() => markTouched('victimEmail')}
                     placeholder="victim@example.com"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
+                    className={`w-full px-3 py-2 border ${getError('victimEmail') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
                   />
+                  {getError('victimEmail') && (
+                    <p className="mt-1 text-sm text-red-600">{getError('victimEmail')}</p>
+                  )}
                 </div>
               </div>
 
@@ -775,10 +987,14 @@ export default function ReportFraudForm() {
                     onChange={(e) =>
                       handleInputChange("actualLoss", e.target.value)
                     }
+                    onBlur={() => markTouched('actualLoss')}
                     placeholder="0.00"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
+                    className={`w-full px-3 py-2 border ${getError('actualLoss') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
                     required
                   />
+                  {getError('actualLoss') && (
+                    <p className="mt-1 text-sm text-red-600">{getError('actualLoss')}</p>
+                  )}
                 </div>
 
                 <div>
@@ -807,7 +1023,8 @@ export default function ReportFraudForm() {
                   onChange={(e) =>
                     handleInputChange("currency", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white"
+                  onBlur={() => markTouched('currency')}
+                  className={`w-full px-3 py-2 border ${getError('currency') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white`}
                   required
                 >
                   {currencies.map((currency) => (
@@ -820,6 +1037,9 @@ export default function ReportFraudForm() {
                     </option>
                   ))}
                 </select>
+                {getError('currency') && (
+                  <p className="mt-1 text-sm text-red-600">{getError('currency')}</p>
+                )}
               </div>
 
               <div>
@@ -867,11 +1087,15 @@ export default function ReportFraudForm() {
                   onChange={(e) =>
                     handleInputChange("detailedDescription", e.target.value)
                   }
+                  onBlur={() => markTouched('detailedDescription')}
                   placeholder="Provide a detailed description of the fraud incident. Include timeline, what happened, how it unfolded, and any communication details..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
+                  className={`w-full px-3 py-2 border ${getError('detailedDescription') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
                   maxLength={50}
                   required
                 />
+                {getError('detailedDescription') && (
+                  <p className="mt-1 text-sm text-red-600">{getError('detailedDescription')}</p>
+                )}
                 <p className="text-sm text-gray-500 mt-1">
                   Max 50 characters ({formData.detailedDescription.length}/50)
                 </p>
@@ -900,7 +1124,7 @@ export default function ReportFraudForm() {
                   <input
                     type="file"
                     multiple
-                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.mp3,.mp4"
+                    accept=".pdf,.png,.jpg,.jpeg"
                     onChange={(e) => handleFileUpload(e.target.files)}
                     className="hidden"
                     id="evidence-files"
@@ -928,8 +1152,7 @@ export default function ReportFraudForm() {
                         other evidence
                       </p>
                       <p className="text-xs text-gray-500 mt-2">
-                        Supported: PDF, JPG, PNG, DOC, MP3, MP4. Max 10MB per
-                        file.
+                        Supported: PDF, JPG, JPEG, PNG. Max 10MB per file.
                       </p>
                     </div>
                   </label>
@@ -1095,6 +1318,8 @@ export default function ReportFraudForm() {
                   <Link
                     href="/terms"
                     className="text-blue-600 hover:text-blue-700 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     Terms of Service
                   </Link>{" "}
@@ -1136,14 +1361,21 @@ export default function ReportFraudForm() {
             ) : (
               <button
                 type="submit"
-                disabled={!isStepValid(5)}
+                disabled={!isStepValid(5) || submitting}
                 className={`px-8 py-3 rounded-lg font-medium ${
                   isStepValid(5)
-                    ? "btn-primary"
+                    ? "btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                     : "bg-gray-100 text-gray-400 cursor-not-allowed"
                 }`}
               >
-                Submit Report
+                {submitting ? (
+                  <span className="inline-flex items-center">
+                    <span className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></span>
+                    Submitting...
+                  </span>
+                ) : (
+                  'Submit Report'
+                )}
               </button>
             )}
           </div>

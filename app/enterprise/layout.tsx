@@ -1,9 +1,8 @@
-import DashboardLayout from '../dashboard/layout'
-
 export default function EnterpriseLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  return <DashboardLayout>{children}</DashboardLayout>
+  // Public layout for Enterprise landing/forms (no auth wrapper)
+  return <>{children}</>
 }

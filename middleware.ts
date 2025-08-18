@@ -14,6 +14,12 @@ export async function middleware(request: NextRequest) {
         '/how-it-works',
         '/services',
         '/report-fraud',
+        '/enterprise',
+        '/privacy',
+        '/terms',
+        '/contact',
+        '/docs',
+        '/api-docs',
         '/forgot-password',
         '/api/auth/login',
         '/api/auth/signup',
@@ -53,11 +59,7 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL('/unauthorized', request.url));
         }
 
-        // Enterprise admin routes
-        if (pathname.startsWith('/enterprise') &&
-            !['enterprise_admin', 'super_admin'].includes(userRole)) {
-            return NextResponse.redirect(new URL('/unauthorized', request.url));
-        }
+        // Enterprise admin routes - none gated at /enterprise (public landing/form)
 
         // Sub admin routes
         if (pathname.startsWith('/manage') &&
