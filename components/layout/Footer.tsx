@@ -11,7 +11,7 @@ const Footer = () => {
         { name: "How It Works", href: "/how-it-works" },
         { name: "Privacy Policy", href: "/privacy" },
         { name: "Terms of Service", href: "/terms" },
-        { name: "Contact", href: "/contact" },
+        { name: "Contact", href: "/help" },
       ],
     },
     services: {
@@ -25,8 +25,7 @@ const Footer = () => {
     support: {
       title: "Support",
       links: [
-        { name: "Help Center", href: "/help" },
-        { name: "Documentation", href: "/docs" },
+        { name: "Help Center", href: "/help" }
       ],
     },
   };
