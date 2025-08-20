@@ -50,6 +50,7 @@ export default function ReportFraudForm() {
   });
   const [submitting, setSubmitting] = useState(false)
   const [touched, setTouched] = useState<Record<string, boolean>>({})
+  const [evidenceError, setEvidenceError] = useState<string | null>(null)
   const { showToast } = useToast()
   const router = useRouter()
   const pathname = usePathname()
@@ -259,6 +260,8 @@ export default function ReportFraudForm() {
     const tooLarge: string[] = []
     const accepted: File[] = []
 
+    setEvidenceError(null)
+
     Array.from(files).forEach(file => {
       if (!isAllowed(file)) {
         invalidType.push(file.name)
@@ -273,9 +276,11 @@ export default function ReportFraudForm() {
 
     if (invalidType.length) {
       showToast(`Unsupported file type: ${invalidType.join(', ')}. Allowed: PDF, PNG, JPG, JPEG.`, 'error')
+      setEvidenceError('Unsupported file type. Allowed: PDF, PNG, JPG, JPEG.')
     }
     if (tooLarge.length) {
       showToast(`File(s) exceed 10MB: ${tooLarge.join(', ')}`, 'error')
+      setEvidenceError('One or more files exceed the 10MB limit. Please upload smaller files.')
     }
 
     if (accepted.length) {
@@ -1154,6 +1159,9 @@ export default function ReportFraudForm() {
                       <p className="text-xs text-gray-500 mt-2">
                         Supported: PDF, JPG, JPEG, PNG. Max 10MB per file.
                       </p>
+                      {evidenceError && (
+                        <p className="text-xs text-rose-600 mt-2" aria-live="assertive">{evidenceError}</p>
+                      )}
                     </div>
                   </label>
                 </div>

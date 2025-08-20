@@ -150,9 +150,23 @@ export default function DashboardPage() {
     ]
   }, [overview])
 
-  const searchBlocked = useMemo(() => {
-    return !!(searchStatus && searchStatus.type === 'free_trial' && searchStatus.isTrialExpired)
+  const limitReached = useMemo(() => {
+    if (!searchStatus) return false
+    if (typeof searchStatus.remainingSearches === 'number') {
+      if (searchStatus.remainingSearches === -1) return false
+      return searchStatus.remainingSearches <= 0
+    }
+    if (typeof searchStatus.searchLimit === 'number' && typeof searchStatus.searchesUsed === 'number') {
+      if (searchStatus.searchLimit < 0) return false
+      return searchStatus.searchLimit > 0 && searchStatus.searchesUsed >= searchStatus.searchLimit
+    }
+    return false
   }, [searchStatus])
+
+  const searchBlocked = useMemo(() => {
+    const trialExpired = !!(searchStatus && searchStatus.type === 'free_trial' && searchStatus.isTrialExpired)
+    return trialExpired || limitReached
+  }, [searchStatus, limitReached])
 
   async function handleSearchSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -301,7 +315,7 @@ export default function DashboardPage() {
         <section className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-gray-900">Recent Activity</h3>
-            <Link href="/my-reports" className="text-sm text-blue-600 hover:underline">View all</Link>
+            <Link href="/dashboard/my-reports" className="text-sm text-blue-600 hover:underline">View all</Link>
           </div>
           <div className="mt-4 space-y-3">
             {recent.length === 0 && (
@@ -380,7 +394,9 @@ export default function DashboardPage() {
           </div>
           {searchBlocked && (
             <div className="mb-4 rounded-md border border-rose-200 bg-rose-50 p-3 text-rose-700 text-sm">
-              Your free trial has expired. Upgrade your plan to continue searching.
+              {searchStatus?.type === 'free_trial' && searchStatus?.isTrialExpired
+                ? 'Your free trial has expired. Upgrade your plan to continue searching.'
+                : 'You have reached your search limit. Upgrade your plan to continue searching.'}
             </div>
           )}
           <form onSubmit={handleSearchSubmit} className="mt-4 grid grid-cols-1 lg:grid-cols-12 gap-3">

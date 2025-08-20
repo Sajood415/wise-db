@@ -22,7 +22,7 @@ type EnterpriseRequest = {
 
 export default function AdminDashboardPage() {
   const { showToast } = useToast()
-  const [activeTab, setActiveTab] = useState<"dashboard" | "fraud" | "enterprise" | "users" | "sub_admins">("users")
+  const [activeTab, setActiveTab] = useState<"dashboard" | "fraud" | "enterprise" | "users" | "sub_admins">("dashboard")
   const [loadingReports, setLoadingReports] = useState(false)
   const [reports, setReports] = useState<any[]>([])
   const [pagination, setPagination] = useState<{ page: number; limit: number; total: number; totalPages: number }>({ page: 1, limit: 10, total: 0, totalPages: 0 })
@@ -219,6 +219,11 @@ export default function AdminDashboardPage() {
     )
   }
   const [actionLoading, setActionLoading] = useState<string | null>(null)
+  const [reportConfirmOpen, setReportConfirmOpen] = useState(false)
+  const [reportRejectOpen, setReportRejectOpen] = useState(false)
+  const [reportPendingAction, setReportPendingAction] = useState<"approve" | "reject" | null>(null)
+  const [reportTarget, setReportTarget] = useState<any | null>(null)
+  const [reportRejectReason, setReportRejectReason] = useState("")
 
   // Sample metrics (replace with API later)
   const [overview, setOverview] = useState<any>(null)
@@ -459,14 +464,14 @@ export default function AdminDashboardPage() {
     return () => { cancelled = true }
   }, [activeTab, entPage, entLimit, entQ, entStatus, entIndustry])
 
-  async function triggerAction(id: string, kind: 'approve' | 'reject') {
+  async function triggerAction(id: string, kind: 'approve' | 'reject', reason?: string) {
     try {
       setActionLoading(id)
       let body: any = undefined
       if (kind === 'reject') {
-        const reason = prompt('Provide rejection reason:')
-        if (!reason || !reason.trim()) { setActionLoading(null); return }
-        body = JSON.stringify({ reason: reason.trim() })
+        const finalReason = (reason || "").trim()
+        if (!finalReason) { setActionLoading(null); return }
+        body = JSON.stringify({ reason: finalReason })
       }
       const res = await fetch(`/api/manage/reports/${id}/${kind}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body })
       const data = await res.json()
@@ -481,6 +486,39 @@ export default function AdminDashboardPage() {
     } finally {
       setActionLoading(null)
     }
+  }
+
+  function openReportConfirmDialog(report: any, action: 'approve' | 'reject') {
+    setReportTarget(report)
+    setReportPendingAction(action)
+    if (action === 'reject') {
+      setReportRejectOpen(true)
+    } else {
+      setReportConfirmOpen(true)
+    }
+  }
+
+  async function handleReportConfirm() {
+    if (!reportTarget || !reportPendingAction) return
+    if (reportPendingAction === 'approve') {
+      await triggerAction(reportTarget._id, 'approve')
+      setReportConfirmOpen(false)
+    } else if (reportPendingAction === 'reject') {
+      if (!reportRejectReason.trim()) { return }
+      await triggerAction(reportTarget._id, 'reject', reportRejectReason.trim())
+      setReportRejectOpen(false)
+      setReportRejectReason('')
+    }
+    setReportTarget(null)
+    setReportPendingAction(null)
+  }
+
+  function cancelReportConfirm() {
+    setReportConfirmOpen(false)
+    setReportRejectOpen(false)
+    setReportTarget(null)
+    setReportPendingAction(null)
+    setReportRejectReason('')
   }
 
   return (
@@ -974,13 +1012,13 @@ export default function AdminDashboardPage() {
                         )}
                       </div>
                       <div className="flex items-center gap-2">
-                        <Link href={`/manage/reports/${r._id}`} className="inline-flex items-center justify-center w-9 h-9 rounded-md border bg-white text-gray-700 hover:bg-gray-50" title="View / Edit">
+                        <Link href={`/admin/reports/${r._id}`} className="inline-flex items-center justify-center w-9 h-9 rounded-md border bg-white text-gray-700 hover:bg-gray-50" title="View / Edit">
                           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                         </Link>
                         {r.status === 'pending' && (
                           <>
-                            <button onClick={() => triggerAction(r._id, 'approve')} disabled={actionLoading === r._id} className="inline-flex items-center justify-center w-9 h-9 rounded-md bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-60" title="Approve">✓</button>
-                            <button onClick={() => triggerAction(r._id, 'reject')} disabled={actionLoading === r._id} className="inline-flex items-center justify-center w-9 h-9 rounded-md bg-rose-600 text-white hover:bg-rose-700 disabled:opacity-60" title="Reject">✕</button>
+                            <button onClick={() => openReportConfirmDialog(r, 'approve')} disabled={actionLoading === r._id} className="inline-flex items-center justify-center w-9 h-9 rounded-md bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-60" title="Approve">✓</button>
+                            <button onClick={() => openReportConfirmDialog(r, 'reject')} disabled={actionLoading === r._id} className="inline-flex items-center justify-center w-9 h-9 rounded-md bg-rose-600 text-white hover:bg-rose-700 disabled:opacity-60" title="Reject">✕</button>
                           </>
                         )}
                       </div>
@@ -1000,6 +1038,52 @@ export default function AdminDashboardPage() {
             </div>
           </div>
         </section>
+      )}
+
+      {/* Approve Confirmation Dialog for Fraud Reports */}
+      {reportConfirmOpen && reportTarget && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div className="flex items-center mb-4">
+              <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center mr-3">
+                <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">Confirm Approval</h3>
+            </div>
+            <p className="text-gray-600 mb-6">Are you sure you want to approve the report "{reportTarget.title}"? This action cannot be undone.</p>
+            <div className="flex justify-end space-x-3">
+              <button onClick={cancelReportConfirm} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">Cancel</button>
+              <button onClick={handleReportConfirm} disabled={actionLoading === reportTarget._id} className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50">{actionLoading === reportTarget._id ? 'Approving...' : 'Approve Report'}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reject Dialog for Fraud Reports */}
+      {reportRejectOpen && reportTarget && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div className="flex items-center mb-4">
+              <div className="w-10 h-10 bg-rose-100 rounded-full flex items-center justify-center mr-3">
+                <svg className="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">Reject Report</h3>
+            </div>
+            <p className="text-gray-600 mb-4">Are you sure you want to reject the report "{reportTarget.title}"? This action cannot be undone.</p>
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Reason for Rejection <span className="text-rose-600">*</span></label>
+              <textarea value={reportRejectReason} onChange={(e)=> setReportRejectReason(e.target.value)} rows={3} className="w-full border border-gray-300 rounded-md px-3 py-2 text-black bg-white focus:outline-none focus:ring-2 focus:ring-rose-200" placeholder="Please provide a reason for rejecting this report..." required />
+            </div>
+            <div className="flex justify-end space-x-3">
+              <button onClick={cancelReportConfirm} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">Cancel</button>
+              <button onClick={handleReportConfirm} disabled={actionLoading === reportTarget._id || !reportRejectReason.trim()} className="px-4 py-2 bg-rose-600 text-white rounded-lg hover:bg-rose-700 transition-colors disabled:opacity-50">{actionLoading === reportTarget._id ? 'Rejecting...' : 'Reject Report'}</button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
