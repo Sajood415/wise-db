@@ -23,7 +23,8 @@ export async function middleware(request: NextRequest) {
         '/forgot-password',
         '/api/auth/login',
         '/api/auth/signup',
-        '/api/fraud'
+        '/api/fraud',
+        '/api/enterprise'
     ];
 
     // Check if the current path is public

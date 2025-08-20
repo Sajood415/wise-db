@@ -19,106 +19,43 @@ export const metadata: Metadata = {
 export default function Services() {
   const services = [
     {
-      id: "verification",
-      title: "Real-time Verification",
+      id: "search",
+      title: "Search Database",
       description:
-        "Instantly verify businesses, individuals, and transactions with our comprehensive global database.",
-      icon: "🔍",
+        "Individuals can search our fraud database to check businesses, identities, emails, phones and websites.",
+      icon: "🔎",
       features: [
-        "Instant identity verification",
-        "Business legitimacy checks",
-        "Transaction risk scoring",
-        "Document authenticity validation",
-        "Phone and email verification",
-        "Address validation services",
+        "Keyword, phone, email and website lookup",
+        "Type and risk-level filters",
+        "View verified report details",
+        "Recent activity and saved submissions",
       ],
-      pricing: "Starting at $0.10 per verification",
-      popular: false,
     },
     {
       id: "reporting",
       title: "Secure Fraud Reporting",
       description:
-        "Report fraudulent activities securely with our encrypted platform that protects your identity.",
+        "Report suspected fraud securely. Your identity is protected and evidence can be attached.",
       icon: "🛡️",
       features: [
         "Anonymous reporting options",
-        "End-to-end encryption",
-        "Multi-format evidence upload",
+        "Encrypted submission and storage",
+        "Multi-format evidence upload (PDF/Images)",
         "Real-time status tracking",
-        "Automated case routing",
-        "Whistleblower protection",
       ],
-      pricing: "Free for public users",
-      popular: false,
-    },
-    {
-      id: "expert-analysis",
-      title: "Expert Analysis",
-      description:
-        "Professional fraud analysts provide detailed case reviews and risk assessments for complex fraud scenarios.",
-      icon: "👨‍💼",
-      features: [
-        "Professional case review",
-        "Manual verification process",
-        "Risk assessment reports",
-        "Pattern analysis",
-        "Comprehensive investigations",
-        "Expert consultation",
-      ],
-      pricing: "Custom enterprise pricing",
-      popular: true,
-    },
-    {
-      id: "intelligence",
-      title: "Global Fraud Intelligence",
-      description:
-        "Access worldwide fraud intelligence shared by businesses and organizations globally.",
-      icon: "🌍",
-      features: [
-        "Global fraud database access",
-        "Threat intelligence feeds",
-        "Industry-specific insights",
-        "Geographic risk mapping",
-        "Emerging threat alerts",
-        "Collaborative intelligence sharing",
-      ],
-      pricing: "Premium subscription required",
-      popular: false,
-    },
-    {
-      id: "analytics",
-      title: "Advanced Analytics",
-      description:
-        "Comprehensive fraud analytics and reporting to track trends and measure protection effectiveness.",
-      icon: "📊",
-      features: [
-        "Custom dashboard creation",
-        "Fraud trend analysis",
-        "ROI measurement tools",
-        "Automated reporting",
-        "Data export capabilities",
-        "API integration support",
-      ],
-      pricing: "Included in premium plans",
-      popular: false,
     },
     {
       id: "enterprise",
-      title: "Enterprise Solutions",
+      title: "Enterprise API & Workspace",
       description:
-        "Comprehensive fraud protection suite designed for large organizations and enterprises.",
+        "Enterprises can integrate via API and manage a team workspace to search and report frauds.",
       icon: "🏢",
       features: [
-        "Dedicated account management",
-        "Custom integration support",
-        "SLA guarantees",
-        "Priority support",
-        "White-label options",
-        "Compliance assistance",
+        "REST API access to the fraud database",
+        "Team management (admins and members)",
+        "Role-based access and usage controls",
+        "Centralized workspace for searches and reports",
       ],
-      pricing: "Contact for custom quote",
-      popular: false,
     },
   ];
 
@@ -187,55 +124,7 @@ export default function Services() {
     },
   ];
 
-  const pricingPlans = [
-    {
-      name: "Starter",
-      price: "$49",
-      period: "/month",
-      description: "Perfect for small businesses getting started",
-      features: [
-        "1,000 verifications per month",
-        "Basic fraud reporting",
-        "Email support",
-        "Standard API access",
-        "Basic analytics dashboard",
-      ],
-      cta: "Start Free Trial",
-      popular: false,
-    },
-    {
-      name: "Professional",
-      price: "$199",
-      period: "/month",
-      description: "Ideal for growing businesses with higher volume needs",
-      features: [
-        "10,000 verifications per month",
-        "Expert fraud analysis",
-        "Priority support",
-        "Advanced API features",
-        "Custom integrations",
-        "Detailed analytics",
-      ],
-      cta: "Start Free Trial",
-      popular: true,
-    },
-    {
-      name: "Enterprise",
-      price: "Custom",
-      period: "",
-      description: "Tailored solutions for large organizations",
-      features: [
-        "Unlimited verifications",
-        "Dedicated account manager",
-        "24/7 phone support",
-        "Custom integrations",
-        "SLA guarantees",
-        "On-premise deployment options",
-      ],
-      cta: "Contact Sales",
-      popular: false,
-    },
-  ];
+  // Removed pricing plans per request
 
   return (
     <div className="min-h-screen">
@@ -248,18 +137,8 @@ export default function Services() {
               <span className="gradient-text">Fraud Protection</span> Services
             </h1>
             <p className="text-xl md:text-2xl text-gray-600 mb-8">
-              From real-time verification to expert fraud analysis, we offer a
-              complete suite of fraud protection services for businesses of all
-              sizes.
+              Search verified fraud reports, submit incidents securely, and integrate our database via API for your enterprise.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/register" className="btn-primary text-lg px-8 py-4">
-                Start Free Trial
-              </Link>
-              <Link href="/contact" className="btn-secondary text-lg px-8 py-4">
-                Schedule Demo
-              </Link>
-            </div>
           </div>
         </div>
       </section>
@@ -281,17 +160,9 @@ export default function Services() {
             {services.map((service) => (
               <div
                 key={service.id}
-                className={`bg-white border-2 rounded-xl p-8 hover:shadow-xl transition-shadow duration-300 ${
-                  service.popular
-                    ? "border-blue-500 ring-2 ring-blue-200"
-                    : "border-gray-200"
-                }`}
+                className={`bg-white border-2 rounded-xl p-8 hover:shadow-xl transition-shadow duration-300 border-gray-200`}
               >
-                {service.popular && (
-                  <div className="inline-flex items-center px-3 py-1 rounded-full bg-blue-500 text-white text-sm font-medium mb-4">
-                    Most Popular
-                  </div>
-                )}
+                {/* Removed Most Popular badge */}
                 <div className="text-4xl mb-4">{service.icon}</div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-3">
                   {service.title}
@@ -322,21 +193,7 @@ export default function Services() {
                   </ul>
                 </div>
 
-                <div className="border-t pt-4">
-                  <p className="text-lg font-semibold text-blue-600 mb-4">
-                    {service.pricing}
-                  </p>
-                  <Link
-                    href={`/services/${service.id}`}
-                    className={`block text-center py-3 px-6 rounded-lg font-semibold transition-colors duration-200 ${
-                      service.popular
-                        ? "bg-blue-600 text-white hover:bg-blue-700"
-                        : "bg-gray-100 text-gray-900 hover:bg-gray-200"
-                    }`}
-                  >
-                    Learn More
-                  </Link>
-                </div>
+                {/* Pricing and Learn More removed per request */}
               </div>
             ))}
           </div>
@@ -388,79 +245,7 @@ export default function Services() {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Simple, Transparent Pricing
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Choose the plan that's right for your business. All plans include
-              our core fraud protection features with no hidden fees.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {pricingPlans.map((plan) => (
-              <div
-                key={plan.name}
-                className={`bg-white border-2 rounded-xl p-8 ${
-                  plan.popular
-                    ? "border-blue-500 ring-2 ring-blue-200 scale-105"
-                    : "border-gray-200"
-                }`}
-              >
-                {plan.popular && (
-                  <div className="inline-flex items-center px-3 py-1 rounded-full bg-blue-500 text-white text-sm font-medium mb-4">
-                    Most Popular
-                  </div>
-                )}
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  {plan.name}
-                </h3>
-                <div className="mb-4">
-                  <span className="text-4xl font-bold text-gray-900">
-                    {plan.price}
-                  </span>
-                  <span className="text-gray-600">{plan.period}</span>
-                </div>
-                <p className="text-gray-600 mb-6">{plan.description}</p>
-
-                <ul className="space-y-3 mb-8">
-                  {plan.features.map((feature, index) => (
-                    <li key={index} className="flex items-start space-x-3">
-                      <svg
-                        className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      <span className="text-gray-600">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <Link
-                  href={plan.name === "Enterprise" ? "/contact" : "/register"}
-                  className={`block text-center py-3 px-6 rounded-lg font-semibold transition-colors duration-200 ${
-                    plan.popular
-                      ? "bg-blue-600 text-white hover:bg-blue-700"
-                      : "bg-gray-100 text-gray-900 hover:bg-gray-200"
-                  }`}
-                >
-                  {plan.cta}
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Pricing Section removed per request */}
 
       {/* API Section */}
       <section className="py-20 bg-gradient-to-r from-gray-900 to-blue-900 text-white">
@@ -538,12 +323,6 @@ export default function Services() {
                   className="bg-white text-gray-900 hover:bg-gray-100 font-semibold py-3 px-6 rounded-lg transition-colors duration-200"
                 >
                   View API Docs
-                </Link>
-                <Link
-                  href="/register"
-                  className="border-2 border-white text-white hover:bg-white hover:text-gray-900 font-semibold py-3 px-6 rounded-lg transition-colors duration-200"
-                >
-                  Get API Key
                 </Link>
               </div>
             </div>

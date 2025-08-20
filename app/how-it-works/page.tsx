@@ -115,7 +115,7 @@ export default function HowItWorks() {
         "Fill in fraud details anonymously",
         "Upload supporting evidence",
         "Submit report for review",
-        "Receive confirmation and tracking ID",
+        "Receive confirmation",
       ],
       icon: "🕵️",
     },
@@ -128,7 +128,6 @@ export default function HowItWorks() {
         "Enter search query or verification request",
         "View instant results and risk scores",
         "Access detailed fraud reports",
-        "Download verification certificates",
       ],
       icon: "👤",
     },
@@ -141,7 +140,7 @@ export default function HowItWorks() {
         "Configure automated checks",
         "Implement real-time verification",
         "Monitor dashboard analytics",
-        "Receive automated alerts",
+        "Access dashboard and add users",
       ],
       icon: "🏢",
     },
@@ -299,7 +298,7 @@ export default function HowItWorks() {
             {userJourneys.map((journey) => (
               <div
                 key={journey.type}
-                className="bg-white rounded-xl p-8 shadow-lg"
+                className="bg-white rounded-xl p-8 shadow-lg h-full flex flex-col"
               >
                 <div className="text-4xl mb-4 text-center">{journey.icon}</div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-2 text-center">
@@ -325,14 +324,14 @@ export default function HowItWorks() {
                   ))}
                 </div>
 
-                <div className="mt-6 pt-6 border-t border-gray-100">
+                <div className="mt-auto pt-6 border-t border-gray-100">
                   <Link
                     href={
                       journey.type === "Public User"
                         ? "/report-fraud"
                         : journey.type === "Enterprise Client"
                         ? "/enterprise"
-                        : "/register"
+                        : "/signup"
                     }
                     className="block text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200"
                   >
@@ -605,7 +604,7 @@ export default function HowItWorks() {
               Report Fraud Now
             </Link>
             <Link
-              href="/register"
+              href="/signup"
               className="border-2 border-white text-white hover:bg-white hover:text-blue-600 font-semibold py-3 px-8 rounded-lg transition-all duration-200"
             >
               Start Free Trial

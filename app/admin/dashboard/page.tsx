@@ -139,8 +139,8 @@ export default function AdminDashboardPage() {
               <option value="false">Disabled</option>
             </select>
           </div>
-          <div className="lg:col-span-3 flex items-end justify-end gap-3">
-            <button type="button" onClick={()=>{ setQ(''); setIsActive(''); setPage(1) }} className="px-4 py-2 rounded-md border">Reset</button>
+          <div className="lg:col-span-12 flex items-end justify-start gap-3">
+            <button type="button" onClick={()=>{ setQ(''); setIsActive(''); setPage(1) }} className="px-4 py-2 rounded-md border text-gray-700">Reset</button>
             <button type="submit" className="px-4 py-2 rounded-md bg-gray-900 text-white">Apply</button>
           </div>
         </form>
@@ -250,14 +250,21 @@ export default function AdminDashboardPage() {
     ]
   }, [overview])
 
-  const urgentItems: UrgentItem[] = [
-    { id: "u1", title: "Fake Investment Platform - CryptoGains", category: "Investment Fraud", amountLabel: "$15,000", dateLabel: "2024-01-20" },
-    { id: "u2", title: "Romance Scam - Dating App", category: "Romance Scam", amountLabel: "$8,000", dateLabel: "2024-01-18" },
-  ]
+  const urgentItems: UrgentItem[] = []
 
-  const enterpriseRequests: EnterpriseRequest[] = [
-    { id: "e1", company: "SecureBank Corp", contactName: "Sarah Wilson", category: "Banking & Finance", requestedAt: "2024-01-18" },
-  ]
+  // Enterprise Requests state (Dashboard widget)
+  const [dashEntLoading, setDashEntLoading] = useState(false)
+  const [dashEnterprise, setDashEnterprise] = useState<any[]>([])
+
+  // Enterprise Requests tab state
+  const [entLoading, setEntLoading] = useState(false)
+  const [entItems, setEntItems] = useState<any[]>([])
+  const [entPage, setEntPage] = useState(1)
+  const [entLimit, setEntLimit] = useState(20)
+  const [entTotal, setEntTotal] = useState(0)
+  const [entQ, setEntQ] = useState("")
+  const [entStatus, setEntStatus] = useState("") // '', 'new', 'in_review', 'contacted', 'closed'
+  const [entIndustry, setEntIndustry] = useState("")
 
   function handleUrgentAction(kind: "view" | "approve" | "reject", item: UrgentItem) {
     if (kind === "view") {
@@ -363,6 +370,30 @@ export default function AdminDashboardPage() {
     return () => { cancelled = true }
   }, [activeTab])
 
+  // Load dashboard enterprise requests (only 'new' or 'in_review')
+  useEffect(() => {
+    if (activeTab !== 'dashboard') return
+    let cancelled = false
+    async function loadEnt() {
+      try {
+        setDashEntLoading(true)
+        const params = new URLSearchParams()
+        params.set('page', '1')
+        params.set('limit', '5')
+        params.set('status', 'new,in_review')
+        const res = await fetch(`/api/admin/enterprise?${params.toString()}`, { cache: 'no-store' })
+        const data = await res.json()
+        if (!cancelled) setDashEnterprise(data.items || [])
+      } catch {
+        if (!cancelled) setDashEnterprise([])
+      } finally {
+        if (!cancelled) setDashEntLoading(false)
+      }
+    }
+    loadEnt()
+    return () => { cancelled = true }
+  }, [activeTab])
+
   // Load fraud reports when on the Fraud tab or filters/pagination change
   useEffect(() => {
     if (activeTab !== "fraud") return
@@ -398,6 +429,35 @@ export default function AdminDashboardPage() {
     load()
     return () => { cancelled = true }
   }, [activeTab, pagination.page, pagination.limit, filters.status, filters.type, filters.q, filters.severity, filters.email, filters.phone, filters.minAmount, filters.maxAmount, reloadKey])
+
+  // Load enterprise requests when on the Enterprise tab
+  useEffect(() => {
+    if (activeTab !== 'enterprise') return
+    let cancelled = false
+    async function loadEntTab() {
+      setEntLoading(true)
+      try {
+        const params = new URLSearchParams()
+        params.set('page', String(entPage))
+        params.set('limit', String(entLimit))
+        if (entQ) params.set('q', entQ)
+        if (entStatus) params.set('status', entStatus)
+        if (entIndustry) params.set('industry', entIndustry)
+        const res = await fetch(`/api/admin/enterprise?${params.toString()}`, { cache: 'no-store' })
+        const data = await res.json()
+        if (!cancelled) {
+          setEntItems(data.items || [])
+          setEntTotal(data.pagination?.total || 0)
+        }
+      } catch {
+        if (!cancelled) setEntItems([])
+      } finally {
+        if (!cancelled) setEntLoading(false)
+      }
+    }
+    loadEntTab()
+    return () => { cancelled = true }
+  }, [activeTab, entPage, entLimit, entQ, entStatus, entIndustry])
 
   async function triggerAction(id: string, kind: 'approve' | 'reject') {
     try {
@@ -531,23 +591,30 @@ export default function AdminDashboardPage() {
               </div>
               <p className="text-sm text-gray-500 mb-4">New API access requests from companies</p>
               <div className="space-y-3">
-                {enterpriseRequests.map((req) => (
-                  <div key={req.id} className="rounded-lg border border-gray-200 bg-white p-4">
-                    <div className="flex items-center justify-between gap-3 flex-wrap">
-                      <div>
-                        <p className="font-medium text-gray-900">{req.company}</p>
-                        <p className="text-xs text-gray-600">{req.contactName} • {req.category} • {req.requestedAt}</p>
+                {dashEntLoading ? (
+                  <div className="py-4 text-center text-gray-500">Loading...</div>
+                ) : (
+                  <>
+                    {dashEnterprise.length === 0 && (
+                      <div className="py-4 text-center text-gray-500">No new requests.</div>
+                    )}
+                    {dashEnterprise.map((req) => (
+                      <div key={req._id} className="rounded-lg border border-gray-200 bg-white p-4">
+                        <div className="flex items-center justify-between gap-3 flex-wrap">
+                          <div>
+                            <p className="font-medium text-gray-900">{req.companyName}</p>
+                            <p className="text-xs text-gray-600">{req.contactName} • {req.industry} • {new Date(req.createdAt).toLocaleDateString()}</p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <a href="#" className="inline-flex items-center justify-center w-10 h-9 rounded-md border bg-white text-gray-700 hover:bg-gray-50" title="View">
+                              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                            </a>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <button onClick={() => handleEnterpriseAction("view", req)} className="inline-flex items-center justify-center w-10 h-9 rounded-md border bg-white text-gray-700 hover:bg-gray-50">
-                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20l9-5-9-5-9 5 9 5z"/><path d="M12 12l9-5-9-5-9 5 9 5z"/></svg>
-                        </button>
-                        <button onClick={() => handleEnterpriseAction("approve", req)} className="inline-flex items-center justify-center w-9 h-9 rounded-md bg-emerald-600 text-white hover:bg-emerald-700">✓</button>
-                        <button onClick={() => handleEnterpriseAction("reject", req)} className="inline-flex items-center justify-center w-9 h-9 rounded-md bg-rose-600 text-white hover:bg-rose-700">✕</button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                    ))}
+                  </>
+                )}
               </div>
             </section>
           </div>
@@ -572,29 +639,88 @@ export default function AdminDashboardPage() {
 
       {/* Enterprise Requests Tab */}
       {activeTab === "enterprise" && (
-        <section className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-900">Enterprise Requests</h3>
-            <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700">{enterpriseRequests.length} pending</span>
+        <section className="bg-white rounded-lg shadow p-6 space-y-4">
+          <div className="flex items-start justify-between gap-3 flex-wrap">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">Enterprise Requests</h3>
+              <p className="text-sm text-gray-600">View and manage enterprise access requests</p>
+            </div>
+            <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700">Total {entTotal}</span>
           </div>
-          <div className="mt-4 space-y-3">
-            {enterpriseRequests.map((req) => (
-              <div key={req.id} className="rounded-lg border border-gray-200 p-4">
-                <div className="flex items-center justify-between gap-3 flex-wrap">
-                  <div>
-                    <p className="font-medium text-gray-900">{req.company}</p>
-                    <p className="text-xs text-gray-600">{req.contactName} • {req.category} • {req.requestedAt}</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button onClick={() => handleEnterpriseAction("view", req)} className="inline-flex items-center justify-center w-10 h-9 rounded-md border bg-white text-gray-700 hover:bg-gray-50">
-                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20l9-5-9-5-9 5 9 5z"/><path d="M12 12l9-5-9-5-9 5 9 5z"/></svg>
-                    </button>
-                    <button onClick={() => handleEnterpriseAction("approve", req)} className="inline-flex items-center justify-center w-9 h-9 rounded-md bg-emerald-600 text-white hover:bg-emerald-700">✓</button>
-                    <button onClick={() => handleEnterpriseAction("reject", req)} className="inline-flex items-center justify-center w-9 h-9 rounded-md bg-rose-600 text-white hover:bg-rose-700">✕</button>
+
+          {/* Filters */}
+          <form onSubmit={(e)=>{ e.preventDefault(); setEntPage(1) }} className="grid grid-cols-1 lg:grid-cols-12 gap-3">
+            <div className="lg:col-span-5">
+              <label className="block text-xs text-gray-600 mb-1">Search</label>
+              <input value={entQ} onChange={(e)=> setEntQ(e.target.value)} placeholder="Company, contact, email, phone" className="w-full border rounded-md px-3 py-2 text-sm text-black" />
+            </div>
+            <div className="lg:col-span-3">
+              <label className="block text-xs text-gray-600 mb-1">Status</label>
+              <select value={entStatus} onChange={(e)=>{ setEntStatus(e.target.value); setEntPage(1) }} className="w-full border rounded-md px-3 py-2 text-sm text-black bg-white">
+                <option value="">All</option>
+                <option value="new">New</option>
+                <option value="in_review">In Review</option>
+                <option value="contacted">Contacted</option>
+                <option value="closed">Closed</option>
+              </select>
+            </div>
+            <div className="lg:col-span-2">
+              <label className="block text-xs text-gray-600 mb-1">Industry</label>
+              <input value={entIndustry} onChange={(e)=> setEntIndustry(e.target.value)} placeholder="Industry" className="w-full border rounded-md px-3 py-2 text-sm text-black" />
+            </div>
+            <div className="lg:col-span-2">
+              <label className="block text-xs text-gray-600 mb-1">Rows per page</label>
+              <select value={entLimit} onChange={(e)=> { setEntLimit(Number(e.target.value)); setEntPage(1) }} className="w-full border rounded-md px-3 py-2 text-sm bg-white text-black">
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={50}>50</option>
+              </select>
+            </div>
+            <div className="lg:col-span-12 flex items-end justify-start gap-3">
+              <button type="button" onClick={()=>{ setEntQ(''); setEntStatus(''); setEntIndustry(''); setEntPage(1) }} className="px-4 py-2 rounded-md border text-gray-700">Reset</button>
+              <button type="submit" className="px-4 py-2 rounded-md bg-gray-900 text-white">Apply</button>
+            </div>
+          </form>
+
+          {/* List */}
+          {entLoading ? (
+            <div className="py-12 text-center text-gray-500">Loading requests...</div>
+          ) : (
+            <div className="space-y-2">
+              {entItems.length === 0 && (
+                <div className="py-12 text-center text-gray-500">No enterprise requests found.</div>
+              )}
+              {entItems.map((req) => (
+                <div key={req._id} className="rounded-lg border border-gray-200 p-4">
+                  <div className="flex items-start justify-between gap-3 flex-wrap">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h4 className="font-semibold text-gray-900 truncate">{req.companyName}</h4>
+                        <span className="text-xs px-2 py-0.5 rounded-full border bg-white text-gray-700">{req.industry}</span>
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${req.status === 'new' ? 'bg-blue-100 text-blue-700' : req.status === 'in_review' ? 'bg-amber-100 text-amber-700' : req.status === 'contacted' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-700'}`}>{req.status}</span>
+                      </div>
+                      <p className="mt-1 text-xs text-gray-600">{req.contactName} • {req.businessEmail} • {req.phoneNumber}</p>
+                      <p className="mt-1 text-xs text-gray-600">Requested: {new Date(req.createdAt).toLocaleString()}</p>
+                      {req.message && (
+                        <p className="mt-2 text-sm text-gray-700 line-clamp-2">{req.message}</p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <a href={`/admin/enterprise/${req._id}`} className="inline-flex items-center justify-center px-3 h-9 rounded-md border bg-white text-gray-700 hover:bg-gray-50" title="View">View</a>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+          )}
+
+          {/* Pagination */}
+          <div className="flex items-center justify-between pt-2">
+            <p className="text-xs text-gray-600">Page {entPage} of {Math.max(Math.ceil(entTotal / entLimit), 1)} • Total {entTotal}</p>
+            <div className="flex items-center gap-2">
+              <button onClick={()=> setEntPage(p=> Math.max(1, p-1))} disabled={entPage<=1} className="px-3 py-1.5 rounded-md border text-sm disabled:opacity-50">Previous</button>
+              <button onClick={()=> setEntPage(p=> Math.min(Math.ceil(entTotal / entLimit) || p, p+1))} disabled={entPage >= (Math.ceil(entTotal / entLimit) || 1)} className="px-3 py-1.5 rounded-md border text-sm disabled:opacity-50">Next</button>
+            </div>
           </div>
         </section>
       )}
@@ -675,10 +801,7 @@ export default function AdminDashboardPage() {
                       <p className="mt-1 text-xs text-gray-600">{u.email}</p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <a href={`/admin/users/${u._id}`} className="inline-flex items-center gap-2 px-3 h-9 rounded-md border bg-white text-gray-700 hover:bg-gray-50" title="View">
-                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1 4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                        View
-                      </a>
+                      <a href={`/admin/users/${u._id}`} className="inline-flex items-center gap-2 px-3 h-9 rounded-md border bg-white text-gray-700 hover:bg-gray-50" title="View">View</a>
                       <button onClick={()=>{ setUserConfirmTarget(u); setUserConfirmAction('toggle'); setUserConfirmOpen(true) }} className={`inline-flex items-center justify-center px-3 h-9 rounded-md border ${u.isActive ? 'text-rose-700 border-rose-300 hover:bg-rose-50' : 'text-emerald-700 border-emerald-300 hover:bg-emerald-50'}`} title={u.isActive? 'Disable' : 'Enable'}>
                         {u.isActive ? 'Disable' : 'Enable'}
                       </button>

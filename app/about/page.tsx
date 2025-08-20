@@ -413,10 +413,10 @@ export default function About() {
             worldwide.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/register" className="btn-primary">
+            <Link href="/signup" className="btn-primary">
               Get Started Today
             </Link>
-            <Link href="/contact" className="btn-secondary">
+            <Link href="/help" className="btn-secondary">
               Contact Our Team
             </Link>
           </div>
