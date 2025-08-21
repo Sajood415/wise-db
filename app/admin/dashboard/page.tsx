@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { useToast } from "@/contexts/ToastContext"
+import { useRouter } from "next/navigation"
 
 type UrgentItem = {
   id: string
@@ -22,6 +23,7 @@ type EnterpriseRequest = {
 
 export default function AdminDashboardPage() {
   const { showToast } = useToast()
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState<"dashboard" | "fraud" | "enterprise" | "users" | "sub_admins">("dashboard")
   const [loadingReports, setLoadingReports] = useState(false)
   const [reports, setReports] = useState<any[]>([])
@@ -255,7 +257,57 @@ export default function AdminDashboardPage() {
     ]
   }, [overview])
 
-  const urgentItems: UrgentItem[] = []
+  const [urgentLoading, setUrgentLoading] = useState(false)
+  const [urgentItems, setUrgentItems] = useState<UrgentItem[]>([])
+
+  async function loadUrgent() {
+    try {
+      setUrgentLoading(true)
+      const params = new URLSearchParams()
+      params.set('status', 'pending')
+      params.set('page', '1')
+      params.set('limit', '5')
+      const res = await fetch(`/api/manage/reports?${params.toString()}`, { cache: 'no-store' })
+      const data = await res.json()
+      const items: UrgentItem[] = (data.reports || []).map((r: any) => {
+        const amount = r?.fraudDetails?.amount
+        const currency = r?.fraudDetails?.currency
+        let amountLabel: string | undefined
+        try {
+          if (typeof amount === 'number') {
+            amountLabel = new Intl.NumberFormat(undefined, { style: 'currency', currency: (currency || 'USD').toUpperCase() }).format(amount)
+          }
+        } catch {
+          if (typeof amount === 'number') amountLabel = `$${amount.toFixed(2)}`
+        }
+        const dt = r?.reportedAt || r?.createdAt || r?.updatedAt
+        const dateLabel = dt ? new Date(dt).toLocaleDateString() : undefined
+        const category = [r?.type || 'fraud', 'pending'].filter(Boolean).join(' • ')
+        return {
+          id: r._id,
+          title: r.title || 'Fraud report',
+          category,
+          amountLabel,
+          dateLabel,
+        }
+      })
+      setUrgentItems(items)
+    } catch {
+      setUrgentItems([])
+    } finally {
+      setUrgentLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (activeTab !== 'dashboard') return
+    let cancelled = false
+    ;(async () => {
+      await loadUrgent()
+      if (cancelled) return
+    })()
+    return () => { cancelled = true }
+  }, [activeTab])
 
   // Enterprise Requests state (Dashboard widget)
   const [dashEntLoading, setDashEntLoading] = useState(false)
@@ -273,22 +325,20 @@ export default function AdminDashboardPage() {
 
   function handleUrgentAction(kind: "view" | "approve" | "reject", item: UrgentItem) {
     if (kind === "view") {
-      showToast(`Opening report: ${item.title}`, "info")
+      router.push(`/admin/reports/${item.id}`)
       return
     }
     if (kind === "approve") {
-      if (confirm("Approve this report?")) {
-        showToast("Report approved", "success")
-      }
+      setReportTarget({ _id: item.id, title: item.title })
+      setReportPendingAction('approve')
+      setReportConfirmOpen(true)
       return
     }
     if (kind === "reject") {
-      const reason = prompt("Provide rejection reason:")
-      if (reason && reason.trim()) {
-        showToast("Report rejected", "success")
-      } else {
-        showToast("Rejection cancelled", "info")
-      }
+      setReportTarget({ _id: item.id, title: item.title })
+      setReportPendingAction('reject')
+      setReportRejectOpen(true)
+      return
     }
   }
 
