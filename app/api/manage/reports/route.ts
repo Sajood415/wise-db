@@ -44,16 +44,16 @@ export async function GET(request: NextRequest) {
         }
         if (email) {
             const rx = new RegExp(email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i')
-            and.push({ $or: [{ 'fraudDetails.suspiciousEmail': rx }, { 'guestSubmission.email': rx }] })
+            and.push({ $or: [{ 'fraudsterDetails.suspiciousEmail': rx }, { 'guestSubmission.email': rx }] })
         }
         if (phone) {
             const rx = new RegExp(phone.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i')
-            and.push({ $or: [{ 'fraudDetails.suspiciousPhone': rx }] })
+            and.push({ $or: [{ 'fraudsterDetails.suspiciousPhone': rx }] })
         }
         const minA = minAmount ? parseFloat(minAmount) : undefined
         const maxA = maxAmount ? parseFloat(maxAmount) : undefined
-        if (typeof minA === 'number' && !Number.isNaN(minA)) and.push({ 'fraudDetails.amount': { $gte: minA } })
-        if (typeof maxA === 'number' && !Number.isNaN(maxA)) and.push({ 'fraudDetails.amount': { $lte: maxA } })
+        if (typeof minA === 'number' && !Number.isNaN(minA)) and.push({ 'fraudsterDetails.amount': { $gte: minA } })
+        if (typeof maxA === 'number' && !Number.isNaN(maxA)) and.push({ 'fraudsterDetails.amount': { $lte: maxA } })
         if (and.length) filter.$and = and
 
         // Get reports with pagination

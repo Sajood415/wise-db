@@ -48,15 +48,15 @@ export async function POST(req: NextRequest) {
             reporterGender,
             reporterLocation,
 
-            // Victim Details
-            victimName,
-            victimType,
-            victimCompany,
-            victimEmail,
-            victimGender,
-            victimContact,
-            victimAddress,
-            victimDescription,
+            // Fraudster Details (who committed the fraud)
+            fraudsterName,
+            fraudsterType,
+            fraudsterCompany,
+            fraudsterEmail,
+            fraudsterGender,
+            fraudsterContact,
+            fraudsterAddress,
+            fraudsterDescription,
 
             // Financial Impact
             actualLoss,
@@ -120,12 +120,12 @@ export async function POST(req: NextRequest) {
             title: reportTitle,
             description: detailedDescription,
             type: mapFraudType(fraudType),
-            fraudDetails: {
-                suspiciousEmail: victimEmail,
-                suspiciousPhone: victimContact,
+            fraudsterDetails: {
+                suspiciousEmail: fraudsterEmail,
+                suspiciousPhone: fraudsterContact,
                 suspiciousWebsite: websitesSocialMedia,
-                suspiciousName: victimName,
-                suspiciousCompany: victimCompany,
+                suspiciousName: fraudsterName,
+                suspiciousCompany: fraudsterCompany,
                 amount: actualLoss ? Number(actualLoss) : undefined,
                 currency: currency || 'USD',
                 date: incidentDate ? new Date(incidentDate) : undefined,
@@ -144,11 +144,7 @@ export async function POST(req: NextRequest) {
                 documents: documents,
                 additionalInfo: additionalInfoParts.join(' | '),
             },
-            location: reporterLocation ? {
-                country: reporterLocation,
-                city: '',
-                region: '',
-            } : undefined,
+            location: reporterLocation || undefined,
             tags: fraudType ? [String(fraudType).toLowerCase()] : [],
             severity: 'medium',
             reportedAt: new Date(),

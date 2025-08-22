@@ -15,6 +15,7 @@ export interface IUser extends Document {
         searchLimit: number;
         canAccessRealData: boolean; // false for free trial (dummy data), true for paid
     };
+    packageName?: string; // Track which package user purchased
     company?: {
         name: string;
         enterpriseId?: mongoose.Types.ObjectId;
@@ -144,6 +145,9 @@ const UserSchema = new Schema<IUser>({
     emailVerified: {
         type: Boolean,
         default: false
+    },
+    packageName: {
+        type: String
     }
 }, {
     timestamps: true

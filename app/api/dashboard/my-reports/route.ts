@@ -35,6 +35,7 @@ export async function GET(request: NextRequest) {
 
         const [items, total] = await Promise.all([
             Fraud.find(filter)
+                .populate('submittedBy', 'firstName lastName email phone')
                 .sort({ createdAt: -1 })
                 .skip(skip)
                 .limit(pageSize)

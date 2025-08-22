@@ -1,11 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const pathname = usePathname();
 
   const navigation = [
@@ -15,6 +18,71 @@ const Header = () => {
     { name: "How It Works", href: "/how-it-works" },
     { name: "Report Fraud", href: "/report-fraud" },
   ];
+
+  // Get dashboard path based on user role
+  const getDashboardPath = (role: string | null) => {
+    switch (role) {
+      case 'super_admin':
+        return '/admin/dashboard';
+      case 'sub_admin':
+        return '/manage';
+      case 'enterprise_admin':
+        return '/enterprise/dashboard';
+      case 'enterprise_user':
+        return '/enterprise/dashboard';
+      case 'individual':
+        return '/dashboard';
+      default:
+        return '/dashboard';
+    }
+  };
+
+  // Check authentication status on component mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/auth/me', {
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          const userData = await response.json();
+          setIsLoggedIn(true);
+          setUserRole(userData.user?.role || null);
+        } else {
+          setIsLoggedIn(false);
+          setUserRole(null);
+        }
+      } catch (error) {
+        setIsLoggedIn(false);
+        setUserRole(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
+  // Don't render until we know auth status
+  if (isLoading) {
+    return (
+      <header className="fixed top-0 left-0 right-0 z-50 glass-effect">
+        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex-shrink-0">
+              <Link href="/" className="flex items-center space-x-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">WD</span>
+                </div>
+                <span className="text-xl font-bold gradient-text">Wise DB</span>
+              </Link>
+            </div>
+          </div>
+        </nav>
+      </header>
+    );
+  }
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass-effect">
@@ -54,15 +122,26 @@ const Header = () => {
 
           {/* Desktop CTA Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Link
-              href="/login"
-              className="text-blue-600 hover:text-blue-700 px-3 py-2 text-sm font-medium transition-colors duration-200"
-            >
-              Sign In
-            </Link>
-            <Link href="/signup" className="btn-primary text-sm">
-              Get Started
-            </Link>
+            {isLoggedIn ? (
+              <Link
+                href={getDashboardPath(userRole)}
+                className="btn-primary text-sm"
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="text-blue-600 hover:text-blue-700 px-3 py-2 text-sm font-medium transition-colors duration-200"
+                >
+                  Sign In
+                </Link>
+                <Link href="/signup" className="btn-primary text-sm">
+                  Get Started
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -119,20 +198,32 @@ const Header = () => {
                 );
               })}
               <div className="border-t border-gray-200 dark:border-gray-700 pt-3 mt-3">
-                <Link
-                  href="/login"
-                  className="text-blue-600 hover:text-blue-700 block px-3 py-2 text-base font-medium transition-colors duration-200"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Sign In
-                </Link>
-                <Link
-                  href="/signup"
-                  className="btn-primary block text-center mt-2 mx-3"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Get Started
-                </Link>
+                {isLoggedIn ? (
+                  <Link
+                    href={getDashboardPath(userRole)}
+                    className="btn-primary block text-center mt-2 mx-3"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      className="text-blue-600 hover:text-blue-700 block px-3 py-2 text-base font-medium transition-colors duration-200"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      href="/signup"
+                      className="btn-primary block text-center mt-2 mx-3"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Get Started
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </div>

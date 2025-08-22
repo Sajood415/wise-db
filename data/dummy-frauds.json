@@ -5,21 +5,17 @@
         "description": "Received an email impersonating a bank requesting login verification.",
         "type": "email",
         "status": "approved",
-        "fraudDetails": {
+        "fraudsterDetails": {
+            "suspiciousEmail": "security@fakebank.example",
+            "suspiciousPhone": "+1-512-555-1200",
+            "suspiciousWebsite": "fakebank-verify.example",
+            "suspiciousName": "Fake Bank Security",
+            "suspiciousCompany": "Fake Bank",
             "amount": 0,
             "currency": "USD",
             "date": "2025-07-01T00:00:00.000Z"
         },
-        "location": {
-            "country": "US",
-            "city": "Austin",
-            "region": "TX"
-        },
-        "contact": {
-            "phone": "+1-512-555-1200",
-            "email": "security@fakebank.example",
-            "website": "fakebank-verify.example"
-        },
+        "location": "Austin, TX, US",
         "tags": [
             "phishing",
             "bank"
@@ -34,21 +30,17 @@
         "description": "Caller claimed to be from Microsoft asking for remote access.",
         "type": "phone",
         "status": "approved",
-        "fraudDetails": {
+        "fraudsterDetails": {
+            "suspiciousEmail": "support@ms-secure.example",
+            "suspiciousPhone": "+1-206-555-0173",
+            "suspiciousWebsite": "ms-secure.example",
+            "suspiciousName": "MS Support Scammer",
+            "suspiciousCompany": "Fake Microsoft Support",
             "amount": 200,
             "currency": "USD",
             "date": "2025-06-15T00:00:00.000Z"
         },
-        "location": {
-            "country": "US",
-            "city": "Seattle",
-            "region": "WA"
-        },
-        "contact": {
-            "phone": "+1-206-555-0173",
-            "email": "support@ms-secure.example",
-            "website": "ms-secure.example"
-        },
+        "location": "Seattle, WA, US",
         "tags": [
             "tech support",
             "remote access"
@@ -63,21 +55,17 @@
         "description": "Paid for electronics, website disappeared after purchase.",
         "type": "website",
         "status": "approved",
-        "fraudDetails": {
+        "fraudsterDetails": {
+            "suspiciousEmail": "orders@shop-electro.example",
+            "suspiciousPhone": "+1-416-555-0102",
+            "suspiciousWebsite": "shop-electro.example",
+            "suspiciousName": "Shop Electro Scam",
+            "suspiciousCompany": "Fake Electronics Store",
             "amount": 349.99,
             "currency": "USD",
             "date": "2025-05-20T00:00:00.000Z"
         },
-        "location": {
-            "country": "CA",
-            "city": "Toronto",
-            "region": "ON"
-        },
-        "contact": {
-            "phone": "+1-416-555-0102",
-            "email": "orders@shop-electro.example",
-            "website": "shop-electro.example"
-        },
+        "location": "Toronto, ON, CA",
         "tags": [
             "ecommerce",
             "non-delivery"
@@ -92,21 +80,17 @@
         "description": "Unauthorized credit account opened using leaked info.",
         "type": "identity",
         "status": "approved",
-        "fraudDetails": {
+        "fraudsterDetails": {
+            "suspiciousEmail": "identity@breach-alerts.example",
+            "suspiciousPhone": "+1-312-555-2230",
+            "suspiciousWebsite": "breach-alerts.example",
+            "suspiciousName": "Identity Thief",
+            "suspiciousCompany": "Fake Breach Alerts",
             "amount": 0,
             "currency": "USD",
             "date": "2025-03-12T00:00:00.000Z"
         },
-        "location": {
-            "country": "US",
-            "city": "Chicago",
-            "region": "IL"
-        },
-        "contact": {
-            "phone": "+1-312-555-2230",
-            "email": "identity@breach-alerts.example",
-            "website": "breach-alerts.example"
-        },
+        "location": "Chicago, IL, US",
         "tags": [
             "identity theft",
             "breach"
@@ -121,21 +105,17 @@
         "description": "Crypto investment platform promised 20% weekly returns.",
         "type": "financial",
         "status": "approved",
-        "fraudDetails": {
+        "fraudsterDetails": {
+            "suspiciousEmail": "hello@cryptogains.fake",
+            "suspiciousPhone": "+44 20 7946 0958",
+            "suspiciousWebsite": "cryptogains.fake",
+            "suspiciousName": "Crypto Gains Scam",
+            "suspiciousCompany": "Fake Crypto Platform",
             "amount": 1500,
             "currency": "USD",
             "date": "2025-04-05T00:00:00.000Z"
         },
-        "location": {
-            "country": "GB",
-            "city": "London",
-            "region": "ENG"
-        },
-        "contact": {
-            "phone": "+44 20 7946 0958",
-            "email": "hello@cryptogains.fake",
-            "website": "cryptogains.fake"
-        },
+        "location": "London, ENG, GB",
         "tags": [
             "investment",
             "crypto"
@@ -150,21 +130,17 @@
         "description": "Scammer built trust over weeks and requested gift cards.",
         "type": "financial",
         "status": "approved",
-        "fraudDetails": {
+        "fraudsterDetails": {
+            "suspiciousEmail": "contact@romance-help.example",
+            "suspiciousPhone": "+61 2 5550 0130",
+            "suspiciousWebsite": "romance-help.example",
+            "suspiciousName": "Romance Scammer",
+            "suspiciousCompany": "Fake Romance Service",
             "amount": 600,
             "currency": "USD",
             "date": "2025-02-14T00:00:00.000Z"
         },
-        "location": {
-            "country": "AU",
-            "city": "Sydney",
-            "region": "NSW"
-        },
-        "contact": {
-            "phone": "+61 2 5550 0130",
-            "email": "contact@romance-help.example",
-            "website": "romance-help.example"
-        },
+        "location": "Sydney, NSW, AU",
         "tags": [
             "romance",
             "gift cards"
@@ -179,21 +155,17 @@
         "description": "Vendor invoice details were altered leading to mispayment.",
         "type": "email",
         "status": "approved",
-        "fraudDetails": {
+        "fraudsterDetails": {
+            "suspiciousEmail": "ap@vendor-payments.example",
+            "suspiciousPhone": "+1-212-555-4420",
+            "suspiciousWebsite": "vendor-payments.example",
+            "suspiciousName": "BEC Scammer",
+            "suspiciousCompany": "Fake Vendor",
             "amount": 9200,
             "currency": "USD",
             "date": "2025-01-30T00:00:00.000Z"
         },
-        "location": {
-            "country": "US",
-            "city": "New York",
-            "region": "NY"
-        },
-        "contact": {
-            "phone": "+1-212-555-4420",
-            "email": "ap@vendor-payments.example",
-            "website": "vendor-payments.example"
-        },
+        "location": "New York, NY, US",
         "tags": [
             "BEC",
             "invoice"
@@ -208,21 +180,17 @@
         "description": "SMS claimed I won a prize, requested processing fee.",
         "type": "phone",
         "status": "approved",
-        "fraudDetails": {
+        "fraudsterDetails": {
+            "suspiciousEmail": "claims@lotto-prize.example",
+            "suspiciousPhone": "+91 22 5550 1200",
+            "suspiciousWebsite": "lotto-prize.example",
+            "suspiciousName": "Lottery Scammer",
+            "suspiciousCompany": "Fake Lottery Service",
             "amount": 50,
             "currency": "USD",
             "date": "2025-06-01T00:00:00.000Z"
         },
-        "location": {
-            "country": "IN",
-            "city": "Mumbai",
-            "region": "MH"
-        },
-        "contact": {
-            "phone": "+91 22 5550 1200",
-            "email": "claims@lotto-prize.example",
-            "website": "lotto-prize.example"
-        },
+        "location": "Mumbai, MH, IN",
         "tags": [
             "lottery",
             "sms"
@@ -237,21 +205,17 @@
         "description": "Donation site turned out to be fraudulent.",
         "type": "website",
         "status": "approved",
-        "fraudDetails": {
+        "fraudsterDetails": {
+            "suspiciousEmail": "donate@relief-aid.example",
+            "suspiciousPhone": "+1-303-555-0142",
+            "suspiciousWebsite": "relief-aid.example",
+            "suspiciousName": "Charity Scammer",
+            "suspiciousCompany": "Fake Relief Organization",
             "amount": 120,
             "currency": "USD",
             "date": "2025-05-10T00:00:00.000Z"
         },
-        "location": {
-            "country": "US",
-            "city": "Denver",
-            "region": "CO"
-        },
-        "contact": {
-            "phone": "+1-303-555-0142",
-            "email": "donate@relief-aid.example",
-            "website": "relief-aid.example"
-        },
+        "location": "Denver, CO, US",
         "tags": [
             "charity",
             "donation"
@@ -266,21 +230,17 @@
         "description": "Finance team received spoofed CEO email to wire funds.",
         "type": "email",
         "status": "approved",
-        "fraudDetails": {
+        "fraudsterDetails": {
+            "suspiciousEmail": "ceo@company-wire.example",
+            "suspiciousPhone": "+1-415-555-0901",
+            "suspiciousWebsite": "company-wire.example",
+            "suspiciousName": "CEO Spoofer",
+            "suspiciousCompany": "Fake Company",
             "amount": 15000,
             "currency": "USD",
             "date": "2025-03-22T00:00:00.000Z"
         },
-        "location": {
-            "country": "US",
-            "city": "San Francisco",
-            "region": "CA"
-        },
-        "contact": {
-            "phone": "+1-415-555-0901",
-            "email": "ceo@company-wire.example",
-            "website": "company-wire.example"
-        },
+        "location": "San Francisco, CA, US",
         "tags": [
             "spoofing",
             "wire"

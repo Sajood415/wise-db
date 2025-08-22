@@ -6,8 +6,8 @@ export interface IFraud extends Document {
     description: string;
     type: 'email' | 'phone' | 'website' | 'identity' | 'financial' | 'other';
 
-    // Fraud details
-    fraudDetails: {
+    // Fraudster details (who committed the fraud)
+    fraudsterDetails: {
         suspiciousEmail?: string;
         suspiciousPhone?: string;
         suspiciousWebsite?: string;
@@ -39,11 +39,7 @@ export interface IFraud extends Document {
     };
 
     // Geographic info
-    location?: {
-        country: string;
-        city?: string;
-        region?: string;
-    };
+    location?: string;
 
     // For search and categorization
     tags: string[];
@@ -75,7 +71,7 @@ const FraudSchema = new Schema<IFraud>({
         required: true
     },
 
-    fraudDetails: {
+    fraudsterDetails: {
         suspiciousEmail: {
             type: String,
             lowercase: true,
@@ -158,18 +154,8 @@ const FraudSchema = new Schema<IFraud>({
     },
 
     location: {
-        country: {
-            type: String,
-            trim: true
-        },
-        city: {
-            type: String,
-            trim: true
-        },
-        region: {
-            type: String,
-            trim: true
-        }
+        type: String,
+        trim: true
     },
 
     tags: [{
@@ -196,9 +182,9 @@ const FraudSchema = new Schema<IFraud>({
 // Indexes for search performance
 FraudSchema.index({ status: 1, createdAt: -1 });
 FraudSchema.index({ type: 1, severity: 1 });
-FraudSchema.index({ 'fraudDetails.suspiciousEmail': 1 });
-FraudSchema.index({ 'fraudDetails.suspiciousPhone': 1 });
-FraudSchema.index({ 'fraudDetails.suspiciousWebsite': 1 });
+FraudSchema.index({ 'fraudsterDetails.suspiciousEmail': 1 });
+FraudSchema.index({ 'fraudsterDetails.suspiciousPhone': 1 });
+FraudSchema.index({ 'fraudsterDetails.suspiciousWebsite': 1 });
 FraudSchema.index({ tags: 1 });
 
 export default mongoose.models.Fraud || mongoose.model<IFraud>('Fraud', FraudSchema);

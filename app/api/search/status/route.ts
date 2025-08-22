@@ -37,6 +37,7 @@ export async function GET(request: NextRequest) {
             searchLimit: sub.searchLimit ?? -1,
             remainingSearches: remaining,
             isTrialExpired: user.subscription?.type === 'free_trial' && user.subscription?.trialEndsAt ? (new Date() > new Date(user.subscription.trialEndsAt)) : false,
+            packageName: (user as any).packageName || null,
         })
     } catch (error) {
         console.error('Search status error:', error)

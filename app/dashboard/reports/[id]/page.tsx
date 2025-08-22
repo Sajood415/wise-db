@@ -26,8 +26,8 @@ export default async function DashboardReportDetailPage({ params }: { params: Pr
           <h3 className="font-semibold text-gray-900 mb-2">Details</h3>
           <div className="text-sm text-gray-700 space-y-1">
             <div><span className="font-medium">Type:</span> {r.type}</div>
-            <div><span className="font-medium">Loss:</span> {r.fraudDetails?.amount ? `${r.fraudDetails.amount} ${r.fraudDetails.currency || 'USD'}` : 'N/A'}</div>
-            <div><span className="font-medium">Date:</span> {r.fraudDetails?.date ? new Date(r.fraudDetails.date).toLocaleDateString() : 'N/A'}</div>
+            <div><span className="font-medium">Loss:</span> {r.fraudsterDetails?.amount ? `${r.fraudsterDetails.amount} ${r.fraudsterDetails.currency || 'USD'}` : 'N/A'}</div>
+            <div><span className="font-medium">Date:</span> {r.fraudsterDetails?.date ? new Date(r.fraudsterDetails.date).toLocaleDateString() : 'N/A'}</div>
             <div><span className="font-medium">Severity:</span> {r.severity}</div>
             <div><span className="font-medium">Tags:</span> {r.tags?.length ? r.tags.join(', ') : '—'}</div>
           </div>
@@ -42,11 +42,11 @@ export default async function DashboardReportDetailPage({ params }: { params: Pr
       <section className="bg-white rounded-lg shadow p-6">
         <h3 className="font-semibold text-gray-900 mb-2">Incident Details</h3>
         <div className="grid md:grid-cols-2 gap-4 text-sm text-gray-700">
-          <div><span className="font-medium">Suspicious Email:</span> {r.fraudDetails?.suspiciousEmail || '—'}</div>
-          <div><span className="font-medium">Suspicious Phone:</span> {r.fraudDetails?.suspiciousPhone || '—'}</div>
-          <div><span className="font-medium">Suspicious Website:</span> {r.fraudDetails?.suspiciousWebsite || '—'}</div>
-          <div><span className="font-medium">Suspicious Name:</span> {r.fraudDetails?.suspiciousName || '—'}</div>
-          <div><span className="font-medium">Suspicious Company:</span> {r.fraudDetails?.suspiciousCompany || '—'}</div>
+          <div><span className="font-medium">Suspicious Email:</span> {r.fraudsterDetails?.suspiciousEmail || '—'}</div>
+          <div><span className="font-medium">Suspicious Phone:</span> {r.fraudsterDetails?.suspiciousPhone || '—'}</div>
+          <div><span className="font-medium">Suspicious Website:</span> {r.fraudsterDetails?.suspiciousWebsite || '—'}</div>
+          <div><span className="font-medium">Suspicious Name:</span> {r.fraudsterDetails?.suspiciousName || '—'}</div>
+          <div><span className="font-medium">Suspicious Company:</span> {r.fraudsterDetails?.suspiciousCompany || '—'}</div>
         </div>
       </section>
 
@@ -54,18 +54,24 @@ export default async function DashboardReportDetailPage({ params }: { params: Pr
         <section className="bg-white rounded-lg shadow p-6">
           <h3 className="font-semibold text-gray-900 mb-2">Reporter</h3>
           <div className="text-sm text-gray-700 space-y-1">
-            <div><span className="font-medium">User:</span> {r.submittedBy ? String(r.submittedBy) : (r.guestSubmission?.name || 'Guest')}</div>
+            <div><span className="font-medium">User:</span> {r.submittedBy ? 
+              (() => {
+                const user = r.submittedBy as any
+                if (typeof user === 'string') return user
+                const name = [user.firstName, user.lastName].filter(Boolean).join(' ')
+                return name || user.email || 'Registered User'
+              })()
+              : (r.guestSubmission?.name || 'Guest')
+            }</div>
             {r.guestSubmission?.email ? (<div><span className="font-medium">Email:</span> {r.guestSubmission.email}</div>) : null}
             {r.guestSubmission?.phone ? (<div><span className="font-medium">Phone:</span> {r.guestSubmission.phone}</div>) : null}
           </div>
         </section>
 
         <section className="bg-white rounded-lg shadow p-6">
-          <h3 className="font-semibold text-gray-900 mb-2">Location</h3>
+          <h3 className="font-semibold text-gray-900 mb-2">Address</h3>
           <div className="text-sm text-gray-700 space-y-1">
-            <div><span className="font-medium">Country:</span> {r.location?.country || '—'}</div>
-            <div><span className="font-medium">City:</span> {r.location?.city || '—'}</div>
-            <div><span className="font-medium">Region:</span> {r.location?.region || '—'}</div>
+            <div><span className="font-medium">Address:</span> {r.location || '—'}</div>
           </div>
         </section>
       </div>

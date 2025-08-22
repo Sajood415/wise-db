@@ -21,15 +21,15 @@ export default function ReportFraudForm() {
     reporterGender: "",
     reporterLocation: "",
 
-    // Victim Details
-    victimName: "",
-    victimType: "",
-    victimCompany: "",
-    victimEmail: "",
-    victimGender: "",
-    victimContact: "",
-    victimAddress: "",
-    victimDescription: "",
+    // Fraudster Details (who committed the fraud)
+    fraudsterName: "",
+    fraudsterType: "",
+    fraudsterCompany: "",
+    fraudsterEmail: "",
+    fraudsterGender: "",
+    fraudsterContact: "",
+    fraudsterAddress: "",
+    fraudsterDescription: "",
 
     // Financial Impact
     actualLoss: "",
@@ -114,13 +114,13 @@ export default function ReportFraudForm() {
         if (!touched.reporterPhone) return ''
         return formData.reporterPhone && !isValidPhone(formData.reporterPhone) ? 'Enter a valid phone number' : ''
       // Step 2
-      case 'victimName':
-        return touched.victimName && !formData.victimName ? 'Victim name is required' : ''
-      case 'victimType':
-        return touched.victimType && !formData.victimType ? 'Victim type is required' : ''
-      case 'victimEmail':
-        if (!touched.victimEmail) return ''
-        return formData.victimEmail && !isValidEmail(formData.victimEmail) ? 'Enter a valid email address' : ''
+      case 'fraudsterName':
+        return touched.fraudsterName && !formData.fraudsterName ? 'Fraudster name is required' : ''
+      case 'fraudsterType':
+        return touched.fraudsterType && !formData.fraudsterType ? 'Fraudster type is required' : ''
+      case 'fraudsterEmail':
+        if (!touched.fraudsterEmail) return ''
+        return formData.fraudsterEmail && !isValidEmail(formData.fraudsterEmail) ? 'Enter a valid email address' : ''
       // Step 3
       case 'actualLoss':
         if (!touched.actualLoss) return ''
@@ -319,9 +319,9 @@ export default function ReportFraudForm() {
         );
       case 2:
         return (
-          !!formData.victimName &&
-          !!formData.victimType &&
-          (!formData.victimEmail || isValidEmail(formData.victimEmail))
+          !!formData.fraudsterName &&
+          !!formData.fraudsterType &&
+          (!formData.fraudsterEmail || isValidEmail(formData.fraudsterEmail))
         );
       case 3:
         return isValidAmount(formData.actualLoss) && !!formData.currency;
@@ -391,15 +391,15 @@ export default function ReportFraudForm() {
           reporterPhone: formData.reporterPhone,
           reporterGender: formData.reporterGender,
           reporterLocation: formData.reporterLocation,
-          // Victim
-          victimName: formData.victimName,
-          victimType: formData.victimType,
-          victimCompany: formData.victimCompany,
-          victimEmail: formData.victimEmail,
-          victimGender: formData.victimGender,
-          victimContact: formData.victimContact,
-          victimAddress: formData.victimAddress,
-          victimDescription: formData.victimDescription,
+          // Fraudster
+          fraudsterName: formData.fraudsterName,
+          fraudsterType: formData.fraudsterType,
+          fraudsterCompany: formData.fraudsterCompany,
+          fraudsterEmail: formData.fraudsterEmail,
+          fraudsterGender: formData.fraudsterGender,
+          fraudsterContact: formData.fraudsterContact,
+          fraudsterAddress: formData.fraudsterAddress,
+          fraudsterDescription: formData.fraudsterDescription,
           // Financial
           actualLoss: formData.actualLoss,
           attemptedLoss: formData.attemptedLoss,
@@ -459,8 +459,8 @@ export default function ReportFraudForm() {
     },
     {
       number: 2,
-      title: "Victim Details",
-      description: "Tell us about who was targeted by this fraud.",
+      title: "Fraudster Details",
+      description: "Tell us about who committed this fraud.",
       icon: (
         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
           <path
@@ -814,45 +814,45 @@ export default function ReportFraudForm() {
             </div>
           )}
 
-          {/* Step 2: Victim Details */}
+          {/* Step 2: Fraudster Details */}
           {currentStep === 2 && (
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Victim Name <span className="text-red-600">*</span>
+                    Fraudster Name <span className="text-red-600">*</span>
                   </label>
                   <input
                     type="text"
-                    value={formData.victimName}
+                    value={formData.fraudsterName}
                     onChange={(e) =>
-                      handleInputChange("victimName", e.target.value)
+                      handleInputChange("fraudsterName", e.target.value)
                     }
-                    onBlur={() => markTouched('victimName')}
-                    placeholder="Name of person or organization targeted"
-                    className={`w-full px-3 py-2 border ${getError('victimName') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
+                    onBlur={() => markTouched('fraudsterName')}
+                    placeholder="Name of person or organization who committed fraud"
+                    className={`w-full px-3 py-2 border ${getError('fraudsterName') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
                     required
                   />
-                  {getError('victimName') && (
-                    <p className="mt-1 text-sm text-red-600">{getError('victimName')}</p>
+                  {getError('fraudsterName') && (
+                    <p className="mt-1 text-sm text-red-600">{getError('fraudsterName')}</p>
                   )}
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Victim Type <span className="text-red-600">*</span>
+                    Fraudster Type <span className="text-red-600">*</span>
                   </label>
                   <select
-                    value={formData.victimType}
+                    value={formData.fraudsterType}
                     onChange={(e) =>
-                      handleInputChange("victimType", e.target.value)
+                      handleInputChange("fraudsterType", e.target.value)
                     }
-                    onBlur={() => markTouched('victimType')}
-                    className={`w-full px-3 py-2 border ${getError('victimType') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
+                    onBlur={() => markTouched('fraudsterType')}
+                    className={`w-full px-3 py-2 border ${getError('fraudsterType') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
                     required
                   >
                     <option value="" className="text-gray-500">
-                      Select victim type
+                      Select fraudster type
                     </option>
                     {targetTypes.map((type) => (
                       <option key={type} value={type} className="text-gray-900">
@@ -860,8 +860,8 @@ export default function ReportFraudForm() {
                       </option>
                     ))}
                   </select>
-                  {getError('victimType') && (
-                    <p className="mt-1 text-sm text-red-600">{getError('victimType')}</p>
+                  {getError('fraudsterType') && (
+                    <p className="mt-1 text-sm text-red-600">{getError('fraudsterType')}</p>
                   )}
                 </div>
               </div>
@@ -869,13 +869,13 @@ export default function ReportFraudForm() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Victim Company/Organization
+                    Fraudster Company/Organization
                   </label>
                   <input
                     type="text"
-                    value={formData.victimCompany}
+                    value={formData.fraudsterCompany}
                     onChange={(e) =>
-                      handleInputChange("victimCompany", e.target.value)
+                      handleInputChange("fraudsterCompany", e.target.value)
                     }
                     placeholder="Company or organization name"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
@@ -884,20 +884,20 @@ export default function ReportFraudForm() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Victim Email
+                    Fraudster Email
                   </label>
                   <input
                     type="email"
-                    value={formData.victimEmail}
+                    value={formData.fraudsterEmail}
                     onChange={(e) =>
-                      handleInputChange("victimEmail", e.target.value)
+                      handleInputChange("fraudsterEmail", e.target.value)
                     }
-                    onBlur={() => markTouched('victimEmail')}
-                    placeholder="victim@example.com"
-                    className={`w-full px-3 py-2 border ${getError('victimEmail') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
+                    onBlur={() => markTouched('fraudsterEmail')}
+                    placeholder="fraudster@example.com"
+                    className={`w-full px-3 py-2 border ${getError('fraudsterEmail') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
                   />
-                  {getError('victimEmail') && (
-                    <p className="mt-1 text-sm text-red-600">{getError('victimEmail')}</p>
+                  {getError('fraudsterEmail') && (
+                    <p className="mt-1 text-sm text-red-600">{getError('fraudsterEmail')}</p>
                   )}
                 </div>
               </div>
@@ -905,12 +905,12 @@ export default function ReportFraudForm() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Victim Gender
+                    Fraudster Gender
                   </label>
                   <select
-                    value={formData.victimGender}
+                    value={formData.fraudsterGender}
                     onChange={(e) =>
-                      handleInputChange("victimGender", e.target.value)
+                      handleInputChange("fraudsterGender", e.target.value)
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500"
                   >
@@ -931,13 +931,13 @@ export default function ReportFraudForm() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Victim Contact Information
+                    Fraudster Contact Information
                   </label>
                   <input
                     type="text"
-                    value={formData.victimContact}
+                    value={formData.fraudsterContact}
                     onChange={(e) =>
-                      handleInputChange("victimContact", e.target.value)
+                      handleInputChange("fraudsterContact", e.target.value)
                     }
                     placeholder="Phone, email, or other contact info"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500"
@@ -947,30 +947,30 @@ export default function ReportFraudForm() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Victim Address
+                  Fraudster Address
                 </label>
                 <input
                   type="text"
-                  value={formData.victimAddress}
+                  value={formData.fraudsterAddress}
                   onChange={(e) =>
-                    handleInputChange("victimAddress", e.target.value)
+                    handleInputChange("fraudsterAddress", e.target.value)
                   }
-                  placeholder="Full address of the victim"
+                  placeholder="Full address of the fraudster"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Victim Description
+                  Fraudster Description
                 </label>
                 <textarea
                   rows={4}
-                  value={formData.victimDescription}
+                  value={formData.fraudsterDescription}
                   onChange={(e) =>
-                    handleInputChange("victimDescription", e.target.value)
+                    handleInputChange("fraudsterDescription", e.target.value)
                   }
-                  placeholder="Additional details about the victim (demographics, vulnerabilities, etc.)"
+                  placeholder="Additional details about the fraudster (demographics, modus operandi, etc.)"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
                 />
               </div>
@@ -1249,18 +1249,18 @@ export default function ReportFraudForm() {
                       <div><span className="font-medium text-gray-700">Location:</span> <span className="text-gray-800">{formData.reporterLocation || '—'}</span></div>
                     </div>
                   </div>
-                  {/* Victim */}
+                  {/* Fraudster */}
                   <div>
-                    <p className="text-xs uppercase tracking-wide text-gray-500 mb-2">Victim Details</p>
+                    <p className="text-xs uppercase tracking-wide text-gray-500 mb-2">Fraudster Details</p>
                     <div className="space-y-1">
-                      <div><span className="font-medium text-gray-700">Name:</span> <span className="text-gray-800">{formData.victimName || '—'}</span></div>
-                      <div><span className="font-medium text-gray-700">Type:</span> <span className="text-gray-800">{formData.victimType || '—'}</span></div>
-                      <div><span className="font-medium text-gray-700">Company/Org:</span> <span className="text-gray-800">{formData.victimCompany || '—'}</span></div>
-                      <div><span className="font-medium text-gray-700">Email:</span> <span className="text-gray-800">{formData.victimEmail || '—'}</span></div>
-                      <div><span className="font-medium text-gray-700">Gender:</span> <span className="text-gray-800">{formData.victimGender || '—'}</span></div>
-                      <div><span className="font-medium text-gray-700">Contact:</span> <span className="text-gray-800">{formData.victimContact || '—'}</span></div>
-                      <div><span className="font-medium text-gray-700">Address:</span> <span className="text-gray-800">{formData.victimAddress || '—'}</span></div>
-                      <div><span className="font-medium text-gray-700">Description:</span> <span className="text-gray-800">{formData.victimDescription || '—'}</span></div>
+                      <div><span className="font-medium text-gray-700">Name:</span> <span className="text-gray-800">{formData.fraudsterName || '—'}</span></div>
+                      <div><span className="font-medium text-gray-700">Type:</span> <span className="text-gray-800">{formData.fraudsterType || '—'}</span></div>
+                      <div><span className="font-medium text-gray-700">Company/Org:</span> <span className="text-gray-800">{formData.fraudsterCompany || '—'}</span></div>
+                      <div><span className="font-medium text-gray-700">Email:</span> <span className="text-gray-800">{formData.fraudsterEmail || '—'}</span></div>
+                      <div><span className="font-medium text-gray-700">Gender:</span> <span className="text-gray-800">{formData.fraudsterGender || '—'}</span></div>
+                      <div><span className="font-medium text-gray-700">Contact:</span> <span className="text-gray-800">{formData.fraudsterContact || '—'}</span></div>
+                      <div><span className="font-medium text-gray-700">Address:</span> <span className="text-gray-800">{formData.fraudsterAddress || '—'}</span></div>
+                      <div><span className="font-medium text-gray-700">Description:</span> <span className="text-gray-800">{formData.fraudsterDescription || '—'}</span></div>
                     </div>
                   </div>
                   {/* Payments */}

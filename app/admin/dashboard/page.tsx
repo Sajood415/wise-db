@@ -270,8 +270,8 @@ export default function AdminDashboardPage() {
       const res = await fetch(`/api/manage/reports?${params.toString()}`, { cache: 'no-store' })
       const data = await res.json()
       const items: UrgentItem[] = (data.reports || []).map((r: any) => {
-        const amount = r?.fraudDetails?.amount
-        const currency = r?.fraudDetails?.currency
+        const amount = r?.fraudsterDetails?.amount
+        const currency = r?.fraudsterDetails?.currency
         let amountLabel: string | undefined
         try {
           if (typeof amount === 'number') {
@@ -1039,9 +1039,9 @@ export default function AdminDashboardPage() {
                 <div className="py-12 text-center text-gray-500">No reports found.</div>
               )}
               {reports.map((r) => {
-                const locationLabel = [r?.location?.city, r?.location?.region, r?.location?.country].filter(Boolean).join(', ')
-                const amount = r?.fraudDetails?.amount
-                const currency = r?.fraudDetails?.currency
+                const locationLabel = r?.location || 'N/A'
+                const amount = r?.fraudsterDetails?.amount
+                const currency = r?.fraudsterDetails?.currency
                 const amountLabel = safeFormatCurrency(amount, currency)
                 return (
                   <div key={r._id} className="rounded-lg border border-gray-200 p-4">

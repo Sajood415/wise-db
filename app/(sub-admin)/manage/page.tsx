@@ -11,7 +11,7 @@ type FraudReport = {
   type: string
   status: 'pending' | 'approved' | 'rejected' | 'under_review'
   severity: 'low' | 'medium' | 'high' | 'critical'
-  fraudDetails?: {
+  fraudsterDetails?: {
     suspiciousEmail?: string
     suspiciousPhone?: string
     suspiciousWebsite?: string

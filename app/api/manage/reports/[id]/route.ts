@@ -24,6 +24,7 @@ export async function GET(
 
         const report = await Fraud.findById(id)
             .populate('reviewedBy', 'firstName lastName email role')
+            .populate('submittedBy', 'firstName lastName email phone')
             .lean()
         if (!report) {
             return NextResponse.json({ error: 'Report not found' }, { status: 404 })
@@ -74,7 +75,7 @@ export async function PUT(
             'description',
             'type',
             'severity',
-            'fraudDetails',
+            'fraudsterDetails',
             'evidence',
             'location',
             'tags',

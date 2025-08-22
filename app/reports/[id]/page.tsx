@@ -28,8 +28,8 @@ export default async function ReportDetailPage({ params }: { params: Promise<{ i
               <h3 className="font-semibold text-gray-900 mb-2">Details</h3>
               <div className="text-sm text-gray-700 space-y-1">
                 <div><span className="font-medium">Type:</span> {r.type}</div>
-                <div><span className="font-medium">Loss:</span> {r.fraudDetails?.amount ? `${r.fraudDetails.amount} ${r.fraudDetails.currency || 'USD'}` : 'N/A'}</div>
-                <div><span className="font-medium">Date:</span> {r.fraudDetails?.date ? new Date(r.fraudDetails.date).toLocaleDateString() : 'N/A'}</div>
+                <div><span className="font-medium">Loss:</span> {r.fraudsterDetails?.amount ? `${r.fraudsterDetails.amount} ${r.fraudsterDetails.currency || 'USD'}` : 'N/A'}</div>
+                <div><span className="font-medium">Date:</span> {r.fraudsterDetails?.date ? new Date(r.fraudsterDetails.date).toLocaleDateString() : 'N/A'}</div>
               </div>
             </div>
             <div>

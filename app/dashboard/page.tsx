@@ -17,7 +17,7 @@ type OverviewResponse = {
   type: string
     description?: string
     severity?: 'low' | 'medium' | 'high' | 'critical'
-    fraudDetails?: {
+    fraudsterDetails?: {
       amount?: number
       currency?: string
       suspiciousEmail?: string
@@ -42,6 +42,7 @@ type SearchStatus = {
   searchLimit: number
   remainingSearches: number | -1
   isTrialExpired: boolean
+  packageName?: string | null
 }
 
 export default function DashboardPage() {
@@ -256,6 +257,61 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      {/* Package Information - only for Overview */}
+      {activeTab === "overview" && searchStatus && (
+        <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  {searchStatus.packageName || 
+                   (searchStatus.type === 'free_trial' ? 'Free Trial Plan' : 
+                    searchStatus.type === 'paid_package' ? 'Paid Package' : 
+                    searchStatus.type === 'enterprise_package' ? 'Enterprise Package' : 'Current Plan')}
+                </h3>
+                <div className="flex items-center space-x-4 text-sm text-gray-600 mt-1">
+                  <span className="flex items-center">
+                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    {searchStatus.searchesUsed} / {searchStatus.searchLimit === -1 ? '∞' : searchStatus.searchLimit} searches used
+                  </span>
+                  {searchStatus.canAccessRealData && (
+                    <span className="flex items-center">
+                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Real Data Access
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="text-right">
+              {searchStatus.type === 'free_trial' && (
+                <div className="text-sm text-gray-600">
+                  <div>{searchStatus.isTrialExpired ? 'Trial Expired' : 'Trial Active'}</div>
+                  {searchStatus.packageName && (
+                    <div className="text-xs text-blue-600 mt-1">Previous: {searchStatus.packageName}</div>
+                  )}
+                </div>
+              )}
+              {searchStatus.type === 'paid_package' && (
+                <div className="text-sm text-gray-600">
+                  <div className="font-medium text-green-600">✓ Active Package</div>
+                  <div className="text-xs">{searchStatus.packageName || 'Unlimited searches'}</div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Stat cards - only for Overview */}
       {activeTab === "overview" && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -308,6 +364,12 @@ export default function DashboardPage() {
               </svg>
               <span className="font-medium">Export My Data</span>
             </button>
+            <Link href="/dashboard/payment" className="w-full inline-flex items-center gap-3 rounded-lg border border-blue-200 px-4 py-3 bg-blue-50 text-blue-700 hover:bg-blue-100 transition">
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+              <span className="font-medium">Upgrade Plan</span>
+            </Link>
           </div>
         </section>
 
@@ -366,7 +428,7 @@ export default function DashboardPage() {
                     </div>
                     <div className="mt-1 text-xs text-gray-600">
                       <span>
-                        Loss: <span className="text-rose-600 font-medium">{formatCurrency(r.fraudDetails?.amount as number, r.fraudDetails?.currency)}</span>
+                        Loss: <span className="text-rose-600 font-medium">{formatCurrency(r.fraudsterDetails?.amount as number, r.fraudsterDetails?.currency)}</span>
                       </span>
                       <span className="mx-2">•</span>
                       <span>{new Date(r.createdAt).toLocaleDateString()}</span>
@@ -463,11 +525,7 @@ export default function DashboardPage() {
                 ) : (
                   <div className="space-y-4">
                     {searchResults.map((r)=> {
-                      const locationLabel = [
-                        (r as any).location?.city,
-                        (r as any).location?.region,
-                        (r as any).location?.country,
-                      ].filter(Boolean).join(', ')
+                      const locationLabel = (r as any).location || 'N/A'
                       return (
                         <div key={r._id} className="rounded-xl border border-gray-200 bg-white shadow-sm p-5">
                           <div className="flex items-start justify-between gap-3 flex-wrap">
@@ -495,7 +553,7 @@ export default function DashboardPage() {
                             )}
                             <div className="flex items-center gap-2">
                               <svg className="w-4 h-4 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3 3 0 0 1 0 6H6"/></svg>
-                              <span className="text-rose-600 font-medium">{formatCurrency(r.fraudDetails?.amount as number, r.fraudDetails?.currency)}</span>
+                              <span className="text-rose-600 font-medium">{formatCurrency(r.fraudsterDetails?.amount as number, r.fraudsterDetails?.currency)}</span>
                             </div>
                           </div>
                           <p className="mt-3 text-sm text-gray-700 overflow-hidden text-ellipsis whitespace-nowrap">{r.description}</p>
@@ -507,15 +565,15 @@ export default function DashboardPage() {
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-rose-700">
                               <div className="flex items-center gap-2">
                                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.86 19.86 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.86 19.86 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.66 12.66 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.66 12.66 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                                <span>{(r as any).contact?.phone || r.fraudDetails?.suspiciousPhone || 'N/A'}</span>
+                                <span>{(r as any).contact?.phone || r.fraudsterDetails?.suspiciousPhone || 'N/A'}</span>
                               </div>
                               <div className="flex items-center gap-2">
                                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16v16H4z"/></svg>
-                                <span>{(r as any).contact?.email || r.fraudDetails?.suspiciousEmail || 'N/A'}</span>
+                                <span>{(r as any).contact?.email || r.fraudsterDetails?.suspiciousEmail || 'N/A'}</span>
                               </div>
                               <div className="flex items-center gap-2 md:col-span-1">
                                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                                <span>{(r as any).contact?.website || r.fraudDetails?.suspiciousWebsite || 'N/A'}</span>
+                                <span>{(r as any).contact?.website || r.fraudsterDetails?.suspiciousWebsite || 'N/A'}</span>
                               </div>
                             </div>
                           </div>

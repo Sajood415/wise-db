@@ -24,7 +24,9 @@ export async function middleware(request: NextRequest) {
         '/api/auth/login',
         '/api/auth/signup',
         '/api/fraud',
-        '/api/enterprise'
+        '/api/enterprise',
+        '/dashboard/payment/success',
+        '/dashboard/payment/cancel'
     ];
 
     // Check if the current path is public
@@ -39,6 +41,13 @@ export async function middleware(request: NextRequest) {
 
     // Get token from cookies
     const token = request.cookies.get('auth-token')?.value;
+
+    // Special handling for payment success/cancel pages
+    if (pathname.startsWith('/dashboard/payment/')) {
+        // Allow access to payment pages even without token (user might be coming from Stripe)
+        // The payment verification API will handle authentication
+        return NextResponse.next();
+    }
 
     // Redirect to login if no token
     if (!token) {

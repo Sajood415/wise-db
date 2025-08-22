@@ -11,7 +11,7 @@ type FraudReport = {
   type: string
   status: 'pending' | 'approved' | 'rejected' | 'under_review'
   severity: 'low' | 'medium' | 'high' | 'critical'
-  fraudDetails?: {
+  fraudsterDetails?: {
     suspiciousEmail?: string
     suspiciousPhone?: string
     suspiciousWebsite?: string
@@ -21,7 +21,12 @@ type FraudReport = {
     currency?: string
     date?: string
   }
-  submittedBy?: string
+  submittedBy?: string | {
+    firstName?: string
+    lastName?: string
+    email: string
+    phone?: string
+  }
   guestSubmission?: {
     name: string
     email: string
@@ -32,11 +37,7 @@ type FraudReport = {
     documents: string[]
     additionalInfo: string
   }
-  location?: {
-    country: string
-    city?: string
-    region?: string
-  }
+  location?: string
   tags: string[]
   reviewNotes?: string
   reviewedBy?: string
@@ -154,6 +155,41 @@ export default function ReportDetailPage() {
     })
   }
 
+  // Helper functions to parse and update evidence fields
+  function getEvidenceField(fieldName: string): string | null {
+    if (!report?.evidence?.additionalInfo) return null
+    
+    const parts = report.evidence.additionalInfo.split(' | ')
+    for (const part of parts) {
+      if (part.startsWith(`${fieldName}: `)) {
+        return part.substring(fieldName.length + 2)
+      }
+    }
+    return null
+  }
+
+  function updateEvidenceField(fieldName: string, value: string) {
+    if (!formData.evidence) {
+      formData.evidence = { additionalInfo: '' }
+    }
+    
+    const currentInfo = formData.evidence.additionalInfo || ''
+    const parts = currentInfo.split(' | ').filter((part: string) => !part.startsWith(`${fieldName}: `))
+    
+    if (value.trim()) {
+      parts.push(`${fieldName}: ${value}`)
+    }
+    
+    const newInfo = parts.join(' | ')
+    setFormData({
+      ...formData,
+      evidence: {
+        ...formData.evidence,
+        additionalInfo: newInfo
+      }
+    })
+  }
+
   if (loading) {
     return (
       <div className="space-y-6">
@@ -181,7 +217,6 @@ export default function ReportDetailPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">{report.title}</h1>
-          <p className="text-gray-600 mt-1">Report ID: {report._id}</p>
         </div>
         <div className="flex items-center gap-3">
           <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusPill(report.status)}`}>{report.status}</span>
@@ -317,27 +352,45 @@ export default function ReportDetailPage() {
                 </div>
               )}
             </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Address</label>
+              {editing ? (
+                <input
+                  type="text"
+                  value={formData.location || ''}
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    location: e.target.value
+                  })}
+                  className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
+                  placeholder="Enter full address"
+                />
+              ) : (
+                <p className="mt-1 text-sm text-gray-900">{report.location || 'N/A'}</p>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Fraud Details */}
+        {/* Fraudster Details */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Fraud Details</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Fraudster Details</h3>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">Suspicious Email</label>
               {editing ? (
                 <input
                   type="email"
-                  value={formData.fraudDetails?.suspiciousEmail || ''}
+                  value={formData.fraudsterDetails?.suspiciousEmail || ''}
                   onChange={(e) => setFormData({
                     ...formData, 
-                    fraudDetails: {...formData.fraudDetails, suspiciousEmail: e.target.value}
+                    fraudsterDetails: {...formData.fraudsterDetails, suspiciousEmail: e.target.value}
                   })}
                   className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
                 />
               ) : (
-                <p className="mt-1 text-sm text-gray-900">{report.fraudDetails?.suspiciousEmail || 'N/A'}</p>
+                <p className="mt-1 text-sm text-gray-900">{report.fraudsterDetails?.suspiciousEmail || 'N/A'}</p>
               )}
             </div>
 
@@ -346,15 +399,15 @@ export default function ReportDetailPage() {
               {editing ? (
                 <input
                   type="text"
-                  value={formData.fraudDetails?.suspiciousPhone || ''}
+                  value={formData.fraudsterDetails?.suspiciousPhone || ''}
                   onChange={(e) => setFormData({
                     ...formData, 
-                    fraudDetails: {...formData.fraudDetails, suspiciousPhone: e.target.value}
+                    fraudsterDetails: {...formData.fraudsterDetails, suspiciousPhone: e.target.value}
                   })}
                   className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
                 />
               ) : (
-                <p className="mt-1 text-sm text-gray-900">{report.fraudDetails?.suspiciousPhone || 'N/A'}</p>
+                <p className="mt-1 text-sm text-gray-900">{report.fraudsterDetails?.suspiciousPhone || 'N/A'}</p>
               )}
             </div>
 
@@ -363,15 +416,15 @@ export default function ReportDetailPage() {
               {editing ? (
                 <input
                   type="url"
-                  value={formData.fraudDetails?.suspiciousWebsite || ''}
+                  value={formData.fraudsterDetails?.suspiciousWebsite || ''}
                   onChange={(e) => setFormData({
                     ...formData, 
-                    fraudDetails: {...formData.fraudDetails, suspiciousWebsite: e.target.value}
+                    fraudsterDetails: {...formData.fraudsterDetails, suspiciousWebsite: e.target.value}
                   })}
                   className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
                 />
               ) : (
-                <p className="mt-1 text-sm text-gray-900">{report.fraudDetails?.suspiciousWebsite || 'N/A'}</p>
+                <p className="mt-1 text-sm text-gray-900">{report.fraudsterDetails?.suspiciousWebsite || 'N/A'}</p>
               )}
             </div>
 
@@ -380,15 +433,15 @@ export default function ReportDetailPage() {
               {editing ? (
                 <input
                   type="text"
-                  value={formData.fraudDetails?.suspiciousName || ''}
+                  value={formData.fraudsterDetails?.suspiciousName || ''}
                   onChange={(e) => setFormData({
                     ...formData, 
-                    fraudDetails: {...formData.fraudDetails, suspiciousName: e.target.value}
+                    fraudsterDetails: {...formData.fraudsterDetails, suspiciousName: e.target.value}
                   })}
                   className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
                 />
               ) : (
-                <p className="mt-1 text-sm text-gray-900">{report.fraudDetails?.suspiciousName || 'N/A'}</p>
+                <p className="mt-1 text-sm text-gray-900">{report.fraudsterDetails?.suspiciousName || 'N/A'}</p>
               )}
             </div>
 
@@ -397,15 +450,15 @@ export default function ReportDetailPage() {
               {editing ? (
                 <input
                   type="text"
-                  value={formData.fraudDetails?.suspiciousCompany || ''}
+                  value={formData.fraudsterDetails?.suspiciousCompany || ''}
                   onChange={(e) => setFormData({
                     ...formData, 
-                    fraudDetails: {...formData.fraudDetails, suspiciousCompany: e.target.value}
+                    fraudsterDetails: {...formData.fraudsterDetails, suspiciousCompany: e.target.value}
                   })}
                   className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
                 />
               ) : (
-                <p className="mt-1 text-sm text-gray-900">{report.fraudDetails?.suspiciousCompany || 'N/A'}</p>
+                <p className="mt-1 text-sm text-gray-900">{report.fraudsterDetails?.suspiciousCompany || 'N/A'}</p>
               )}
             </div>
 
@@ -415,136 +468,157 @@ export default function ReportDetailPage() {
                 {editing ? (
                   <input
                     type="number"
-                    value={formData.fraudDetails?.amount || ''}
-                    onChange={(e) => setFormData({
-                      ...formData, 
-                      fraudDetails: {...formData.fraudDetails, amount: parseFloat(e.target.value) || 0}
-                    })}
-                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
-                  />
-                ) : (
-                  <p className="mt-1 text-sm text-gray-900">{formatCurrency(report.fraudDetails?.amount, report.fraudDetails?.currency)}</p>
-                )}
-              </div>
+                                      value={formData.fraudsterDetails?.amount || ''}
+                  onChange={(e) => setFormData({
+                    ...formData, 
+                    fraudsterDetails: {...formData.fraudsterDetails, amount: parseFloat(e.target.value) || 0}
+                  })}
+                  className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
+                />
+              ) : (
+                <p className="mt-1 text-sm text-gray-900">{formatCurrency(report.fraudsterDetails?.amount, report.fraudsterDetails?.currency)}</p>
+              )}
+            </div>
               
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Currency</label>
-                {editing ? (
-                  <select
-                    value={formData.fraudDetails?.currency || 'USD'}
-                    onChange={(e) => setFormData({
-                      ...formData, 
-                      fraudDetails: {...formData.fraudDetails, currency: e.target.value}
-                    })}
-                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
-                  >
-                    <option value="USD">USD</option>
-                    <option value="EUR">EUR</option>
-                    <option value="GBP">GBP</option>
-                    <option value="CAD">CAD</option>
-                  </select>
-                ) : (
-                  <p className="mt-1 text-sm text-gray-900">{report.fraudDetails?.currency || 'USD'}</p>
-                )}
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Currency</label>
+              {editing ? (
+                <select
+                  value={formData.fraudsterDetails?.currency || 'USD'}
+                  onChange={(e) => setFormData({
+                    ...formData, 
+                    fraudsterDetails: {...formData.fraudsterDetails, currency: e.target.value}
+                  })}
+                  className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
+                >
+                  <option value="USD">USD</option>
+                  <option value="EUR">EUR</option>
+                  <option value="GBP">GBP</option>
+                  <option value="CAD">CAD</option>
+                </select>
+              ) : (
+                <p className="mt-1 text-sm text-gray-900">{report.fraudsterDetails?.currency || 'USD'}</p>
+              )}
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Date</label>
-                {editing ? (
-                  <input
-                    type="date"
-                    value={formData.fraudDetails?.date ? new Date(formData.fraudDetails.date).toISOString().split('T')[0] : ''}
-                    onChange={(e) => setFormData({
-                      ...formData, 
-                      fraudDetails: {...formData.fraudDetails, date: e.target.value}
-                    })}
-                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
-                  />
-                ) : (
-                  <p className="mt-1 text-sm text-gray-900">
-                    {report.fraudDetails?.date ? new Date(report.fraudDetails.date).toLocaleDateString() : 'N/A'}
-                  </p>
-                )}
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Date</label>
+              {editing ? (
+                <input
+                  type="date"
+                  value={formData.fraudsterDetails?.date ? new Date(formData.fraudsterDetails.date).toISOString().split('T')[0] : ''}
+                  onChange={(e) => setFormData({
+                    ...formData, 
+                    fraudsterDetails: {...formData.fraudsterDetails, date: e.target.value}
+                  })}
+                  className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
+                />
+              ) : (
+                <p className="mt-1 text-sm text-gray-900">
+                  {report.fraudsterDetails?.date ? new Date(report.fraudsterDetails.date).toLocaleDateString() : 'N/A'}
+                </p>
+              )}
+            </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Location Information */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Location Information</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Country</label>
-            {editing ? (
-              <input
-                type="text"
-                value={formData.location?.country || ''}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  location: {...formData.location, country: e.target.value}
-                })}
-                className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
-              />
-            ) : (
-              <p className="mt-1 text-sm text-gray-900">{report.location?.country || 'N/A'}</p>
-            )}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">City</label>
-            {editing ? (
-              <input
-                type="text"
-                value={formData.location?.city || ''}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  location: {...formData.location, city: e.target.value}
-                })}
-                className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
-              />
-            ) : (
-              <p className="mt-1 text-sm text-gray-900">{report.location?.city || 'N/A'}</p>
-            )}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Region</label>
-            {editing ? (
-              <input
-                type="text"
-                value={formData.location?.region || ''}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  location: {...formData.location, region: e.target.value}
-                })}
-                className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
-              />
-            ) : (
-              <p className="mt-1 text-sm text-gray-900">{report.location?.region || 'N/A'}</p>
-            )}
-          </div>
-        </div>
-      </div>
+
 
       {/* Evidence & Documentation */}
       <div className="bg-white rounded-lg shadow p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Evidence & Documentation</h3>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Additional Information</label>
+            <label className="block text-sm font-medium text-gray-700">Websites/Social Media</label>
             {editing ? (
-              <textarea
-                value={formData.evidence?.additionalInfo || ''}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  evidence: {...formData.evidence, additionalInfo: e.target.value}
-                })}
-                rows={4}
+              <input
+                type="text"
+                value={getEvidenceField('Websites/Social Media') || ''}
+                onChange={(e) => updateEvidenceField('Websites/Social Media', e.target.value)}
                 className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
-                placeholder="Additional information about the fraud..."
+                placeholder="Enter websites or social media links"
               />
             ) : (
-              <p className="mt-1 text-sm text-gray-900">{report.evidence?.additionalInfo || 'N/A'}</p>
+              <p className="mt-1 text-sm text-gray-900">{getEvidenceField('Websites/Social Media') || 'N/A'}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Evidence Description</label>
+            {editing ? (
+              <textarea
+                value={getEvidenceField('Evidence Description') || ''}
+                onChange={(e) => updateEvidenceField('Evidence Description', e.target.value)}
+                rows={3}
+                className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
+                placeholder="Describe the evidence"
+              />
+            ) : (
+              <p className="mt-1 text-sm text-gray-900">{getEvidenceField('Evidence Description') || 'N/A'}</p>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Attempted Loss</label>
+              {editing ? (
+                <input
+                  type="number"
+                  value={getEvidenceField('Attempted Loss') || ''}
+                  onChange={(e) => updateEvidenceField('Attempted Loss', e.target.value)}
+                  className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
+                  placeholder="Enter amount"
+                />
+              ) : (
+                <p className="mt-1 text-sm text-gray-900">{getEvidenceField('Attempted Loss') || 'N/A'}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Payment Methods</label>
+              {editing ? (
+                <input
+                  type="text"
+                  value={getEvidenceField('Payment Methods') || ''}
+                  onChange={(e) => updateEvidenceField('Payment Methods', e.target.value)}
+                  className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
+                  placeholder="Enter payment methods used"
+                />
+              ) : (
+                <p className="mt-1 text-sm text-gray-900">{getEvidenceField('Payment Methods') || 'N/A'}</p>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Transaction Details</label>
+            {editing ? (
+              <textarea
+                value={getEvidenceField('Transaction Details') || ''}
+                onChange={(e) => updateEvidenceField('Transaction Details', e.target.value)}
+                rows={3}
+                className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
+                placeholder="Enter transaction details"
+              />
+            ) : (
+              <p className="mt-1 text-sm text-gray-900">{getEvidenceField('Transaction Details') || 'N/A'}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Additional Comments</label>
+            {editing ? (
+              <textarea
+                value={getEvidenceField('Additional Comments') || ''}
+                onChange={(e) => updateEvidenceField('Additional Comments', e.target.value)}
+                rows={3}
+                className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
+                placeholder="Enter additional comments"
+              />
+            ) : (
+              <p className="mt-1 text-sm text-gray-900">{getEvidenceField('Additional Comments') || 'N/A'}</p>
             )}
           </div>
           
@@ -733,9 +807,17 @@ export default function ReportDetailPage() {
                 className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
               />
             ) : (
-              <p className="mt-1 text-sm text-gray-900">
-                {report.submittedBy ? 'Registered User' : (report.guestSubmission?.name || 'N/A')}
-              </p>
+                          <p className="mt-1 text-sm text-gray-900">
+              {report.submittedBy ? 
+                (() => {
+                  const user = report.submittedBy as any
+                  if (typeof user === 'string') return user
+                  const name = [user.firstName, user.lastName].filter(Boolean).join(' ')
+                  return name || user.email || 'Registered User'
+                })()
+                : (report.guestSubmission?.name || 'N/A')
+              }
+            </p>
             )}
           </div>
           <div>
@@ -751,9 +833,16 @@ export default function ReportDetailPage() {
                 className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
               />
             ) : (
-              <p className="mt-1 text-sm text-gray-900">
-                {report.guestSubmission?.email || 'N/A'}
-              </p>
+                          <p className="mt-1 text-sm text-gray-900">
+              {report.submittedBy ? 
+                (() => {
+                  const user = report.submittedBy as any
+                  if (typeof user === 'string') return user
+                  return user.email || 'N/A'
+                })()
+                : (report.guestSubmission?.email || 'N/A')
+              }
+            </p>
             )}
           </div>
           <div>
@@ -769,9 +858,16 @@ export default function ReportDetailPage() {
                 className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
               />
             ) : (
-              <p className="mt-1 text-sm text-gray-900">
-                {report.guestSubmission?.phone || 'N/A'}
-              </p>
+                          <p className="mt-1 text-sm text-gray-900">
+              {report.submittedBy ? 
+                (() => {
+                  const user = report.submittedBy as any
+                  if (typeof user === 'string') return user
+                  return user.phone || 'N/A'
+                })()
+                : (report.guestSubmission?.phone || 'N/A')
+              }
+            </p>
             )}
           </div>
         </div>

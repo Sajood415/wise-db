@@ -27,10 +27,10 @@ function buildFilter({ q, type, severity, email, phone, minAmount, maxAmount }: 
     }
     if (type) and.push({ type })
     if (severity) and.push({ severity })
-    if (email) and.push({ $or: [{ 'fraudDetails.suspiciousEmail': new RegExp(email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') }] })
-    if (phone) and.push({ $or: [{ 'fraudDetails.suspiciousPhone': new RegExp(phone.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') }] })
-    if (typeof minAmount === 'number') and.push({ 'fraudDetails.amount': { $gte: minAmount } })
-    if (typeof maxAmount === 'number') and.push({ 'fraudDetails.amount': { ...(filter['fraudDetails.amount'] || {}), $lte: maxAmount } })
+            if (email) and.push({ $or: [{ 'fraudsterDetails.suspiciousEmail': new RegExp(email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') }] })
+        if (phone) and.push({ $or: [{ 'fraudsterDetails.suspiciousPhone': new RegExp(phone.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') }] })
+        if (typeof minAmount === 'number') and.push({ 'fraudsterDetails.amount': { $gte: minAmount } })
+        if (typeof maxAmount === 'number') and.push({ 'fraudsterDetails.amount': { ...(filter['fraudsterDetails.amount'] || {}), $lte: maxAmount } })
     if (and.length) filter.$and = and
     return filter
 }
@@ -85,11 +85,11 @@ export async function POST(request: NextRequest) {
             results = all.filter((r) => {
                 if (type && r.type !== type) return false
                 if (severity && r.severity !== severity) return false
-                if (typeof minAmount === 'number' && (r.fraudDetails?.amount ?? 0) < minAmount) return false
-                if (typeof maxAmount === 'number' && (r.fraudDetails?.amount ?? 0) > maxAmount) return false
+                if (typeof minAmount === 'number' && (r.fraudsterDetails?.amount ?? 0) < minAmount) return false
+                if (typeof maxAmount === 'number' && (r.fraudsterDetails?.amount ?? 0) > maxAmount) return false
                 if (rx && !(rx.test(r.title) || rx.test(r.description) || (r.tags || []).some((t: string) => rx!.test(t)))) return false
-                if (emailRx && !(emailRx.test(r.fraudDetails?.suspiciousEmail || '') || emailRx.test((r as any).contact?.email || ''))) return false
-                if (phoneRx && !(phoneRx.test(r.fraudDetails?.suspiciousPhone || '') || phoneRx.test((r as any).contact?.phone || ''))) return false
+                if (emailRx && !(emailRx.test(r.fraudsterDetails?.suspiciousEmail || '') || emailRx.test((r as any).contact?.email || ''))) return false
+                if (phoneRx && !(phoneRx.test(r.fraudsterDetails?.suspiciousPhone || '') || phoneRx.test((r as any).contact?.phone || ''))) return false
                 return true
             }).slice(0, 50)
         }
