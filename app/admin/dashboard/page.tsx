@@ -24,7 +24,7 @@ type EnterpriseRequest = {
 export default function AdminDashboardPage() {
   const { showToast } = useToast()
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState<"dashboard" | "fraud" | "enterprise" | "users" | "sub_admins">("dashboard")
+  const [activeTab, setActiveTab] = useState<"dashboard" | "fraud" | "enterprise" | "users" | "sub_admins" | "help_requests">("dashboard")
   const [loadingReports, setLoadingReports] = useState(false)
   const [reports, setReports] = useState<any[]>([])
   const [pagination, setPagination] = useState<{ page: number; limit: number; total: number; totalPages: number }>({ page: 1, limit: 10, total: 0, totalPages: 0 })
@@ -41,6 +41,15 @@ export default function AdminDashboardPage() {
   const [userConfirmOpen, setUserConfirmOpen] = useState(false)
   const [userConfirmAction, setUserConfirmAction] = useState<"toggle" | "delete" | null>(null)
   const [userConfirmTarget, setUserConfirmTarget] = useState<any | null>(null)
+
+  // Help Requests tab state
+  const [helpRequestsLoading, setHelpRequestsLoading] = useState(false)
+  const [helpRequests, setHelpRequests] = useState<any[]>([])
+  const [helpRequestsPage, setHelpRequestsPage] = useState(1)
+  const [helpRequestsLimit, setHelpRequestsLimit] = useState(20)
+  const [helpRequestsTotal, setHelpRequestsTotal] = useState(0)
+  const [helpRequestsFilters, setHelpRequestsFilters] = useState<{ q: string; status: string; issueType: string }>({ q: '', status: '', issueType: '' })
+  const [helpRequestsReloadKey, setHelpRequestsReloadKey] = useState(0)
 
   function AddSubAdmin({ onAdded }: { onAdded: () => void }) {
     const { showToast } = useToast()
@@ -514,6 +523,35 @@ export default function AdminDashboardPage() {
     return () => { cancelled = true }
   }, [activeTab, entPage, entLimit, entQ, entStatus, entIndustry])
 
+  // Load help requests when on the Help Requests tab
+  useEffect(() => {
+    if (activeTab !== 'help_requests') return
+    let cancelled = false
+    async function loadHelpRequests() {
+      setHelpRequestsLoading(true)
+      try {
+        const params = new URLSearchParams()
+        params.set('page', String(helpRequestsPage))
+        params.set('limit', String(helpRequestsLimit))
+        if (helpRequestsFilters.q) params.set('q', helpRequestsFilters.q)
+        if (helpRequestsFilters.status) params.set('status', helpRequestsFilters.status)
+        if (helpRequestsFilters.issueType) params.set('issueType', helpRequestsFilters.issueType)
+        const res = await fetch(`/api/admin/help?${params.toString()}`, { cache: 'no-store' })
+        const data = await res.json()
+        if (!cancelled) {
+          setHelpRequests(data.items || [])
+          setHelpRequestsTotal(data.pagination?.total || 0)
+        }
+      } catch {
+        if (!cancelled) setHelpRequests([])
+      } finally {
+        if (!cancelled) setHelpRequestsLoading(false)
+      }
+    }
+    loadHelpRequests()
+    return () => { cancelled = true }
+  }, [activeTab, helpRequestsPage, helpRequestsLimit, helpRequestsFilters.q, helpRequestsFilters.status, helpRequestsFilters.issueType, helpRequestsReloadKey])
+
   async function triggerAction(id: string, kind: 'approve' | 'reject', reason?: string) {
     try {
       setActionLoading(id)
@@ -577,7 +615,7 @@ export default function AdminDashboardPage() {
       {activeTab === 'dashboard' && null}
       {/* Segmented tabs (match user dashboard style) */}
       <div className="w-full bg-gray-100 rounded-md p-1">
-        <div className="grid grid-cols-5 gap-2">
+        <div className="grid grid-cols-6 gap-2">
           <button
             onClick={() => setActiveTab("dashboard")}
             className={`w-full text-center py-2 rounded-md text-sm font-medium transition ${
@@ -617,6 +655,14 @@ export default function AdminDashboardPage() {
             }`}
           >
             Sub Admins
+          </button>
+          <button
+            onClick={() => setActiveTab("help_requests")}
+            className={`w-full text-center py-2 rounded-md text-sm font-medium transition ${
+              activeTab === "help_requests" ? "bg-white text-blue-700 shadow" : "text-gray-600 hover:text-gray-900"
+            }`}
+          >
+            Help Requests
           </button>
         </div>
       </div>
@@ -723,7 +769,148 @@ export default function AdminDashboardPage() {
         </section>
       )}
 
-      
+      {/* Help Requests Tab */}
+      {activeTab === "help_requests" && (
+        <section className="bg-white rounded-lg shadow p-6 space-y-4">
+          <div className="flex items-start justify-between gap-3 flex-wrap">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">Help Requests</h3>
+              <p className="text-sm text-gray-600">View and manage user support requests</p>
+            </div>
+            <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700">Total {helpRequestsTotal}</span>
+          </div>
+
+          {/* Filters */}
+          <form onSubmit={(e)=>{ e.preventDefault(); setHelpRequestsPage(1) }} className="grid grid-cols-1 lg:grid-cols-12 gap-3">
+            <div className="lg:col-span-4">
+              <label className="block text-xs text-gray-600 mb-1">Search</label>
+              <input value={helpRequestsFilters.q} onChange={(e)=> setHelpRequestsFilters(f => ({...f, q: e.target.value}))} placeholder="Name, email, subject" className="w-full border rounded-md px-3 py-2 text-sm text-black" />
+            </div>
+            <div className="lg:col-span-3">
+              <label className="block text-xs text-gray-600 mb-1">Status</label>
+              <select value={helpRequestsFilters.status} onChange={(e)=>{ setHelpRequestsFilters(f => ({...f, status: e.target.value})); setHelpRequestsPage(1) }} className="w-full border rounded-md px-3 py-2 text-sm text-black bg-white">
+                <option value="">All</option>
+                <option value="pending">Pending</option>
+                <option value="in_progress">In Progress</option>
+                <option value="resolved">Resolved</option>
+                <option value="closed">Closed</option>
+              </select>
+            </div>
+            <div className="lg:col-span-3">
+              <label className="block text-xs text-gray-600 mb-1">Issue Type</label>
+              <select value={helpRequestsFilters.issueType} onChange={(e)=>{ setHelpRequestsFilters(f => ({...f, issueType: e.target.value})); setHelpRequestsPage(1) }} className="w-full border rounded-md px-3 py-2 text-sm text-black bg-white">
+                <option value="">All</option>
+                <option value="General Question">General Question</option>
+                <option value="Technical Issue">Technical Issue</option>
+                <option value="Fraud Reporting Help">Fraud Reporting Help</option>
+                <option value="Account Issues">Account Issues</option>
+                <option value="Billing & Payments">Billing & Payments</option>
+                <option value="Feature Request">Feature Request</option>
+                <option value="Bug Report">Bug Report</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div className="lg:col-span-2">
+              <label className="block text-xs text-gray-600 mb-1">Rows per page</label>
+              <select value={helpRequestsLimit} onChange={(e)=> { setHelpRequestsLimit(Number(e.target.value)); setHelpRequestsPage(1) }} className="w-full border rounded-md px-3 py-2 text-sm bg-white text-black">
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={50}>50</option>
+              </select>
+            </div>
+            <div className="lg:col-span-12 flex items-end justify-start gap-3">
+              <button type="button" onClick={()=>{ setHelpRequestsFilters({q: '', status: '', issueType: ''}); setHelpRequestsPage(1) }} className="px-4 py-2 rounded-md border text-gray-700">Reset</button>
+              <button type="submit" className="px-4 py-2 rounded-md bg-gray-900 text-white">Apply</button>
+            </div>
+          </form>
+
+          {/* List */}
+          {helpRequestsLoading ? (
+            <div className="py-12 text-center text-gray-500">Loading help requests...</div>
+          ) : (
+            <div className="space-y-2">
+              {helpRequests.length === 0 && (
+                <div className="py-12 text-center text-gray-500">No help requests found.</div>
+              )}
+              {helpRequests.map((request) => (
+                <div key={request._id} className="rounded-lg border border-gray-200 p-4">
+                  <div className="flex items-start justify-between gap-3 flex-wrap">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h4 className="font-semibold text-gray-900 truncate">{request.subject}</h4>
+                        <span className="text-xs px-2 py-0.5 rounded-full border bg-white text-gray-700">{request.issueType}</span>
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${
+                          request.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 
+                          request.status === 'in_progress' ? 'bg-blue-100 text-blue-700' : 
+                          request.status === 'resolved' ? 'bg-green-100 text-green-700' : 
+                          'bg-gray-100 text-gray-700'
+                        }`}>{request.status}</span>
+                      </div>
+                      <p className="mt-1 text-xs text-gray-600">{request.name} • {request.email} • {new Date(request.createdAt).toLocaleString()}</p>
+                      <p className="mt-2 text-sm text-gray-700 line-clamp-2">{request.message}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <select 
+                        value={request.status} 
+                        onChange={async (e) => {
+                          try {
+                            const res = await fetch(`/api/admin/help/${request._id}`, {
+                              method: 'PATCH',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ status: e.target.value })
+                            })
+                            if (res.ok) {
+                              showToast('Status updated successfully', 'success')
+                              // Trigger reload to get fresh data
+                              setHelpRequestsReloadKey(k => k + 1)
+                            } else {
+                              showToast('Failed to update status', 'error')
+                            }
+                          } catch (error) {
+                            showToast('Failed to update status', 'error')
+                          }
+                        }}
+                        className="text-xs px-2 py-1 rounded border bg-white text-gray-700"
+                      >
+                        <option value="pending">Pending</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="resolved">Resolved</option>
+                        <option value="closed">Closed</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Pagination */}
+          {helpRequestsTotal > 0 && (
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div className="text-sm text-gray-600">
+                Showing {((helpRequestsPage - 1) * helpRequestsLimit) + 1} to {Math.min(helpRequestsPage * helpRequestsLimit, helpRequestsTotal)} of {helpRequestsTotal} requests
+              </div>
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => setHelpRequestsPage(p => Math.max(1, p - 1))}
+                  disabled={helpRequestsPage === 1}
+                  className="px-3 py-1 rounded border text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Previous
+                </button>
+                <span className="text-sm text-gray-600">Page {helpRequestsPage}</span>
+                <button 
+                  onClick={() => setHelpRequestsPage(p => p + 1)}
+                  disabled={helpRequestsPage * helpRequestsLimit >= helpRequestsTotal}
+                  className="px-3 py-1 rounded border text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
+        </section>
+      )}
 
       {/* Enterprise Requests Tab */}
       {activeTab === "enterprise" && (

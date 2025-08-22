@@ -1,16 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import { useToast } from "@/contexts/ToastContext";
 
 export default function HelpForm() {
+  const { showToast } = useToast();
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     subject: "",
     issueType: "",
-    priority: "",
     message: "",
   });
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const issueTypes = [
     "General Question",
@@ -23,26 +28,113 @@ export default function HelpForm() {
     "Other",
   ];
 
-  const priorities = [
-    "Low - General inquiry",
-    "Medium - Non-urgent issue",
-    "High - Affecting my work",
-    "Urgent - Critical issue",
-  ];
+  const validateField = (field: string, value: string) => {
+    let error = "";
+    
+    switch (field) {
+      case "name":
+        if (!value.trim()) {
+          error = "Name is required";
+        } else if (value.trim().length < 2) {
+          error = "Name must be at least 2 characters";
+        }
+        break;
+      case "email":
+        if (!value.trim()) {
+          error = "Email is required";
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          error = "Please enter a valid email address";
+        }
+        break;
+      case "subject":
+        if (!value.trim()) {
+          error = "Subject is required";
+        } else if (value.trim().length < 5) {
+          error = "Subject must be at least 5 characters";
+        }
+        break;
+      case "issueType":
+        if (!value) {
+          error = "Please select an issue type";
+        }
+        break;
+      case "message":
+        if (!value.trim()) {
+          error = "Message is required";
+        } else if (value.trim().length < 20) {
+          error = "Message must be at least 20 characters";
+        }
+        break;
+    }
+    
+    return error;
+  };
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
+
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors((prev) => ({
+        ...prev,
+        [field]: "",
+      }));
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Help form submitted:", formData);
-    alert(
-      "Thank you for contacting us! We'll get back to you within 24 hours."
-    );
+    
+    // Validate all fields
+    const newErrors: Record<string, string> = {};
+    Object.keys(formData).forEach((field) => {
+      const error = validateField(field, formData[field as keyof typeof formData]);
+      if (error) {
+        newErrors[field] = error;
+      }
+    });
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/help", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        showToast("Help request submitted successfully! We'll get back to you within 24 hours.", "success");
+        // Reset form
+        setFormData({
+          name: "",
+          email: "",
+          subject: "",
+          issueType: "",
+          message: "",
+        });
+        setErrors({});
+      } else {
+        showToast(data.error || "Failed to submit help request. Please try again.", "error");
+      }
+    } catch (error) {
+      console.error("Error submitting help request:", error);
+      showToast("Network error. Please check your connection and try again.", "error");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCancel = () => {
@@ -51,9 +143,15 @@ export default function HelpForm() {
       email: "",
       subject: "",
       issueType: "",
-      priority: "",
       message: "",
     });
+    setErrors({});
+  };
+
+  const renderFieldError = (field: string) => {
+    return errors[field] ? (
+      <p className="text-red-600 text-sm mt-1">{errors[field]}</p>
+    ) : null;
   };
 
   return (
@@ -72,110 +170,98 @@ export default function HelpForm() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Your Name *
+              Your Name <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               value={formData.name}
               onChange={(e) => handleInputChange("name", e.target.value)}
               placeholder="John Doe"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500"
+              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500 ${
+                errors.name ? "border-red-500" : "border-gray-300"
+              }`}
               required
             />
+            {renderFieldError("name")}
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email Address *
+              Email Address <span className="text-red-500">*</span>
             </label>
             <input
               type="email"
               value={formData.email}
               onChange={(e) => handleInputChange("email", e.target.value)}
               placeholder="john@example.com"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500"
+              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500 ${
+                errors.email ? "border-red-500" : "border-gray-300"
+              }`}
               required
             />
+            {renderFieldError("email")}
           </div>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Subject *
+            Subject <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
             value={formData.subject}
             onChange={(e) => handleInputChange("subject", e.target.value)}
             placeholder="Brief description of your issue"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500"
+            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500 ${
+              errors.subject ? "border-red-500" : "border-gray-300"
+            }`}
             required
           />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Issue Type *
-            </label>
-            <select
-              value={formData.issueType}
-              onChange={(e) => handleInputChange("issueType", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
-              required
-            >
-              <option value="" className="text-gray-500">
-                Select issue type
-              </option>
-              {issueTypes.map((type) => (
-                <option key={type} value={type} className="text-gray-900">
-                  {type}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Priority *
-            </label>
-            <select
-              value={formData.priority}
-              onChange={(e) => handleInputChange("priority", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
-              required
-            >
-              <option value="" className="text-gray-500">
-                Select priority
-              </option>
-              {priorities.map((priority) => (
-                <option
-                  key={priority}
-                  value={priority}
-                  className="text-gray-900"
-                >
-                  {priority}
-                </option>
-              ))}
-            </select>
-          </div>
+          {renderFieldError("subject")}
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Message *
+            Issue Type <span className="text-red-500">*</span>
+          </label>
+          <select
+            value={formData.issueType}
+            onChange={(e) => handleInputChange("issueType", e.target.value)}
+            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white ${
+              errors.issueType ? "border-red-500" : "border-gray-300"
+            }`}
+            required
+          >
+            <option value="" className="text-gray-500">
+              Select issue type
+            </option>
+            {issueTypes.map((type) => (
+              <option key={type} value={type} className="text-gray-900">
+                {type}
+              </option>
+            ))}
+          </select>
+          {renderFieldError("issueType")}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Message <span className="text-red-500">*</span>
           </label>
           <textarea
             rows={6}
             value={formData.message}
             onChange={(e) => handleInputChange("message", e.target.value)}
             placeholder="Please describe your issue in detail. Include any error messages, steps to reproduce the problem, or specific questions you have..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500"
+            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500 ${
+              errors.message ? "border-red-500" : "border-gray-300"
+            }`}
             required
           />
           <p className="text-sm text-gray-500 mt-1">
             Minimum 20 characters ({formData.message.length}/20)
           </p>
+          {renderFieldError("message")}
         </div>
 
         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
@@ -206,14 +292,26 @@ export default function HelpForm() {
         <div className="flex flex-col sm:flex-row gap-4 pt-6">
           <button
             type="submit"
-            className="btn-primary flex-1 sm:flex-initial px-8 py-3"
+            disabled={isSubmitting}
+            className="btn-primary flex-1 sm:flex-initial px-8 py-3 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Send Message
+            {isSubmitting ? (
+              <div className="flex items-center justify-center">
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Sending...
+              </div>
+            ) : (
+              "Send Message"
+            )}
           </button>
           <button
             type="button"
             onClick={handleCancel}
-            className="btn-secondary flex-1 sm:flex-initial px-8 py-3"
+            disabled={isSubmitting}
+            className="btn-secondary flex-1 sm:flex-initial px-8 py-3 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Clear Form
           </button>
