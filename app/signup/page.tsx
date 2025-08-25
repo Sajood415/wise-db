@@ -4,6 +4,8 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useToast } from '@/contexts/ToastContext'
+import { useMemo } from 'react'
+import { useSearchParams } from 'next/navigation'
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -20,6 +22,8 @@ export default function SignupPage() {
   const [error, setError] = useState('')
   const router = useRouter()
   const { showToast } = useToast()
+  const params = useSearchParams()
+  const isEnterpriseSignup = useMemo(() => !!(params.get('enterprise') && params.get('token')), [params])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
@@ -45,18 +49,27 @@ export default function SignupPage() {
     setLoading(true)
     
     try {
-      const response = await fetch('/api/auth/signup', {
+      const endpoint = isEnterpriseSignup ? '/api/auth/enterprise-signup' : '/api/auth/signup'
+      const body = isEnterpriseSignup ? {
+        enterprise: params.get('enterprise'),
+        token: params.get('token'),
+        email: formData.email,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        password: formData.password,
+      } : {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        company: formData.company
+      }
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          password: formData.password,
-          company: formData.company
-        }),
+        body: JSON.stringify(body),
       })
 
       const data = await response.json()
@@ -87,8 +100,8 @@ export default function SignupPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full mb-6 shadow-lg">
             <span className="text-2xl">🛡️</span>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Join WiseDB</h2>
-          <p className="text-gray-600">Start protecting your business from fraud today</p>
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">{isEnterpriseSignup ? 'Create Enterprise Admin' : 'Join WiseDB'}</h2>
+          <p className="text-gray-600">{isEnterpriseSignup ? 'Complete your enterprise admin account setup' : 'Start protecting your business from fraud today'}</p>
         </div>
 
         <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-xl border border-white/50 p-8">
@@ -148,7 +161,7 @@ export default function SignupPage() {
               />
             </div>
 
-            <div>
+            {!isEnterpriseSignup && (<div>
               <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-2">
                 Company Name <span className="text-gray-400">(Optional)</span>
               </label>
@@ -161,7 +174,7 @@ export default function SignupPage() {
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/90 text-black"
                 placeholder="Acme Corp"
               />
-            </div>
+            </div>)}
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">

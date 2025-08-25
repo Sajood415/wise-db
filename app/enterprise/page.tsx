@@ -1,5 +1,7 @@
 import { Metadata } from "next";
 import EnterpriseForm from "./EnterpriseForm";
+import VerifyOnSuccess from "./VerifyOnSuccess";
+import PaymentToast from "./payment-toast";
 
 export const metadata: Metadata = {
   title: "Enterprise Solutions - Wise DB | Custom Fraud Protection",
@@ -16,10 +18,33 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Enterprise() {
+export default async function Enterprise({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
+  const sp = await searchParams
+  const payment = (sp?.payment as string) || ''
+  const sessionId = (sp?.session_id as string) || ''
+  if (payment === 'success') {
+    return (
+      <div className="min-h-screen bg-gray-50 py-12">
+        <div className="max-w-2xl mx-auto px-4">
+          <div className="bg-white rounded-2xl shadow p-8 text-center">
+            <div className="mx-auto w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center">
+              <svg className="w-8 h-8 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <h1 className="mt-4 text-2xl font-bold text-gray-900">Payment Successful</h1>
+            <p className="mt-2 text-gray-600">Thank you. Our team will reach out shortly with next steps.</p>
+            {sessionId ? <VerifyOnSuccess sessionId={sessionId} /> : null}
+            <div className="mt-6 flex items-center justify-center gap-3">
+              <a href="/" className="px-4 py-2 rounded-md bg-gray-900 text-white">Go to Home</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <PaymentToast />
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">

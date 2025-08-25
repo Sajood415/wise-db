@@ -27,10 +27,10 @@ function buildFilter({ q, type, severity, email, phone, minAmount, maxAmount }: 
     }
     if (type) and.push({ type })
     if (severity) and.push({ severity })
-            if (email) and.push({ $or: [{ 'fraudsterDetails.suspiciousEmail': new RegExp(email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') }] })
-        if (phone) and.push({ $or: [{ 'fraudsterDetails.suspiciousPhone': new RegExp(phone.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') }] })
-        if (typeof minAmount === 'number') and.push({ 'fraudsterDetails.amount': { $gte: minAmount } })
-        if (typeof maxAmount === 'number') and.push({ 'fraudsterDetails.amount': { ...(filter['fraudsterDetails.amount'] || {}), $lte: maxAmount } })
+    if (email) and.push({ $or: [{ 'fraudsterDetails.suspiciousEmail': new RegExp(email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') }] })
+    if (phone) and.push({ $or: [{ 'fraudsterDetails.suspiciousPhone': new RegExp(phone.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') }] })
+    if (typeof minAmount === 'number') and.push({ 'fraudsterDetails.amount': { $gte: minAmount } })
+    if (typeof maxAmount === 'number') and.push({ 'fraudsterDetails.amount': { ...(filter['fraudsterDetails.amount'] || {}), $lte: maxAmount } })
     if (and.length) filter.$and = and
     return filter
 }
@@ -94,10 +94,21 @@ export async function POST(request: NextRequest) {
             }).slice(0, 50)
         }
 
-        // Increment searchesUsed when not unlimited
+        // Increment search usage
         if (!isUnlimited) {
-            user.subscription.searchesUsed = (user.subscription.searchesUsed || 0) + 1
-            await user.save()
+            if (user.role === 'enterprise_user' && user.createdBy) {
+                // Deduct from enterprise admin (creator)
+                try {
+                    const admin = await User.findById(user.createdBy)
+                    if (admin && admin.subscription && admin.subscription.type === 'enterprise_package' && admin.subscription.searchLimit !== -1) {
+                        admin.subscription.searchesUsed = (admin.subscription.searchesUsed || 0) + 1
+                        await admin.save()
+                    }
+                } catch { }
+            } else {
+                user.subscription.searchesUsed = (user.subscription.searchesUsed || 0) + 1
+                await user.save()
+            }
         }
 
         // Log search action

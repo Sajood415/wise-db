@@ -25,16 +25,29 @@ export async function GET(request: NextRequest) {
         }
 
         const sub = user.subscription || {}
-        const remaining = typeof sub.searchLimit === 'number' && sub.searchLimit >= 0
+        let remaining = typeof sub.searchLimit === 'number' && sub.searchLimit >= 0
             ? Math.max(0, (sub.searchLimit || 0) - (sub.searchesUsed || 0))
             : -1
+
+        // For enterprise_user, reflect creator's remaining if exists
+        if (user.role === 'enterprise_user' && user.createdBy) {
+            try {
+                const admin: any = await User.findById(user.createdBy)
+                if (admin && admin.subscription) {
+                    const aSub = admin.subscription
+                    remaining = typeof aSub.searchLimit === 'number' && aSub.searchLimit >= 0
+                        ? Math.max(0, (aSub.searchLimit || 0) - (aSub.searchesUsed || 0))
+                        : -1
+                }
+            } catch { }
+        }
 
         return NextResponse.json({
             type: sub.type,
             status: sub.status,
             canAccessRealData: sub.canAccessRealData,
             searchesUsed: sub.searchesUsed || 0,
-            searchLimit: sub.searchLimit ?? -1,
+            searchLimit: user.role === 'enterprise_user' ? (undefined as any) : (sub.searchLimit ?? -1),
             remainingSearches: remaining,
             isTrialExpired: user.subscription?.type === 'free_trial' && user.subscription?.trialEndsAt ? (new Date() > new Date(user.subscription.trialEndsAt)) : false,
             packageName: (user as any).packageName || null,

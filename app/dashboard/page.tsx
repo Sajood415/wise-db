@@ -50,12 +50,16 @@ export default function DashboardPage() {
   const [overview, setOverview] = useState<OverviewResponse | null>(null)
   const [recent, setRecent] = useState<any[]>([])
   const [myReports, setMyReports] = useState<MyReportsResponse | null>(null)
-  const [activeTab, setActiveTab] = useState<"overview" | "my_reports" | "search">("overview")
+  const [activeTab, setActiveTab] = useState<"overview" | "my_reports" | "search" | "users">("overview")
   const [searchLoading, setSearchLoading] = useState(false)
   const [searchForm, setSearchForm] = useState({ q: "", type: "", severity: "", email: "", phone: "", minAmount: "", maxAmount: "" })
   const [searchResults, setSearchResults] = useState<FraudItem[] | null>(null)
   const [searchMeta, setSearchMeta] = useState<{ source: 'real' | 'dummy'; searchesUsed: number; searchLimit: number } | null>(null)
   const [searchStatus, setSearchStatus] = useState<SearchStatus | null>(null)
+  const [auth, setAuth] = useState<{ role?: string } | null>(null)
+  const [usersLoading, setUsersLoading] = useState(false)
+  const [enterpriseUsers, setEnterpriseUsers] = useState<any[]>([])
+  const [createUserForm, setCreateUserForm] = useState({ firstName: '', lastName: '', email: '', password: '' })
   const { showToast } = useToast()
 
   function formatCurrency(amount?: number, code?: string) {
@@ -99,17 +103,19 @@ export default function DashboardPage() {
     let isMounted = true
     async function load() {
       try {
-        const [o, r, m, s] = await Promise.all([
+        const [o, r, m, s, me] = await Promise.all([
           fetch("/api/dashboard/overview").then((res) => res.json()),
           fetch("/api/dashboard/recent-activity?limit=5").then((res) => res.json()),
           fetch("/api/dashboard/my-reports?page=1&pageSize=5").then((res) => res.json()),
           fetch("/api/search/status").then((res) => res.json()),
+          fetch("/api/auth/me").then((res)=> res.json()).catch(()=>({}))
         ])
         if (!isMounted) return
         setOverview(o)
         setRecent(r.items || [])
         setMyReports(m)
         setSearchStatus(s)
+        setAuth(me?.user || me)
       } catch (err) {
         console.error("Failed to load dashboard data", err)
       } finally {
@@ -223,7 +229,7 @@ export default function DashboardPage() {
 
       {/* Tabs - full width, expanded, 3 segments */}
       <div className="w-full bg-gray-100 rounded-md p-1">
-        <div className="grid grid-cols-3 gap-2">
+        <div className={`grid gap-2 ${auth?.role === 'enterprise_admin' ? 'grid-cols-4' : 'grid-cols-3'}`}>
           <button
             onClick={() => setActiveTab("overview")}
             className={`w-full text-center py-2 rounded-md text-sm font-medium transition ${
@@ -254,6 +260,16 @@ export default function DashboardPage() {
           >
             Search Database
           </button>
+          {auth?.role === 'enterprise_admin' && (
+            <button
+              onClick={() => setActiveTab('users')}
+              className={`w-full text-center py-2 rounded-md text-sm font-medium transition ${
+                activeTab === 'users' ? 'bg-white text-blue-700 shadow' : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Users
+            </button>
+          )}
         </div>
       </div>
 
@@ -364,12 +380,14 @@ export default function DashboardPage() {
               </svg>
               <span className="font-medium">Export My Data</span>
             </button>
-            <Link href="/dashboard/payment" className="w-full inline-flex items-center gap-3 rounded-lg border border-blue-200 px-4 py-3 bg-blue-50 text-blue-700 hover:bg-blue-100 transition">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-              </svg>
-              <span className="font-medium">Upgrade Plan</span>
-            </Link>
+            {!(searchStatus?.type === 'enterprise_package' || (auth?.role && auth.role.startsWith('enterprise')) ) && (
+              <Link href="/dashboard/payment" className="w-full inline-flex items-center gap-3 rounded-lg border border-blue-200 px-4 py-3 bg-blue-50 text-blue-700 hover:bg-blue-100 transition">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+                <span className="font-medium">Upgrade Plan</span>
+              </Link>
+            )}
           </div>
         </section>
 
@@ -584,6 +602,100 @@ export default function DashboardPage() {
                 )}
               </div>
             )}
+          </div>
+        </section>
+      )}
+
+      {/* Users management - enterprise admin only */}
+      {activeTab === 'users' && auth?.role === 'enterprise_admin' && (
+        <section className="bg-white rounded-lg shadow p-6">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-gray-900">Enterprise Users</h3>
+            <button onClick={async()=>{
+              setUsersLoading(true)
+              try {
+                const res = await fetch('/api/enterprise/users')
+                const data = await res.json()
+                if (!res.ok) throw new Error(data?.error || 'Failed to load')
+                setEnterpriseUsers(data.items || [])
+              } catch (e:any) {
+                showToast(e.message || 'Failed to load users', 'error')
+              } finally {
+                setUsersLoading(false)
+              }
+            }} className="text-sm px-3 py-1.5 rounded-md border">Refresh</button>
+          </div>
+          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h4 className="font-medium text-gray-900 mb-2">Create User</h4>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">First Name</label>
+                  <input value={createUserForm.firstName} onChange={(e)=> setCreateUserForm(f=>({...f, firstName: e.target.value}))} className="w-full border rounded-md px-3 py-2 text-sm text-black" />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">Last Name</label>
+                  <input value={createUserForm.lastName} onChange={(e)=> setCreateUserForm(f=>({...f, lastName: e.target.value}))} className="w-full border rounded-md px-3 py-2 text-sm text-black" />
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-xs text-gray-600 mb-1">Email</label>
+                  <input type="email" value={createUserForm.email} onChange={(e)=> setCreateUserForm(f=>({...f, email: e.target.value}))} className="w-full border rounded-md px-3 py-2 text-sm text-black" />
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-xs text-gray-600 mb-1">Password</label>
+                  <input type="password" value={createUserForm.password} onChange={(e)=> setCreateUserForm(f=>({...f, password: e.target.value}))} className="w-full border rounded-md px-3 py-2 text-sm text-black" />
+                </div>
+              </div>
+              <div className="mt-3">
+                <button disabled={usersLoading} onClick={async()=>{
+                  if (!createUserForm.firstName || !createUserForm.lastName || !createUserForm.email || !createUserForm.password) { showToast('Please fill all fields','error'); return }
+                  setUsersLoading(true)
+                  try {
+                    const res = await fetch('/api/enterprise/users', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(createUserForm) })
+                    const data = await res.json()
+                    if (!res.ok) throw new Error(data?.error || 'Failed to create')
+                    setCreateUserForm({ firstName: '', lastName: '', email: '', password: '' })
+                    showToast('User created','success')
+                    // refresh list
+                    try {
+                      const pres = await fetch('/api/enterprise/users')
+                      const pdata = await pres.json()
+                      if (pres.ok) setEnterpriseUsers(pdata.items || [])
+                    } catch {}
+                  } catch (e:any) {
+                    showToast(e.message || 'Failed to create user','error')
+                  } finally {
+                    setUsersLoading(false)
+                  }
+                }} className="px-4 py-2 rounded-md bg-gray-900 text-white disabled:opacity-60">{usersLoading ? 'Saving...' : 'Create User'}</button>
+              </div>
+            </div>
+            <div>
+              <h4 className="font-medium text-gray-900 mb-2">Users List</h4>
+              <div className="border rounded-md overflow-hidden">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-left text-gray-600 bg-gray-50">
+                      <th className="py-2 px-3">Name</th>
+                      <th className="py-2 px-3">Email</th>
+                      <th className="py-2 px-3">Created</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {enterpriseUsers.length === 0 && (
+                      <tr><td className="py-3 px-3 text-gray-500" colSpan={3}>No users yet.</td></tr>
+                    )}
+                    {enterpriseUsers.map(u => (
+                      <tr key={u._id} className="border-t">
+                        <td className="py-2 px-3 text-gray-900">{u.firstName} {u.lastName}</td>
+                        <td className="py-2 px-3 text-gray-900">{u.email}</td>
+                        <td className="py-2 px-3 text-gray-900">{u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '-'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </section>
       )}

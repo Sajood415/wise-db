@@ -1,43 +1,49 @@
-'use client'
+"use client"
 
-import { usePathname } from 'next/navigation'
+import { Suspense } from 'react'
+import { usePathname, useSearchParams } from 'next/navigation'
 import Header from './Header'
 import Footer from './Footer'
 
-export default function ConditionalLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+function LayoutInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const searchParams = useSearchParams()
 
-  // Define routes that should NOT show the public header/footer
   const dashboardRoutes = [
     '/dashboard',
     '/admin',
-    '/manage', 
+    '/manage',
     '/search',
     '/searches',
     '/my-reports',
-    '/subscription'
+    '/subscription',
+    '/enterprise',
   ]
 
-  // Check if current path is a dashboard route
-  const isDashboardRoute = dashboardRoutes.some(route => 
-    pathname.startsWith(route)
-  )
+  const isDashboardRoute = dashboardRoutes.some((route) => pathname.startsWith(route))
 
-  // If it's a dashboard route, don't show header/footer
   if (isDashboardRoute) {
     return <>{children}</>
   }
 
-  // For public routes, show header and footer
+  const hideForEnterpriseSuccess = pathname === '/enterprise' && searchParams.get('payment') === 'success'
+  if (hideForEnterpriseSuccess) {
+    return <>{children}</>
+  }
+
   return (
     <>
       <Header />
       <main className="pt-16">{children}</main>
       <Footer />
     </>
+  )
+}
+
+export default function ConditionalLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <Suspense fallback={null}>
+      <LayoutInner>{children}</LayoutInner>
+    </Suspense>
   )
 }

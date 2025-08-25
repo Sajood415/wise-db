@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
   title: "Wise DB - Fraud Reporting & Verification Platform",
   description:
     "Protect your business from fraud with comprehensive reporting, verification, and intelligence services. Join thousands of businesses worldwide fighting fraud together.",

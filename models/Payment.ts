@@ -77,7 +77,6 @@ const PaymentSchema = new Schema<IPayment>({
 
 // Index for efficient queries
 PaymentSchema.index({ userId: 1, status: 1 });
-PaymentSchema.index({ stripeSessionId: 1 });
 PaymentSchema.index({ createdAt: -1 });
 
 export default mongoose.models.Payment || mongoose.model<IPayment>('Payment', PaymentSchema);
