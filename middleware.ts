@@ -26,6 +26,7 @@ export async function middleware(request: NextRequest) {
         '/api/auth/enterprise-signup',
         '/api/fraud',
         '/api/help',
+        '/api/enterprise',
         '/dashboard/payment/success',
         '/dashboard/payment/cancel',
         '/api/payment/enterprise/verify'
