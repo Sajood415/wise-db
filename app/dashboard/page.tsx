@@ -128,6 +128,28 @@ export default function DashboardPage() {
     }
   }, [])
 
+  // Auto-load enterprise users when enterprise admin opens Users tab
+  useEffect(() => {
+    let isMounted = true
+    async function loadEnterpriseUsers() {
+      if (auth?.role === 'enterprise_admin' && activeTab === 'users') {
+        setUsersLoading(true)
+        try {
+          const res = await fetch('/api/enterprise/users')
+          const data = await res.json()
+          if (!res.ok) throw new Error(data?.error || 'Failed to load')
+          if (isMounted) setEnterpriseUsers(data.items || [])
+        } catch (e: any) {
+          showToast(e.message || 'Failed to load users', 'error')
+        } finally {
+          if (isMounted) setUsersLoading(false)
+        }
+      }
+    }
+    loadEnterpriseUsers()
+    return () => { isMounted = false }
+  }, [activeTab, auth?.role])
+
   const stats = useMemo(() => {
     return [
       {
@@ -678,17 +700,19 @@ export default function DashboardPage() {
                     <tr className="text-left text-gray-600 bg-gray-50">
                       <th className="py-2 px-3">Name</th>
                       <th className="py-2 px-3">Email</th>
+                      <th className="py-2 px-3">Searches Used</th>
                       <th className="py-2 px-3">Created</th>
                     </tr>
                   </thead>
                   <tbody>
                     {enterpriseUsers.length === 0 && (
-                      <tr><td className="py-3 px-3 text-gray-500" colSpan={3}>No users yet.</td></tr>
+                      <tr><td className="py-3 px-3 text-gray-500" colSpan={4}>No users yet.</td></tr>
                     )}
                     {enterpriseUsers.map(u => (
                       <tr key={u._id} className="border-t">
                         <td className="py-2 px-3 text-gray-900">{u.firstName} {u.lastName}</td>
                         <td className="py-2 px-3 text-gray-900">{u.email}</td>
+                        <td className="py-2 px-3 text-gray-900">{typeof (u as any).searchCount === 'number' ? (u as any).searchCount : 0}</td>
                         <td className="py-2 px-3 text-gray-900">{u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '-'}</td>
                       </tr>
                     ))}

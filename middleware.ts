@@ -28,8 +28,7 @@ export async function middleware(request: NextRequest) {
         '/api/help',
         '/dashboard/payment/success',
         '/dashboard/payment/cancel',
-        '/api/payment/enterprise/verify',
-        '/api/enterprise'
+        '/api/payment/enterprise/verify'
     ];
 
     // Check if the current path is public

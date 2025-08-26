@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import dbConnect from '@/lib/mongodb'
 import User from '@/models/User'
+import mongoose from 'mongoose'
 
 export async function GET(request: NextRequest) {
     try {
@@ -21,8 +22,8 @@ export async function GET(request: NextRequest) {
 
         const filter: any = {}
         const and: any[] = []
-        // Always exclude super admins and sub admins from this listing
-        and.push({ role: { $nin: ['super_admin', 'sub_admin'] } })
+        // Always exclude super admins, sub admins, and enterprise users from this listing
+        and.push({ role: { $nin: ['super_admin', 'sub_admin', 'enterprise_user'] } })
         if (q) {
             const rx = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i')
             and.push({ $or: [{ firstName: rx }, { lastName: rx }, { email: rx }] })
@@ -43,8 +44,22 @@ export async function GET(request: NextRequest) {
 
         const total = await User.countDocuments(filter)
 
+        // For enterprise_admin rows, compute count of associated enterprise users
+        const enterpriseAdminIds = users.filter((u: any) => u.role === 'enterprise_admin').map((u: any) => u._id)
+        let counts: Array<{ _id: any; count: number }> = []
+        if (enterpriseAdminIds.length) {
+            counts = await User.aggregate([
+                { $match: { role: 'enterprise_user', createdBy: { $in: enterpriseAdminIds as any } } },
+                { $group: { _id: '$createdBy', count: { $sum: 1 } } }
+            ]) as any
+        }
+        const idToCount = new Map<string, number>(counts.map(c => [String(c._id), c.count]))
+        const itemsWithCounts = users.map((u: any) => (
+            u.role === 'enterprise_admin' ? { ...u, enterpriseUserCount: idToCount.get(String(u._id)) || 0 } : u
+        ))
+
         return NextResponse.json({
-            items: users,
+            items: itemsWithCounts,
             pagination: { page, limit, total, totalPages: Math.ceil(total / limit) }
         })
     } catch (err) {

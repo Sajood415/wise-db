@@ -740,7 +740,7 @@ export default function AdminDashboardPage() {
                             <p className="text-xs text-gray-600">{req.contactName} • {req.industry} • {new Date(req.createdAt).toLocaleDateString()}</p>
                           </div>
                           <div className="flex items-center gap-2">
-                            <a href="#" className="inline-flex items-center justify-center w-10 h-9 rounded-md border bg-white text-gray-700 hover:bg-gray-50" title="View">
+                            <a href={`/admin/enterprise/${req._id}`} className="inline-flex items-center justify-center w-10 h-9 rounded-md border bg-white text-gray-700 hover:bg-gray-50" title="View">
                               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                             </a>
                           </div>
@@ -1072,6 +1072,9 @@ export default function AdminDashboardPage() {
                         <span className="text-xs px-2 py-0.5 rounded-full border bg-white text-gray-700">{u.role}</span>
                         <span className={`text-xs px-2 py-0.5 rounded-full ${u.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-700'}`}>{u.isActive ? 'Enabled' : 'Disabled'}</span>
                         <span className={`text-xs px-2 py-0.5 rounded-full ${u.subscription?.status === 'active' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700'}`}>{u.subscription?.status}</span>
+                        {u.role === 'enterprise_admin' && typeof (u as any).enterpriseUserCount === 'number' && (
+                          <span className="text-xs px-2 py-0.5 rounded-full border bg-white text-gray-700">Users: {(u as any).enterpriseUserCount}</span>
+                        )}
                       </div>
                       <p className="mt-1 text-xs text-gray-600">{u.email}</p>
                     </div>

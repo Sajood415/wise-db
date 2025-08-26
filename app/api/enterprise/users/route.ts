@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import dbConnect from '@/lib/mongodb'
 import User from '@/models/User'
+import SearchLog from '@/models/SearchLog'
 
 // GET: list enterprise users for current enterprise admin
 export async function GET(request: NextRequest) {
@@ -14,14 +15,38 @@ export async function GET(request: NextRequest) {
 
         const page = Math.max(1, Number(request.nextUrl.searchParams.get('page') || 1))
         const pageSize = Math.min(100, Math.max(1, Number(request.nextUrl.searchParams.get('pageSize') || 20)))
+        const createdByParam = (request.nextUrl.searchParams.get('createdBy') || '').trim()
 
-        const filter: any = role === 'super_admin' ? { role: 'enterprise_user' } : { createdBy: userId, role: 'enterprise_user' }
+        const filter: any = role === 'super_admin'
+            ? (createdByParam ? { role: 'enterprise_user', createdBy: createdByParam } : { role: 'enterprise_user' })
+            : { createdBy: userId, role: 'enterprise_user' }
         const [items, total] = await Promise.all([
-            User.find(filter).sort({ createdAt: -1 }).skip((page - 1) * pageSize).limit(pageSize).select('-password').lean(),
+            User.find(filter)
+                .sort({ createdAt: -1 })
+                .skip((page - 1) * pageSize)
+                .limit(pageSize)
+                .select('-password')
+                .lean(),
             User.countDocuments(filter)
         ])
 
-        return NextResponse.json({ items, pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } })
+        // Compute per-user search counts from SearchLog
+        const userIds = items.map((u: any) => u._id)
+        let counts: Array<{ _id: any; count: number }> = []
+        if (userIds.length) {
+            counts = await SearchLog.aggregate([
+                { $match: { user: { $in: userIds } } },
+                { $group: { _id: '$user', count: { $sum: 1 } } }
+            ]) as any
+        }
+        const idToCount = new Map<string, number>(counts.map(c => [String(c._id), c.count]))
+
+        const itemsWithCounts = items.map((u: any) => ({
+            ...u,
+            searchCount: idToCount.get(String(u._id)) || 0,
+        }))
+
+        return NextResponse.json({ items: itemsWithCounts, pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } })
     } catch (err) {
         console.error('Enterprise users list error:', err)
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
