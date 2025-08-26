@@ -135,7 +135,7 @@ export default function DashboardPage() {
       if (auth?.role === 'enterprise_admin' && activeTab === 'users') {
         setUsersLoading(true)
         try {
-          const res = await fetch('/api/enterprise/users')
+          const res = await fetch('/api/enterprise/users', { credentials: 'include' })
           const data = await res.json()
           if (!res.ok) throw new Error(data?.error || 'Failed to load')
           if (isMounted) setEnterpriseUsers(data.items || [])
@@ -635,16 +635,16 @@ export default function DashboardPage() {
             <h3 className="text-lg font-semibold text-gray-900">Enterprise Users</h3>
             <button onClick={async()=>{
               setUsersLoading(true)
-              try {
-                const res = await fetch('/api/enterprise/users')
-                const data = await res.json()
-                if (!res.ok) throw new Error(data?.error || 'Failed to load')
-                setEnterpriseUsers(data.items || [])
-              } catch (e:any) {
-                showToast(e.message || 'Failed to load users', 'error')
-              } finally {
-                setUsersLoading(false)
-              }
+                      try {
+          const res = await fetch('/api/enterprise/users', { credentials: 'include' })
+          const data = await res.json()
+          if (!res.ok) throw new Error(data?.error || 'Failed to load')
+          setEnterpriseUsers(data.items || [])
+        } catch (e:any) {
+          showToast(e.message || 'Failed to load users', 'error')
+        } finally {
+          setUsersLoading(false)
+        }
             }} className="text-sm px-3 py-1.5 rounded-md border">Refresh</button>
           </div>
           <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -673,14 +673,14 @@ export default function DashboardPage() {
                   if (!createUserForm.firstName || !createUserForm.lastName || !createUserForm.email || !createUserForm.password) { showToast('Please fill all fields','error'); return }
                   setUsersLoading(true)
                   try {
-                    const res = await fetch('/api/enterprise/users', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(createUserForm) })
+                    const res = await fetch('/api/enterprise/users', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(createUserForm), credentials: 'include' })
                     const data = await res.json()
                     if (!res.ok) throw new Error(data?.error || 'Failed to create')
                     setCreateUserForm({ firstName: '', lastName: '', email: '', password: '' })
                     showToast('User created','success')
                     // refresh list
                     try {
-                      const pres = await fetch('/api/enterprise/users')
+                      const pres = await fetch('/api/enterprise/users', { credentials: 'include' })
                       const pdata = await pres.json()
                       if (pres.ok) setEnterpriseUsers(pdata.items || [])
                     } catch {}

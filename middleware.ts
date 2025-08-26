@@ -26,16 +26,20 @@ export async function middleware(request: NextRequest) {
         '/api/auth/enterprise-signup',
         '/api/fraud',
         '/api/help',
-        '/api/enterprise',
+        '/api/enterprise$',
         '/dashboard/payment/success',
         '/dashboard/payment/cancel',
         '/api/payment/enterprise/verify'
     ];
 
     // Check if the current path is public
-    const isPublicPath = publicPaths.some(path =>
-        pathname === path || pathname.startsWith(path + '/')
-    );
+    const isPublicPath = publicPaths.some(path => {
+        if (path.endsWith('$')) {
+            // Exact match for paths ending with $
+            return pathname === path.slice(0, -1);
+        }
+        return pathname === path || pathname.startsWith(path + '/');
+    });
 
     // Skip authentication for public paths and static files
     if (isPublicPath || pathname.startsWith('/_next') || pathname.startsWith('/api/public')) {
