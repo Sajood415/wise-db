@@ -14,6 +14,8 @@ export interface IFraud extends Document {
         suspiciousName?: string;
         suspiciousCompany?: string;
         amount?: number;
+        attemptedAmount?: number;
+        attemptedLoss?: number;
         currency?: string;
         date?: Date;
     };
@@ -95,6 +97,14 @@ const FraudSchema = new Schema<IFraud>({
             trim: true
         },
         amount: {
+            type: Number,
+            min: 0
+        },
+        attemptedAmount: {
+            type: Number,
+            min: 0
+        },
+        attemptedLoss: {
             type: Number,
             min: 0
         },

@@ -18,6 +18,8 @@ type FraudReport = {
     suspiciousName?: string
     suspiciousCompany?: string
     amount?: number
+    attemptedLoss?: number
+    attemptedAmount?: number
     currency?: string
     date?: string
   }
@@ -477,6 +479,22 @@ export default function ReportDetailPage() {
                 />
               ) : (
                 <p className="mt-1 text-sm text-gray-900">{formatCurrency(report.fraudsterDetails?.amount, report.fraudsterDetails?.currency)}</p>
+              )}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Attempted Amount</label>
+              {editing ? (
+                <input
+                  type="number"
+                  value={formData.fraudsterDetails?.attemptedAmount || ''}
+                  onChange={(e) => setFormData({
+                    ...formData, 
+                    fraudsterDetails: {...formData.fraudsterDetails, attemptedAmount: parseFloat(e.target.value) || 0}
+                  })}
+                  className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
+                />
+              ) : (
+                <p className="mt-1 text-sm text-gray-900">{formatCurrency(report.fraudsterDetails?.attemptedAmount, report.fraudsterDetails?.currency)}</p>
               )}
             </div>
               

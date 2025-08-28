@@ -10,6 +10,9 @@ export default async function DashboardReportDetailPage({ params }: { params: Pr
   const raw = await Fraud.findById(id).lean()
   if (!raw || Array.isArray(raw)) notFound()
   const r = raw as any
+  const attemptedInfo = typeof r?.evidence?.additionalInfo === 'string'
+    ? (r.evidence.additionalInfo.split(' | ').find((p: string) => p.startsWith('Attempted Loss: ')) || '').slice('Attempted Loss: '.length)
+    : ''
 
   return (
     <div className="space-y-6">
@@ -27,6 +30,7 @@ export default async function DashboardReportDetailPage({ params }: { params: Pr
           <div className="text-sm text-gray-700 space-y-1">
             <div><span className="font-medium">Type:</span> {r.type}</div>
             <div><span className="font-medium">Loss:</span> {r.fraudsterDetails?.amount ? `${r.fraudsterDetails.amount} ${r.fraudsterDetails.currency || 'USD'}` : 'N/A'}</div>
+            <div><span className="font-medium">Attempted Loss:</span> {typeof (r.fraudsterDetails?.attemptedAmount ?? r.fraudsterDetails?.attemptedLoss) === 'number' ? `${(r.fraudsterDetails?.attemptedAmount ?? r.fraudsterDetails?.attemptedLoss)} ${r.fraudsterDetails?.currency || 'USD'}` : (attemptedInfo ? `${attemptedInfo} ${r.fraudsterDetails?.currency || 'USD'}` : 'N/A')}</div>
             <div><span className="font-medium">Date:</span> {r.fraudsterDetails?.date ? new Date(r.fraudsterDetails.date).toLocaleDateString() : 'N/A'}</div>
             <div><span className="font-medium">Severity:</span> {r.severity}</div>
             <div><span className="font-medium">Tags:</span> {r.tags?.length ? r.tags.join(', ') : '—'}</div>

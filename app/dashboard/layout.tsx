@@ -20,14 +20,14 @@ const DashboardHeader = ({ user, onLogout }: { user: any, onLogout: () => void }
   const packageEndsAt = user?.subscription?.packageEndsAt ? new Date(user.subscription.packageEndsAt) : null
   const now = new Date()
   
-  // Determine which expiration date to use
-  const expirationDate = user?.subscription?.type === 'paid_package' ? packageEndsAt : trialEndsAt
+  // Determine which expiration date to use (include enterprise packages)
+  const expirationDate = (user?.subscription?.type === 'paid_package' || user?.subscription?.type === 'enterprise_package') ? packageEndsAt : trialEndsAt
   const msLeft = expirationDate ? (expirationDate.getTime() - now.getTime()) : null
   const daysLeft = typeof msLeft === 'number' ? Math.ceil(msLeft / (1000 * 60 * 60 * 24)) : null
   
   const trialActive = user?.subscription?.type === 'free_trial' && user?.subscription?.status === 'active'
-  const packageActive = user?.subscription?.type === 'paid_package' && user?.subscription?.status === 'active'
-  const shouldShowExpiration = (trialActive || packageActive) && user?.role === 'individual'
+  const packageActive = (user?.subscription?.type === 'paid_package' || user?.subscription?.type === 'enterprise_package') && user?.subscription?.status === 'active'
+  const shouldShowExpiration = (trialActive || packageActive) && (user?.role === 'individual' || user?.role === 'enterprise_admin') && !!expirationDate
 
   function formatDate(d?: Date | null) {
     if (!d) return ''

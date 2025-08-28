@@ -127,6 +127,8 @@ export async function POST(req: NextRequest) {
                 suspiciousName: fraudsterName,
                 suspiciousCompany: fraudsterCompany,
                 amount: actualLoss ? Number(actualLoss) : undefined,
+                attemptedAmount: attemptedLoss !== '' && attemptedLoss !== undefined && attemptedLoss !== null ? Number(attemptedLoss) : undefined,
+                attemptedLoss: attemptedLoss !== '' && attemptedLoss !== undefined && attemptedLoss !== null ? Number(attemptedLoss) : undefined,
                 currency: currency || 'USD',
                 date: incidentDate ? new Date(incidentDate) : undefined,
             },

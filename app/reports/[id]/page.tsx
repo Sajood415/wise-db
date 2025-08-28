@@ -11,6 +11,9 @@ export default async function ReportDetailPage({ params }: { params: Promise<{ i
   const raw = await Fraud.findById(id).lean()
   if (!raw || Array.isArray(raw)) notFound()
   const r = raw as any
+  const attemptedInfo = typeof r?.evidence?.additionalInfo === 'string'
+    ? (r.evidence.additionalInfo.split(' | ').find((p: string) => p.startsWith('Attempted Loss: ')) || '').slice('Attempted Loss: '.length)
+    : ''
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-4xl mx-auto px-4">
@@ -29,6 +32,7 @@ export default async function ReportDetailPage({ params }: { params: Promise<{ i
               <div className="text-sm text-gray-700 space-y-1">
                 <div><span className="font-medium">Type:</span> {r.type}</div>
                 <div><span className="font-medium">Loss:</span> {r.fraudsterDetails?.amount ? `${r.fraudsterDetails.amount} ${r.fraudsterDetails.currency || 'USD'}` : 'N/A'}</div>
+                <div><span className="font-medium">Attempted Loss:</span> {typeof (r.fraudsterDetails?.attemptedAmount ?? r.fraudsterDetails?.attemptedLoss) === 'number' ? `${(r.fraudsterDetails?.attemptedAmount ?? r.fraudsterDetails?.attemptedLoss)} ${r.fraudsterDetails?.currency || 'USD'}` : (attemptedInfo ? `${attemptedInfo} ${r.fraudsterDetails?.currency || 'USD'}` : 'N/A')}</div>
                 <div><span className="font-medium">Date:</span> {r.fraudsterDetails?.date ? new Date(r.fraudsterDetails.date).toLocaleDateString() : 'N/A'}</div>
               </div>
             </div>
