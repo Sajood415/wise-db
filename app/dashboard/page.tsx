@@ -213,8 +213,8 @@ export default function DashboardPage() {
         email: searchForm.email || undefined,
         phone: searchForm.phone || undefined,
       }
-      const min = Number(searchForm.minAmount)
-      const max = Number(searchForm.maxAmount)
+      const min = parseFloat(searchForm.minAmount)
+      const max = parseFloat(searchForm.maxAmount)
       if (!Number.isNaN(min)) payload.minAmount = min
       if (!Number.isNaN(max)) payload.maxAmount = max
       const res = await fetch('/api/search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })

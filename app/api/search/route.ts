@@ -49,7 +49,6 @@ export async function POST(request: NextRequest) {
         const body = await request.json()
         const { q, type, severity, email, phone, minAmount, maxAmount } = (body || {}) as SearchQuery
 
-        const isUnlimited = user.subscription.searchLimit === -1
         const trialExpired = user.isTrialExpired()
         if (user.subscription?.type === 'free_trial' && user.subscription?.trialEndsAt && trialExpired && user.subscription.status !== 'expired') {
             user.subscription.status = 'expired'
@@ -57,9 +56,22 @@ export async function POST(request: NextRequest) {
         }
 
         const isFreeTrial = user.subscription?.type === 'free_trial'
-        const used = user.subscription.searchesUsed || 0
-        const limit = user.subscription.searchLimit || 0
-        if ((user.role === 'individual' && isFreeTrial && trialExpired) || (!isUnlimited && used >= limit)) {
+
+        // Determine effective quota (enterprise_user uses creator's quota)
+        let effectiveUsed = user.subscription.searchesUsed || 0
+        let effectiveLimit = typeof user.subscription.searchLimit === 'number' ? user.subscription.searchLimit : 0
+        if (user.role === 'enterprise_user' && user.createdBy) {
+            try {
+                const admin: any = await User.findById(user.createdBy)
+                if (admin && admin.subscription) {
+                    effectiveUsed = admin.subscription.searchesUsed || 0
+                    effectiveLimit = typeof admin.subscription.searchLimit === 'number' ? admin.subscription.searchLimit : 0
+                }
+            } catch { }
+        }
+
+        const isUnlimited = effectiveLimit === -1
+        if ((user.role === 'individual' && isFreeTrial && trialExpired) || (!isUnlimited && effectiveUsed >= effectiveLimit)) {
             const msg = (user.role === 'individual' && isFreeTrial && trialExpired)
                 ? 'Your free trial has expired. Upgrade to continue searching.'
                 : 'You have reached your search limit. Upgrade to continue searching.'
@@ -73,7 +85,7 @@ export async function POST(request: NextRequest) {
 
         if (canUseReal) {
             const filter = buildFilter({ q, type, severity, email, phone, minAmount, maxAmount })
-            results = await Fraud.find(filter).sort({ createdAt: -1 }).limit(50).lean()
+            results = await Fraud.find(filter).sort({ _id: -1 }).limit(50).lean()
         } else {
             // Dummy data
             const filePath = path.join(process.cwd(), 'data', 'dummy-frauds.json')
@@ -94,7 +106,7 @@ export async function POST(request: NextRequest) {
             }).slice(0, 50)
         }
 
-        // Increment search usage
+        // Increment search usage (enterprise_user deducts from creator/admin)
         if (!isUnlimited) {
             if (user.role === 'enterprise_user' && user.createdBy) {
                 // Deduct from enterprise admin (creator)
@@ -104,6 +116,11 @@ export async function POST(request: NextRequest) {
                         admin.subscription.searchesUsed = (admin.subscription.searchesUsed || 0) + 1
                         await admin.save()
                     }
+                } catch { }
+                // Also track this user's personal search count
+                try {
+                    user.subscription.searchesUsed = (user.subscription.searchesUsed || 0) + 1
+                    await user.save()
                 } catch { }
             } else {
                 user.subscription.searchesUsed = (user.subscription.searchesUsed || 0) + 1
@@ -122,11 +139,19 @@ export async function POST(request: NextRequest) {
             source: canUseReal ? 'real' : 'dummy',
         })
 
+        // Respond with effective quota values for UI
+        const responseSearchesUsed = (user.role === 'enterprise_user' && user.createdBy)
+            ? (isUnlimited ? effectiveUsed : effectiveUsed + 1)
+            : user.subscription.searchesUsed
+        const responseSearchLimit = (user.role === 'enterprise_user' && user.createdBy)
+            ? effectiveLimit
+            : user.subscription.searchLimit
+
         return NextResponse.json({
             source: canUseReal ? 'real' : 'dummy',
             items: results,
-            searchesUsed: user.subscription.searchesUsed,
-            searchLimit: user.subscription.searchLimit,
+            searchesUsed: responseSearchesUsed,
+            searchLimit: responseSearchLimit,
         })
     } catch (error) {
         console.error('Search error:', error)

@@ -25,29 +25,32 @@ export async function GET(request: NextRequest) {
         }
 
         const sub = user.subscription || {}
-        let remaining = typeof sub.searchLimit === 'number' && sub.searchLimit >= 0
-            ? Math.max(0, (sub.searchLimit || 0) - (sub.searchesUsed || 0))
-            : -1
 
-        // For enterprise_user, reflect creator's remaining if exists
+        // Defaults to the user's own subscription
+        let effectiveUsed = sub.searchesUsed || 0
+        let effectiveLimit = typeof sub.searchLimit === 'number' ? sub.searchLimit : -1
+
+        // For enterprise_user, reflect creator's quota if exists
         if (user.role === 'enterprise_user' && user.createdBy) {
             try {
                 const admin: any = await User.findById(user.createdBy)
                 if (admin && admin.subscription) {
-                    const aSub = admin.subscription
-                    remaining = typeof aSub.searchLimit === 'number' && aSub.searchLimit >= 0
-                        ? Math.max(0, (aSub.searchLimit || 0) - (aSub.searchesUsed || 0))
-                        : -1
+                    effectiveUsed = admin.subscription.searchesUsed || 0
+                    effectiveLimit = typeof admin.subscription.searchLimit === 'number' ? admin.subscription.searchLimit : -1
                 }
             } catch { }
         }
+
+        const remaining = effectiveLimit >= 0
+            ? Math.max(0, (effectiveLimit || 0) - (effectiveUsed || 0))
+            : -1
 
         return NextResponse.json({
             type: sub.type,
             status: sub.status,
             canAccessRealData: sub.canAccessRealData,
-            searchesUsed: sub.searchesUsed || 0,
-            searchLimit: user.role === 'enterprise_user' ? (undefined as any) : (sub.searchLimit ?? -1),
+            searchesUsed: effectiveUsed,
+            searchLimit: effectiveLimit,
             remainingSearches: remaining,
             isTrialExpired: user.subscription?.type === 'free_trial' && user.subscription?.trialEndsAt ? (new Date() > new Date(user.subscription.trialEndsAt)) : false,
             packageName: (user as any).packageName || null,

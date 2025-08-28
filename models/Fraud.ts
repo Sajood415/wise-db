@@ -186,5 +186,7 @@ FraudSchema.index({ 'fraudsterDetails.suspiciousEmail': 1 });
 FraudSchema.index({ 'fraudsterDetails.suspiciousPhone': 1 });
 FraudSchema.index({ 'fraudsterDetails.suspiciousWebsite': 1 });
 FraudSchema.index({ tags: 1 });
+// Ensure efficient sorting by createdAt for search route
+FraudSchema.index({ createdAt: -1 });
 
 export default mongoose.models.Fraud || mongoose.model<IFraud>('Fraud', FraudSchema);

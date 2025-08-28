@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import dbConnect from '@/lib/mongodb'
 import User from '@/models/User'
+import EnterpriseRequest from '@/models/EnterpriseRequest'
 import SearchLog from '@/models/SearchLog'
 
 // GET: list enterprise users for current enterprise admin
@@ -30,20 +31,10 @@ export async function GET(request: NextRequest) {
             User.countDocuments(filter)
         ])
 
-        // Compute per-user search counts from SearchLog
-        const userIds = items.map((u: any) => u._id)
-        let counts: Array<{ _id: any; count: number }> = []
-        if (userIds.length) {
-            counts = await SearchLog.aggregate([
-                { $match: { user: { $in: userIds } } },
-                { $group: { _id: '$user', count: { $sum: 1 } } }
-            ]) as any
-        }
-        const idToCount = new Map<string, number>(counts.map(c => [String(c._id), c.count]))
-
+        // Use stored per-user subscription.searchesUsed for personal counts
         const itemsWithCounts = items.map((u: any) => ({
             ...u,
-            searchCount: idToCount.get(String(u._id)) || 0,
+            searchCount: (u.subscription?.searchesUsed as number) || 0,
         }))
 
         return NextResponse.json({ items: itemsWithCounts, pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } })
@@ -69,6 +60,20 @@ export async function POST(request: NextRequest) {
 
         const admin = await User.findById(adminId)
         if (!admin) return NextResponse.json({ error: 'Admin not found' }, { status: 404 })
+
+        // Enforce allowanceUsers limit based on EnterpriseRequest
+        try {
+            // Find the latest paid enterprise request for this admin email
+            const er: any = await EnterpriseRequest.findOne({ enterpriseAdminEmail: admin.email, paymentReceived: true })
+                .sort({ createdAt: -1 })
+                .lean()
+            if (er && typeof er.allowanceUsers === 'number' && er.allowanceUsers >= 0) {
+                const currentUsers = await User.countDocuments({ createdBy: admin._id, role: 'enterprise_user' })
+                if (currentUsers >= er.allowanceUsers) {
+                    return NextResponse.json({ error: 'User limit reached for your enterprise plan' }, { status: 403 })
+                }
+            }
+        } catch { /* ignore and proceed if lookup fails */ }
 
         const existing = await User.findOne({ email: String(email).toLowerCase() }).lean()
         if (existing) return NextResponse.json({ error: 'User with this email already exists' }, { status: 400 })

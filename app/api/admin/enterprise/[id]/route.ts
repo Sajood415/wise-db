@@ -96,6 +96,28 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
         ).lean()
         if (!doc) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
+        // Validate required fields when touching payment/pricing
+        const touchedPaymentOrPricing = ['paymentReceived', 'paymentMethod', 'paymentTxnId', 'paymentTxnDate', 'paymentNotes', 'pricingAmount', 'pricingCurrency', 'allowanceSearches', 'allowanceUsers']
+            .some((k) => Object.prototype.hasOwnProperty.call(body, k))
+        if (touchedPaymentOrPricing) {
+            const amountNum = body.pricingAmount !== undefined ? Number(body.pricingAmount) : undefined
+            const currencyStr = body.pricingCurrency !== undefined ? String(body.pricingCurrency) : undefined
+            const searchesNum = body.allowanceSearches !== undefined ? Number(body.allowanceSearches) : undefined
+            const usersNum = body.allowanceUsers !== undefined ? Number(body.allowanceUsers) : undefined
+            if (amountNum !== undefined && !(amountNum > 0)) {
+                return NextResponse.json({ error: 'Amount must be greater than 0' }, { status: 400 })
+            }
+            if (currencyStr !== undefined && !currencyStr.trim()) {
+                return NextResponse.json({ error: 'Currency is required' }, { status: 400 })
+            }
+            if (searchesNum !== undefined && !(searchesNum >= 1)) {
+                return NextResponse.json({ error: 'Searches Included must be ≥ 1' }, { status: 400 })
+            }
+            if (usersNum !== undefined && !(usersNum >= 1)) {
+                return NextResponse.json({ error: 'Users Allowed must be ≥ 1' }, { status: 400 })
+            }
+        }
+
         // If manual payment or pricing fields were updated, record a payment entry
         const touchedPaymentFields = ['paymentReceived', 'paymentMethod', 'paymentTxnId', 'paymentTxnDate', 'paymentNotes', 'pricingAmount', 'pricingCurrency', 'allowanceSearches', 'allowanceUsers']
             .some((k) => Object.prototype.hasOwnProperty.call(body, k))

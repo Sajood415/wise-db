@@ -304,42 +304,56 @@ export default function EnterpriseRequestDetail({ params }: { params: Params }) 
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs text-gray-600 mb-1">Amount</label>
+                <label className="block text-xs text-gray-600 mb-1">Amount <span className="text-red-600">*</span></label>
                 <input value={String(stripeForm.pricingAmount ?? '')} onChange={(e)=> setStripeForm(f=>({...f, pricingAmount: e.target.value}))} className="w-full border rounded-md px-3 py-2 text-sm text-black" placeholder="0.00" />
+                {(!(Number(stripeForm.pricingAmount) > 0)) && <p className="mt-1 text-xs text-red-600">Enter a valid amount greater than 0.</p>}
               </div>
               <div>
-                <label className="block text-xs text-gray-600 mb-1">Currency</label>
+                <label className="block text-xs text-gray-600 mb-1">Currency <span className="text-red-600">*</span></label>
                 <input value={stripeForm.pricingCurrency || ''} onChange={(e)=> setStripeForm(f=>({...f, pricingCurrency: e.target.value}))} className="w-full border rounded-md px-3 py-2 text-sm text-black" placeholder="USD" />
+                {(!(stripeForm.pricingCurrency || '').toString().trim()) && <p className="mt-1 text-xs text-red-600">Currency is required.</p>}
               </div>
               <div>
-                <label className="block text-xs text-gray-600 mb-1">Searches Included</label>
+                <label className="block text-xs text-gray-600 mb-1">Searches Included <span className="text-red-600">*</span></label>
                 <input value={String(stripeForm.allowanceSearches ?? '')} onChange={(e)=> setStripeForm(f=>({...f, allowanceSearches: e.target.value}))} className="w-full border rounded-md px-3 py-2 text-sm text-black" placeholder="e.g. 10000" />
+                {(!(Number(stripeForm.allowanceSearches) >= 1)) && <p className="mt-1 text-xs text-red-600">Must be a number ≥ 1.</p>}
               </div>
               <div>
-                <label className="block text-xs text-gray-600 mb-1">Users Allowed</label>
+                <label className="block text-xs text-gray-600 mb-1">Users Allowed <span className="text-red-600">*</span></label>
                 <input value={String(stripeForm.allowanceUsers ?? '')} onChange={(e)=> setStripeForm(f=>({...f, allowanceUsers: e.target.value}))} className="w-full border rounded-md px-3 py-2 text-sm text-black" placeholder="e.g. 25" />
+                {(!(Number(stripeForm.allowanceUsers) >= 1)) && <p className="mt-1 text-xs text-red-600">Must be a number ≥ 1.</p>}
               </div>
               
             </div>
             <div className="flex justify-end gap-2 mt-4">
               <button onClick={()=> setStripeOpen(false)} className="px-4 py-2 rounded-md border text-gray-700">Cancel</button>
-              <button onClick={async()=>{
-                const payload = {
-                  pricingAmount: Number(stripeForm.pricingAmount || 0),
-                  pricingCurrency: (stripeForm.pricingCurrency || 'USD').toUpperCase(),
-                  allowanceSearches: Number(stripeForm.allowanceSearches || 0),
-                  allowanceUsers: Number(stripeForm.allowanceUsers || 0),
-                  enterpriseAdminEmail: item.enterpriseAdminEmail || item.businessEmail,
-                }
-                const res = await fetch(`/api/admin/enterprise/${enterpriseId}/create-checkout`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-user-role': 'super_admin' }, body: JSON.stringify(payload) })
-                const data = await res.json()
-                if (!res.ok) { showToast(data?.error || 'Failed to create Stripe session', 'error'); return }
-                setItem(data.item)
-                setStripeOpen(false)
-                if (data.sessionUrl) {
-                  try { await navigator.clipboard.writeText(data.sessionUrl); showToast('Checkout link copied to clipboard', 'success') } catch { showToast('Checkout link created', 'success') }
-                }
-              }} className="px-4 py-2 rounded-md bg-gray-900 text-white">Create Link</button>
+              {(() => {
+                const amountValid = Number(stripeForm.pricingAmount) > 0
+                const currencyValid = Boolean((stripeForm.pricingCurrency || '').toString().trim())
+                const searchesValid = Number(stripeForm.allowanceSearches) >= 1
+                const usersValid = Number(stripeForm.allowanceUsers) >= 1
+                const canSubmit = amountValid && currencyValid && searchesValid && usersValid
+                return (
+                  <button disabled={!canSubmit} onClick={async()=>{
+                    if (!canSubmit) return
+                    const payload = {
+                      pricingAmount: Number(stripeForm.pricingAmount),
+                      pricingCurrency: (stripeForm.pricingCurrency || 'USD').toUpperCase(),
+                      allowanceSearches: Number(stripeForm.allowanceSearches),
+                      allowanceUsers: Number(stripeForm.allowanceUsers),
+                      enterpriseAdminEmail: item.enterpriseAdminEmail || item.businessEmail,
+                    }
+                    const res = await fetch(`/api/admin/enterprise/${enterpriseId}/create-checkout`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-user-role': 'super_admin' }, body: JSON.stringify(payload) })
+                    const data = await res.json()
+                    if (!res.ok) { showToast(data?.error || 'Failed to create Stripe session', 'error'); return }
+                    setItem(data.item)
+                    setStripeOpen(false)
+                    if (data.sessionUrl) {
+                      try { await navigator.clipboard.writeText(data.sessionUrl); showToast('Checkout link copied to clipboard', 'success') } catch { showToast('Checkout link created', 'success') }
+                    }
+                  }} className={`px-4 py-2 rounded-md text-white ${canSubmit ? 'bg-gray-900' : 'bg-gray-400 cursor-not-allowed'}`}>Create Link</button>
+                )
+              })()}
             </div>
           </div>
         </div>
@@ -363,12 +377,18 @@ export default function EnterpriseRequestDetail({ params }: { params: Params }) 
                 <input value={manualForm.pricingCurrency || 'USD'} onChange={(e)=> setManualForm(f=>({...f, pricingCurrency: e.target.value}))} className="w-full border rounded-md px-3 py-2 text-sm text-black" placeholder="USD" />
               </div>
               <div>
-                <label className="block text-xs text-gray-600 mb-1">Searches Included</label>
+                <label className="block text-xs text-gray-600 mb-1">Searches Included <span className="text-red-600">*</span></label>
                 <input value={String(manualForm.allowanceSearches ?? '')} onChange={(e)=> setManualForm(f=>({...f, allowanceSearches: e.target.value}))} className="w-full border rounded-md px-3 py-2 text-sm text-black" placeholder="e.g. 10000" />
+                {((Number.isNaN(Number(manualForm.allowanceSearches)) || Number(manualForm.allowanceSearches) < 1)) && (
+                  <p className="mt-1 text-xs text-red-600">Must be a number ≥ 1.</p>
+                )}
               </div>
               <div>
-                <label className="block text-xs text-gray-600 mb-1">Users Allowed</label>
+                <label className="block text-xs text-gray-600 mb-1">Users Allowed <span className="text-red-600">*</span></label>
                 <input value={String(manualForm.allowanceUsers ?? '')} onChange={(e)=> setManualForm(f=>({...f, allowanceUsers: e.target.value}))} className="w-full border rounded-md px-3 py-2 text-sm text-black" placeholder="e.g. 25" />
+                {((Number.isNaN(Number(manualForm.allowanceUsers)) || Number(manualForm.allowanceUsers) < 1)) && (
+                  <p className="mt-1 text-xs text-red-600">Must be a number ≥ 1.</p>
+                )}
               </div>
               <div>
                 <label className="block text-xs text-gray-600 mb-1">Payment Method</label>
@@ -398,7 +418,12 @@ export default function EnterpriseRequestDetail({ params }: { params: Params }) 
             </div>
             <div className="flex justify-end gap-2 mt-4">
               <button onClick={()=> setManualOpen(false)} className="px-4 py-2 rounded-md border text-gray-700">Cancel</button>
-              <button onClick={async()=>{
+              <button
+                disabled={(
+                  Number.isNaN(Number(manualForm.allowanceSearches)) || Number(manualForm.allowanceSearches) < 1 ||
+                  Number.isNaN(Number(manualForm.allowanceUsers)) || Number(manualForm.allowanceUsers) < 1
+                )}
+                onClick={async()=>{
                 await patch({
                   paymentMethod: manualForm.paymentMethod || null,
                   paymentTxnId: manualForm.paymentTxnId || '',
@@ -412,7 +437,12 @@ export default function EnterpriseRequestDetail({ params }: { params: Params }) 
                 })
                 showToast('Manual payment saved', 'success')
                 setManualOpen(false)
-              }} className="px-4 py-2 rounded-md bg-gray-900 text-white">Save</button>
+              }}
+                className={`px-4 py-2 rounded-md text-white ${(
+                  !Number.isNaN(Number(manualForm.allowanceSearches)) && Number(manualForm.allowanceSearches) >= 1 &&
+                  !Number.isNaN(Number(manualForm.allowanceUsers)) && Number(manualForm.allowanceUsers) >= 1
+                ) ? 'bg-gray-900' : 'bg-gray-400 cursor-not-allowed'}`}
+              >Save</button>
             </div>
           </div>
         </div>

@@ -28,7 +28,16 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         const enterpriseAdminEmail = String(body.enterpriseAdminEmail || existing.enterpriseAdminEmail || existing.businessEmail)
 
         if (!pricingAmount || pricingAmount <= 0) {
-            return NextResponse.json({ error: 'Invalid amount' }, { status: 400 })
+            return NextResponse.json({ error: 'Amount must be greater than 0' }, { status: 400 })
+        }
+        if (!pricingCurrency || !String(pricingCurrency).trim()) {
+            return NextResponse.json({ error: 'Currency is required' }, { status: 400 })
+        }
+        if (!(allowanceSearches >= 1)) {
+            return NextResponse.json({ error: 'Searches Included must be ≥ 1' }, { status: 400 })
+        }
+        if (!(allowanceUsers >= 1)) {
+            return NextResponse.json({ error: 'Users Allowed must be ≥ 1' }, { status: 400 })
         }
 
         const session = await stripe.checkout.sessions.create({
