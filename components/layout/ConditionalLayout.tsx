@@ -17,7 +17,7 @@ function LayoutInner({ children }: { children: React.ReactNode }) {
     '/searches',
     '/my-reports',
     '/subscription',
-    '/enterprise',
+    '/enterprise/dashboard',
   ]
 
   const isDashboardRoute = dashboardRoutes.some((route) => pathname.startsWith(route))
@@ -34,7 +34,7 @@ function LayoutInner({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Header />
-      <main className="pt-16">{children}</main>
+      <main className="pt-[68px]">{children}</main>
       <Footer />
     </>
   )

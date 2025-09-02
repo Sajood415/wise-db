@@ -66,23 +66,17 @@ function LoginPageInner() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-100/20 via-transparent to-purple-100/20"></div>
-      <div className="absolute top-10 left-10 w-20 h-20 bg-gradient-to-br from-blue-200 to-blue-300 rounded-full opacity-30 animate-float"></div>
-      <div className="absolute bottom-10 right-10 w-32 h-32 bg-gradient-to-br from-purple-200 to-purple-300 rounded-full opacity-20 animate-float-delayed"></div>
-      <div className="absolute top-1/4 right-1/4 w-16 h-16 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full opacity-25 animate-float" style={{ animationDelay: '1s' }}></div>
-      
-      <div className="max-w-md w-full space-y-8 relative z-10">
+    <div className="min-h-screen bg-gradient-to-br from-[#1c2736] via-[#006d5b]/10 to-[#43d49d]/5 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full mb-6 shadow-lg">
-            <span className="text-2xl">🛡️</span>
+          <div className="inline-flex items-center justify-center w-12 h-12 bg-[#006d5b] rounded-lg mb-4 shadow-sm">
+            <span className="text-white font-bold text-sm">WD</span>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
-          <p className="text-gray-600">Sign in to your WiseDB account</p>
+          <h2 className="text-3xl font-bold text-white mb-2">Welcome Back</h2>
+          <p className="text-gray-200">Sign in to your WiseDB account</p>
         </div>
 
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-xl border border-white/50 p-8">
+        <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8">
                      <form className="space-y-6" onSubmit={handleSubmit}>
              {error && (
                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
@@ -101,7 +95,7 @@ function LoginPageInner() {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/90 text-black"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] transition-all duration-200 bg-white text-black"
                 placeholder="john@example.com"
               />
             </div>
@@ -118,7 +112,7 @@ function LoginPageInner() {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 pr-14 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/90 text-black"
+                  className="w-full px-4 py-3 pr-14 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] transition-all duration-200 bg-white text-black"
                   placeholder="••••••••"
                 />
                 <button
@@ -146,27 +140,22 @@ function LoginPageInner() {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+              className="btn-primary w-full py-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <div className="flex items-center">
                   <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
-                  Signing In...
+                  Signing in...
                 </div>
               ) : (
-                <>
-                  🔐 Sign In
-                  <svg className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                </>
+                <>Sign In</>
               )}
             </button>
 
                          <div className="text-center">
                <p className="text-sm text-gray-600">
                  Don't have an account?{' '}
-                 <Link href="/signup" className="text-blue-600 hover:text-blue-800 font-medium hover:underline transition-colors duration-200">
+                 <Link href="/signup" className="text-[#006d5b] hover:text-[#1c2736] font-medium hover:underline transition-colors duration-200">
                    Sign up
                  </Link>
                </p>

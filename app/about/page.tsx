@@ -212,9 +212,9 @@ export default function About() {
               </div>
             </div>
             <div className="relative">
-              <div className="bg-gradient-to-br from-blue-400 to-purple-600 rounded-2xl p-8 text-white">
+              <div className="bg-gradient-to-br from-[#006d5b] to-[#43d49d] rounded-2xl p-8 text-white">
                 <h3 className="text-2xl font-bold mb-4">Our Vision</h3>
-                <p className="text-blue-100 mb-6">
+                <p className="text-white/80 mb-6">
                   A world where fraud is eliminated through collaborative
                   intelligence, advanced technology, and shared responsibility.
                 </p>
@@ -319,7 +319,7 @@ export default function About() {
       </section>
 
       {/* Values Section */}
-      <section className="py-20 bg-gradient-to-br from-blue-900 to-purple-900 text-white">
+      <section className="py-20 bg-gradient-to-br from-[#1c2736] to-[#006d5b] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Values</h2>
@@ -403,20 +403,26 @@ export default function About() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-[#006d5b]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Ready to Join Our Mission?
           </h2>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-[#d7f6ea] mb-8 max-w-2xl mx-auto">
             Be part of the global effort to combat fraud and protect businesses
             worldwide.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/signup" className="btn-primary">
+            <Link
+              href="/signup"
+              className="bg-white text-[#006d5b] hover:bg-[#d7f6ea] font-semibold py-3 px-8 rounded-lg transition-colors duration-200 shadow-sm"
+            >
               Get Started Today
             </Link>
-            <Link href="/help" className="btn-secondary">
+            <Link
+              href="/help"
+              className="border-2 border-white text-white hover:bg-white hover:text-[#006d5b] font-semibold py-3 px-8 rounded-lg transition-colors duration-200"
+            >
               Contact Our Team
             </Link>
           </div>

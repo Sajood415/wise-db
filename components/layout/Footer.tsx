@@ -19,7 +19,6 @@ const Footer = () => {
       links: [
         { name: "Report Fraud", href: "/report-fraud" },
         { name: "Enterprise Solutions", href: "/enterprise" },
-        { name: "API Access", href: "/api-docs" },
       ],
     },
     support: {
@@ -31,14 +30,14 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-[#1c2736] text-white">
       {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand Section */}
           <div className="lg:col-span-1">
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[#006d5b]">
                 <span className="text-white font-bold text-sm">WD</span>
               </div>
               <span className="text-xl font-bold">Wise DB</span>

@@ -9,6 +9,7 @@ const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
   const pathname = usePathname();
 
   const navigation = [
@@ -67,15 +68,19 @@ const Header = () => {
   // Don't render until we know auth status
   if (isLoading) {
     return (
-      <header className="fixed top-0 left-0 right-0 z-50 glass-effect">
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ease-in-out ${isHovered ? 'bg-[#1c2736]' : 'bg-white border-b border-gray-100'}`}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-[68px]">
             <div className="flex-shrink-0">
               <Link href="/" className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[#006d5b]">
                   <span className="text-white font-bold text-sm">WD</span>
                 </div>
-                <span className="text-xl font-bold gradient-text">Wise DB</span>
+                <span className={`text-xl font-bold ${isHovered ? 'text-white' : 'text-[#1c2736]'}`}>Wise DB</span>
               </Link>
             </div>
           </div>
@@ -85,16 +90,20 @@ const Header = () => {
   }
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 glass-effect">
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ease-in-out ${isHovered ? 'bg-[#1c2736]' : 'bg-white border-b border-gray-100'}`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-[68px]">
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[#006d5b]">
                 <span className="text-white font-bold text-sm">WD</span>
               </div>
-              <span className="text-xl font-bold gradient-text">Wise DB</span>
+              <span className={`text-xl font-bold ${isHovered ? 'text-white' : 'text-[#1c2736]'}`}>Wise DB</span>
             </Link>
           </div>
 
@@ -107,13 +116,14 @@ const Header = () => {
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`px-3 py-2 text-sm font-medium transition-colors duration-200 ${
-                      isActive
-                        ? "text-blue-600 bg-blue-50 rounded-md"
-                        : "text-gray-700 hover:text-blue-600"
+                    className={`group inline-flex flex-col items-center px-3 py-2 text-sm font-medium transition-colors duration-200 ${
+                      isHovered
+                        ? (isActive ? 'text-white' : 'text-white/80 hover:text-white')
+                        : (isActive ? 'text-[#1c2736]' : 'text-[#1c2736]/80 hover:text-[#1c2736]')
                     }`}
                   >
-                    {item.name}
+                    <span>{item.name}</span>
+                    <span className={`${isActive ? "w-8 opacity-100" : "w-0 opacity-0 group-hover:w-6 group-hover:opacity-100"} h-0.5 rounded bg-[#f6c14b] mt-1 transition-all`}></span>
                   </Link>
                 );
               })}
@@ -125,7 +135,7 @@ const Header = () => {
             {isLoggedIn ? (
               <Link
                 href={getDashboardPath(userRole)}
-                className="btn-primary text-sm"
+                className="text-sm font-semibold bg-[#43d49d] text-[#1c2736] hover:bg-[#3bc58f] px-4 py-2 rounded-lg transition-colors"
               >
                 Dashboard
               </Link>
@@ -133,11 +143,11 @@ const Header = () => {
               <>
                 <Link
                   href="/login"
-                  className="text-blue-600 hover:text-blue-700 px-3 py-2 text-sm font-medium transition-colors duration-200"
+                  className={`px-3 py-2 text-sm font-medium transition-colors duration-200 ${isHovered ? 'text-white/80 hover:text-white' : 'text-[#006d5b] hover:text-[#1c2736]'}`}
                 >
                   Sign In
                 </Link>
-                <Link href="/signup" className="btn-primary text-sm">
+                <Link href="/signup" className="text-sm font-semibold bg-[#43d49d] text-[#1c2736] hover:bg-[#3bc58f] px-4 py-2 rounded-lg transition-colors">
                   Get Started
                 </Link>
               </>
@@ -148,7 +158,7 @@ const Header = () => {
           <div className="md:hidden">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-gray-700 hover:text-blue-600 focus:outline-none focus:text-blue-600 transition-colors duration-200"
+              className={`${isHovered ? 'text-white/80 hover:text-white focus:text-white' : 'text-[#1c2736]/80 hover:text-[#1c2736] focus:text-[#1c2736]'} focus:outline-none transition-colors duration-200`}
             >
               <svg
                 className="h-6 w-6"
@@ -179,7 +189,7 @@ const Header = () => {
         {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
           <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 bg-white dark:bg-slate-800 rounded-lg mt-2 border border-gray-200 dark:border-gray-700 shadow-lg">
+            <div className={`px-2 pt-2 pb-3 space-y-1 rounded-lg mt-2 shadow-lg ${isHovered ? 'bg-[#1c2736] border border-white/10' : 'bg-white border border-gray-200'}`}>
               {navigation.map((item) => {
                 const isActive = pathname === item.href;
                 return (
@@ -187,9 +197,9 @@ const Header = () => {
                     key={item.name}
                     href={item.href}
                     className={`block px-3 py-2 text-base font-medium transition-colors duration-200 ${
-                      isActive
-                        ? "text-blue-600 bg-blue-50 rounded-md"
-                        : "text-gray-900 dark:text-white hover:text-blue-600"
+                      isHovered
+                        ? (isActive ? 'text-white' : 'text-white/80 hover:text-white')
+                        : (isActive ? 'text-[#1c2736]' : 'text-[#1c2736]/80 hover:text-[#1c2736]')
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -197,11 +207,11 @@ const Header = () => {
                   </Link>
                 );
               })}
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-3 mt-3">
+              <div className={`${isHovered ? 'border-t border-white/10' : 'border-t border-gray-200'} pt-3 mt-3`}>
                 {isLoggedIn ? (
                   <Link
                     href={getDashboardPath(userRole)}
-                    className="btn-primary block text-center mt-2 mx-3"
+                    className="block text-center mt-2 mx-3 text-sm font-semibold bg-[#43d49d] text-[#1c2736] hover:bg-[#3bc58f] px-4 py-2 rounded-lg transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Dashboard
@@ -210,14 +220,14 @@ const Header = () => {
                   <>
                     <Link
                       href="/login"
-                      className="text-blue-600 hover:text-blue-700 block px-3 py-2 text-base font-medium transition-colors duration-200"
+                      className={`block px-3 py-2 text-base font-medium transition-colors duration-200 ${isHovered ? 'text-white/80 hover:text-white' : 'text-[#1c2736]/80 hover:text-[#1c2736]'}`}
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Sign In
                     </Link>
                     <Link
                       href="/signup"
-                      className="btn-primary block text-center mt-2 mx-3"
+                      className="block text-center mt-2 mx-3 text-sm font-semibold bg-[#43d49d] text-[#1c2736] hover:bg-[#3bc58f] px-4 py-2 rounded-lg transition-colors"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Get Started

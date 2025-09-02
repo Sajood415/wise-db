@@ -177,7 +177,7 @@ export default function Services() {
                     {service.features.map((feature, index) => (
                       <li key={index} className="flex items-start space-x-2">
                         <svg
-                          className="w-4 h-4 text-green-500 mt-1 flex-shrink-0"
+                          className="w-4 h-4 text-[#006d5b] mt-1 flex-shrink-0"
                           fill="currentColor"
                           viewBox="0 0 20 20"
                         >
@@ -232,7 +232,7 @@ export default function Services() {
                     {industry.useCases.map((useCase, index) => (
                       <span
                         key={index}
-                        className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full mr-2 mb-1"
+                        className="inline-block bg-[#006d5b]/10 text-[#006d5b] text-xs px-2 py-1 rounded-full mr-2 mb-1"
                       >
                         {useCase}
                       </span>
@@ -248,21 +248,21 @@ export default function Services() {
       {/* Pricing Section removed per request */}
 
       {/* API Section */}
-      <section className="py-20 bg-gradient-to-r from-gray-900 to-blue-900 text-white">
+      <section className="py-20 bg-gradient-to-r from-[#1c2736] to-[#006d5b] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold mb-6">
                 Developer-Friendly API
               </h2>
-              <p className="text-xl text-blue-100 mb-8">
+              <p className="text-xl text-[#d7f6ea] mb-8">
                 Integrate our fraud protection services directly into your
                 applications with our comprehensive RESTful API and SDKs.
               </p>
               <ul className="space-y-4 mb-8">
                 <li className="flex items-center space-x-3">
                   <svg
-                    className="w-5 h-5 text-green-400"
+                    className="w-5 h-5 text-[#43d49d]"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -276,7 +276,7 @@ export default function Services() {
                 </li>
                 <li className="flex items-center space-x-3">
                   <svg
-                    className="w-5 h-5 text-green-400"
+                    className="w-5 h-5 text-[#43d49d]"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -290,7 +290,7 @@ export default function Services() {
                 </li>
                 <li className="flex items-center space-x-3">
                   <svg
-                    className="w-5 h-5 text-green-400"
+                    className="w-5 h-5 text-[#43d49d]"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -304,7 +304,7 @@ export default function Services() {
                 </li>
                 <li className="flex items-center space-x-3">
                   <svg
-                    className="w-5 h-5 text-green-400"
+                    className="w-5 h-5 text-[#43d49d]"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -341,7 +341,7 @@ export default function Services() {
   }'`}
               </pre>
               <div className="text-sm text-gray-400 mt-4 mb-2">Response</div>
-              <pre className="text-blue-400 text-sm overflow-x-auto">
+              <pre className="text-[#d7f6ea] text-sm overflow-x-auto">
                 {`{
   "status": "verified",
   "risk_score": 15,
@@ -359,25 +359,25 @@ export default function Services() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-700">
+      <section className="py-20 bg-[#006d5b]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Ready to Protect Your Business?
           </h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-[#d7f6ea] mb-8 max-w-2xl mx-auto">
             Start with a free trial and see how our fraud protection services
             can safeguard your business operations.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/signup"
-              className="bg-white text-blue-600 hover:bg-blue-50 font-semibold py-3 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
+              className="bg-white text-[#006d5b] hover:bg-[#d7f6ea] font-semibold py-3 px-8 rounded-lg transition-colors duration-200 shadow-sm"
             >
               Start Free Trial
             </Link>
             <Link
               href="/help"
-              className="border-2 border-white text-white hover:bg-white hover:text-blue-600 font-semibold py-3 px-8 rounded-lg transition-all duration-200"
+              className="border-2 border-white text-white hover:bg-white hover:text-[#006d5b] font-semibold py-3 px-8 rounded-lg transition-colors duration-200"
             >
               Schedule Consultation
             </Link>

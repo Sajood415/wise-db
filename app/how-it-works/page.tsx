@@ -208,8 +208,8 @@ export default function HowItWorks() {
               Understanding our comprehensive fraud protection process from
               initial reporting to global intelligence sharing.
             </p>
-            <div className="inline-flex items-center px-6 py-3 rounded-full bg-green-100 text-green-800 text-lg font-medium">
-              <span className="w-3 h-3 bg-green-500 rounded-full mr-3 animate-pulse"></span>
+            <div className="inline-flex items-center px-6 py-3 rounded-full bg-[#006d5b]/10 text-[#43d49d] text-lg font-medium border border-[#006d5b]/20">
+              <span className="w-3 h-3 bg-[#006d5b] rounded-full mr-3"></span>
               95% report verification accuracy
             </div>
           </div>
@@ -240,7 +240,7 @@ export default function HowItWorks() {
                   {/* Step Card */}
                   <div className="bg-white border-2 border-gray-100 rounded-xl p-6 hover:shadow-lg transition-shadow duration-300 h-full">
                     {/* Step Number */}
-                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg mb-4 mx-auto lg:mx-0">
+                    <div className="w-16 h-16 bg-gradient-to-br from-[#006d5b] to-[#43d49d] rounded-full flex items-center justify-center text-white font-bold text-lg mb-4 mx-auto lg:mx-0">
                       {step.number}
                     </div>
 
@@ -265,7 +265,7 @@ export default function HowItWorks() {
                           key={actionIndex}
                           className="flex items-center space-x-2"
                         >
-                          <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                          <div className="w-2 h-2 bg-[#006d5b] rounded-full"></div>
                           <span className="text-sm text-gray-600">
                             {action}
                           </span>
@@ -304,7 +304,7 @@ export default function HowItWorks() {
                 <h3 className="text-2xl font-bold text-gray-900 mb-2 text-center">
                   {journey.type}
                 </h3>
-                <h4 className="text-lg font-semibold text-blue-600 mb-3 text-center">
+                <h4 className="text-lg font-semibold text-[#006d5b] mb-3 text-center">
                   {journey.title}
                 </h4>
                 <p className="text-gray-600 mb-6 text-center">
@@ -314,8 +314,8 @@ export default function HowItWorks() {
                 <div className="space-y-3">
                   {journey.steps.map((step, index) => (
                     <div key={index} className="flex items-start space-x-3">
-                      <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <span className="text-blue-600 font-semibold text-sm">
+                      <div className="w-6 h-6 bg-[#006d5b]/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-[#006d5b] font-semibold text-sm">
                           {index + 1}
                         </span>
                       </div>
@@ -333,7 +333,7 @@ export default function HowItWorks() {
                         ? "/enterprise"
                         : "/signup"
                     }
-                    className="block text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200"
+                    className="block text-center btn-primary"
                   >
                     Get Started
                   </Link>
@@ -382,14 +382,14 @@ export default function HowItWorks() {
       </section>
 
       {/* Security & Privacy */}
-      <section className="py-20 bg-gradient-to-r from-gray-900 to-blue-900 text-white">
+      <section className="py-20 bg-gradient-to-r from-[#1c2736] to-[#006d5b] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold mb-6">
                 Security & Privacy First
               </h2>
-              <p className="text-xl text-blue-100 mb-8">
+              <p className="text-xl text-[#d7f6ea] mb-8">
                 Your data security and privacy are our top priorities. We
                 implement industry-leading security measures to protect all
                 information.
@@ -397,7 +397,7 @@ export default function HowItWorks() {
 
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
-                  <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-8 h-8 bg-[#006d5b] rounded-full flex items-center justify-center flex-shrink-0">
                     <svg
                       className="w-4 h-4"
                       fill="currentColor"
@@ -414,7 +414,7 @@ export default function HowItWorks() {
                     <h3 className="font-semibold mb-2">
                       End-to-End Encryption
                     </h3>
-                    <p className="text-blue-100">
+                    <p className="text-[#d7f6ea]">
                       All data is encrypted in transit and at rest using AES-256
                       encryption.
                     </p>
@@ -422,7 +422,7 @@ export default function HowItWorks() {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-8 h-8 bg-[#006d5b] rounded-full flex items-center justify-center flex-shrink-0">
                     <svg
                       className="w-4 h-4"
                       fill="currentColor"
@@ -437,7 +437,7 @@ export default function HowItWorks() {
                   </div>
                   <div>
                     <h3 className="font-semibold mb-2">Anonymous Reporting</h3>
-                    <p className="text-blue-100">
+                    <p className="text-[#d7f6ea]">
                       Report fraud without revealing your identity or personal
                       information.
                     </p>
@@ -445,7 +445,7 @@ export default function HowItWorks() {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-8 h-8 bg-[#006d5b] rounded-full flex items-center justify-center flex-shrink-0">
                     <svg
                       className="w-4 h-4"
                       fill="currentColor"
@@ -460,7 +460,7 @@ export default function HowItWorks() {
                   </div>
                   <div>
                     <h3 className="font-semibold mb-2">Compliance Ready</h3>
-                    <p className="text-blue-100">
+                    <p className="text-[#d7f6ea]">
                       SOC 2, GDPR, and CCPA compliant with regular security
                       audits.
                     </p>
@@ -468,7 +468,7 @@ export default function HowItWorks() {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-8 h-8 bg-[#006d5b] rounded-full flex items-center justify-center flex-shrink-0">
                     <svg
                       className="w-4 h-4"
                       fill="currentColor"
@@ -483,7 +483,7 @@ export default function HowItWorks() {
                   </div>
                   <div>
                     <h3 className="font-semibold mb-2">Access Controls</h3>
-                    <p className="text-blue-100">
+                    <p className="text-[#d7f6ea]">
                       Role-based access controls and multi-factor
                       authentication.
                     </p>
@@ -498,13 +498,13 @@ export default function HowItWorks() {
               </h3>
               <div className="grid grid-cols-2 gap-6">
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <div className="w-16 h-16 bg-[#006d5b] rounded-full flex items-center justify-center mx-auto mb-3">
                     <span className="text-white font-bold">SOC</span>
                   </div>
                   <p className="text-sm">SOC 2 Type II</p>
                 </div>
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <div className="w-16 h-16 bg-[#43d49d] rounded-full flex items-center justify-center mx-auto mb-3">
                     <span className="text-white font-bold">ISO</span>
                   </div>
                   <p className="text-sm">ISO 27001</p>
@@ -587,25 +587,25 @@ export default function HowItWorks() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-700">
+      <section className="py-20 bg-[#006d5b]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Ready to Get Started?
           </h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-[#d7f6ea] mb-8 max-w-2xl mx-auto">
             Join thousands of businesses and individuals using Wise DB to fight
             fraud and protect their operations.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/report-fraud"
-              className="bg-white text-blue-600 hover:bg-blue-50 font-semibold py-3 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
+              className="bg-white text-[#006d5b] hover:bg-[#d7f6ea] font-semibold py-3 px-8 rounded-lg transition-colors duration-200 shadow-sm"
             >
               Report Fraud Now
             </Link>
             <Link
               href="/signup"
-              className="border-2 border-white text-white hover:bg-white hover:text-blue-600 font-semibold py-3 px-8 rounded-lg transition-all duration-200"
+              className="border-2 border-white text-white hover:bg-white hover:text-[#006d5b] font-semibold py-3 px-8 rounded-lg transition-colors duration-200"
             >
               Start Free Trial
             </Link>

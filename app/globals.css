@@ -1,27 +1,30 @@
 @import "tailwindcss";
 
 :root {
-  /* Primary Colors - Trust & Security */
-  --primary-blue: #1e40af;
-  --primary-navy: #1e3a8a;
-  --primary-light: #3b82f6;
-  
+  /* Primary Colors - Brand */
+  --primary-blue: #1c2736;
+  /* Navy */
+  --primary-navy: #006d5b;
+  /* Teal */
+  --primary-light: #43d49d;
+  /* Mint */
+
   /* Status Colors */
   --success: #16a34a;
   --warning: #ea580c;
   --danger: #dc2626;
   --info: #0ea5e9;
-  
+
   /* Neutral Colors */
   --text-primary: #1f2937;
   --text-secondary: #6b7280;
   --bg-light: #f3f4f6;
   --border: #e5e7eb;
-  
+
   /* Enterprise Colors */
   --enterprise: #7c3aed;
   --premium: #d97706;
-  
+
   /* Background & Foreground */
   --background: #ffffff;
   --foreground: #1f2937;
@@ -59,7 +62,7 @@ body {
 
 /* Custom Utility Classes */
 .gradient-text {
-  background: linear-gradient(to right, #1e40af, #7c3aed);
+  background: linear-gradient(to right, #006d5b, #43d49d);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -111,6 +114,7 @@ body {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -121,6 +125,7 @@ body {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -128,18 +133,24 @@ body {
 }
 
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-20px);
   }
 }
 
 @keyframes floatDelayed {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-30px);
   }

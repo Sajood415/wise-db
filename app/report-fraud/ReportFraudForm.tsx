@@ -539,9 +539,9 @@ export default function ReportFraudForm() {
                 key={step.number}
                 className={`rounded-lg border-2 p-4 transition-all duration-200 ${
                   currentStep === step.number
-                    ? "border-blue-500 bg-blue-50"
+                    ? "border-[#006d5b] bg-[#d7f6ea]"
                     : currentStep > step.number
-                    ? "border-green-500 bg-green-50"
+                    ? "border-[#43d49d] bg-[#43d49d]/10"
                     : "border-gray-200 bg-white"
                 }`}
               >
@@ -549,9 +549,9 @@ export default function ReportFraudForm() {
                   <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium mr-3 ${
                       currentStep === step.number
-                        ? "bg-blue-600 text-white"
+                        ? "bg-[#006d5b] text-white"
                         : currentStep > step.number
-                        ? "bg-green-600 text-white"
+                        ? "bg-[#43d49d] text-white"
                         : "bg-gray-200 text-gray-600"
                     }`}
                   >
@@ -574,7 +574,7 @@ export default function ReportFraudForm() {
                   <span
                     className={`text-sm font-medium ${
                       currentStep === step.number
-                        ? "text-blue-900"
+                        ? "text-[#1c2736]"
                         : "text-gray-700"
                     }`}
                   >
@@ -584,7 +584,7 @@ export default function ReportFraudForm() {
                 <h3
                   className={`font-semibold text-sm mb-1 ${
                     currentStep === step.number
-                      ? "text-blue-900"
+                      ? "text-[#1c2736]"
                       : "text-gray-900"
                   }`}
                 >
@@ -593,7 +593,7 @@ export default function ReportFraudForm() {
                 <p
                   className={`text-xs ${
                     currentStep === step.number
-                      ? "text-blue-700"
+                      ? "text-[#006d5b]"
                       : "text-gray-600"
                   }`}
                 >
@@ -623,7 +623,7 @@ export default function ReportFraudForm() {
                       handleInputChange("fraudType", e.target.value)
                     }
                     onBlur={() => markTouched('fraudType')}
-                    className={`w-full px-3 py-2 border ${getError('fraudType') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
+                    className={`w-full px-3 py-2 border ${getError('fraudType') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] text-black bg-white placeholder-gray-500`}
                     required
                   >
                     <option value="" className="text-gray-500">
@@ -652,7 +652,7 @@ export default function ReportFraudForm() {
                     }
                     onBlur={() => markTouched('incidentDate')}
                     max={getTodayDateString()}
-                    className={`w-full px-3 py-2 border ${getError('incidentDate') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
+                    className={`w-full px-3 py-2 border ${getError('incidentDate') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] text-black bg-white placeholder-gray-500`}
                     required
                   />
                   {getError('incidentDate') && (
@@ -673,7 +673,7 @@ export default function ReportFraudForm() {
                   }
                   onBlur={() => markTouched('reportTitle')}
                   placeholder="Brief title describing the fraud incident"
-                  className={`w-full px-3 py-2 border ${getError('reportTitle') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
+                  className={`w-full px-3 py-2 border ${getError('reportTitle') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] text-black bg-white placeholder-gray-500`}
                   required
                 />
                 {getError('reportTitle') && (
@@ -691,7 +691,7 @@ export default function ReportFraudForm() {
                     handleInputChange("reporterType", e.target.value)
                   }
                   onBlur={() => markTouched('reporterType')}
-                  className={`w-full px-3 py-2 border ${getError('reporterType') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
+                  className={`w-full px-3 py-2 border ${getError('reporterType') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] text-black bg-white placeholder-gray-500`}
                   required
                 >
                   <option value="" className="text-gray-500">
@@ -721,7 +721,7 @@ export default function ReportFraudForm() {
                     }
                     onBlur={() => markTouched('reporterName')}
                     placeholder="Your full name"
-                    className={`w-full px-3 py-2 border ${getError('reporterName') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
+                    className={`w-full px-3 py-2 border ${getError('reporterName') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] text-black bg-white placeholder-gray-500`}
                     required
                   />
                   {getError('reporterName') && (
@@ -741,7 +741,7 @@ export default function ReportFraudForm() {
                     }
                     onBlur={() => markTouched('reporterEmail')}
                     placeholder="your.email@example.com"
-                    className={`w-full px-3 py-2 border ${getError('reporterEmail') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
+                    className={`w-full px-3 py-2 border ${getError('reporterEmail') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] text-black bg-white placeholder-gray-500`}
                     required
                   />
                   {getError('reporterEmail') && (
@@ -763,7 +763,7 @@ export default function ReportFraudForm() {
                     onChange={(e) => handlePhoneChange(e.target.value)}
                     onBlur={() => markTouched('reporterPhone')}
                     placeholder="+1 (555) 123-4567"
-                    className={`w-full px-3 py-2 border ${getError('reporterPhone') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
+                    className={`w-full px-3 py-2 border ${getError('reporterPhone') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] text-black bg-white placeholder-gray-500`}
                   />
                   {getError('reporterPhone') && (
                     <p className="mt-1 text-sm text-red-600">{getError('reporterPhone')}</p>
@@ -779,7 +779,7 @@ export default function ReportFraudForm() {
                     onChange={(e) =>
                       handleInputChange("reporterGender", e.target.value)
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] text-black bg-white placeholder-gray-500"
                   >
                     <option value="" className="text-gray-500">
                       Select gender
@@ -808,7 +808,7 @@ export default function ReportFraudForm() {
                     handleInputChange("reporterLocation", e.target.value)
                   }
                   placeholder="City, State/Province, Country"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] text-black bg-white placeholder-gray-500"
                 />
               </div>
             </div>
@@ -830,7 +830,7 @@ export default function ReportFraudForm() {
                     }
                     onBlur={() => markTouched('fraudsterName')}
                     placeholder="Name of person or organization who committed fraud"
-                    className={`w-full px-3 py-2 border ${getError('fraudsterName') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
+                    className={`w-full px-3 py-2 border ${getError('fraudsterName') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] text-black bg-white placeholder-gray-500`}
                     required
                   />
                   {getError('fraudsterName') && (
@@ -848,7 +848,7 @@ export default function ReportFraudForm() {
                       handleInputChange("fraudsterType", e.target.value)
                     }
                     onBlur={() => markTouched('fraudsterType')}
-                    className={`w-full px-3 py-2 border ${getError('fraudsterType') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
+                    className={`w-full px-3 py-2 border ${getError('fraudsterType') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] text-black bg-white placeholder-gray-500`}
                     required
                   >
                     <option value="" className="text-gray-500">
@@ -878,7 +878,7 @@ export default function ReportFraudForm() {
                       handleInputChange("fraudsterCompany", e.target.value)
                     }
                     placeholder="Company or organization name"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] text-black bg-white placeholder-gray-500"
                   />
                 </div>
 
@@ -894,7 +894,7 @@ export default function ReportFraudForm() {
                     }
                     onBlur={() => markTouched('fraudsterEmail')}
                     placeholder="fraudster@example.com"
-                    className={`w-full px-3 py-2 border ${getError('fraudsterEmail') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
+                    className={`w-full px-3 py-2 border ${getError('fraudsterEmail') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] text-black bg-white placeholder-gray-500`}
                   />
                   {getError('fraudsterEmail') && (
                     <p className="mt-1 text-sm text-red-600">{getError('fraudsterEmail')}</p>
@@ -912,7 +912,7 @@ export default function ReportFraudForm() {
                     onChange={(e) =>
                       handleInputChange("fraudsterGender", e.target.value)
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] text-gray-900 bg-white placeholder-gray-500"
                   >
                     <option value="" className="text-gray-500">
                       Select gender
@@ -940,7 +940,7 @@ export default function ReportFraudForm() {
                       handleInputChange("fraudsterContact", e.target.value)
                     }
                     placeholder="Phone, email, or other contact info"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] text-gray-900 bg-white placeholder-gray-500"
                   />
                 </div>
               </div>
@@ -956,7 +956,7 @@ export default function ReportFraudForm() {
                     handleInputChange("fraudsterAddress", e.target.value)
                   }
                   placeholder="Full address of the fraudster"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] text-black bg-white placeholder-gray-500"
                 />
               </div>
 
@@ -971,7 +971,7 @@ export default function ReportFraudForm() {
                     handleInputChange("fraudsterDescription", e.target.value)
                   }
                   placeholder="Additional details about the fraudster (demographics, modus operandi, etc.)"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] text-black bg-white placeholder-gray-500"
                 />
               </div>
             </div>
@@ -994,7 +994,7 @@ export default function ReportFraudForm() {
                     }
                     onBlur={() => markTouched('actualLoss')}
                     placeholder="0.00"
-                    className={`w-full px-3 py-2 border ${getError('actualLoss') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
+                    className={`w-full px-3 py-2 border ${getError('actualLoss') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] text-black bg-white placeholder-gray-500`}
                     required
                   />
                   {getError('actualLoss') && (
@@ -1014,7 +1014,7 @@ export default function ReportFraudForm() {
                       handleInputChange("attemptedLoss", e.target.value)
                     }
                     placeholder="0.00"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] text-black bg-white placeholder-gray-500"
                   />
                 </div>
               </div>
@@ -1029,7 +1029,7 @@ export default function ReportFraudForm() {
                     handleInputChange("currency", e.target.value)
                   }
                   onBlur={() => markTouched('currency')}
-                  className={`w-full px-3 py-2 border ${getError('currency') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white`}
+                  className={`w-full px-3 py-2 border ${getError('currency') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] text-black bg-white`}
                   required
                 >
                   {currencies.map((currency) => (
@@ -1058,7 +1058,7 @@ export default function ReportFraudForm() {
                     handleInputChange("paymentMethods", e.target.value)
                   }
                   placeholder="How was the payment made? (credit card, wire transfer, cryptocurrency, gift cards, cash, etc.)"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] text-black bg-white placeholder-gray-500"
                 />
               </div>
 
@@ -1073,7 +1073,7 @@ export default function ReportFraudForm() {
                     handleInputChange("transactionDetails", e.target.value)
                   }
                   placeholder="Provide transaction IDs, account numbers, wallet addresses, or other relevant payment details"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] text-black bg-white placeholder-gray-500"
                 />
               </div>
             </div>
@@ -1094,7 +1094,7 @@ export default function ReportFraudForm() {
                   }
                   onBlur={() => markTouched('detailedDescription')}
                   placeholder="Provide a detailed description of the fraud incident. Include timeline, what happened, how it unfolded, and any communication details..."
-                  className={`w-full px-3 py-2 border ${getError('detailedDescription') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500`}
+                  className={`w-full px-3 py-2 border ${getError('detailedDescription') ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] text-black bg-white placeholder-gray-500`}
                   maxLength={50}
                   required
                 />
@@ -1117,7 +1117,7 @@ export default function ReportFraudForm() {
                     handleInputChange("websitesSocialMedia", e.target.value)
                   }
                   placeholder="List any websites, social media profiles, or online platforms used by the scammer"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] text-black bg-white placeholder-gray-500"
                 />
               </div>
 
@@ -1205,7 +1205,7 @@ export default function ReportFraudForm() {
                     handleInputChange("evidenceDescription", e.target.value)
                   }
                   placeholder="Describe the evidence you have or uploaded (screenshots, emails, phone records, documents, etc.)"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] text-black bg-white placeholder-gray-500"
                 />
               </div>
             </div>
@@ -1306,7 +1306,7 @@ export default function ReportFraudForm() {
                     handleInputChange("additionalComments", e.target.value)
                   }
                   placeholder="Any additional information you'd like to include..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white placeholder-gray-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006d5b] focus:border-[#006d5b] text-black bg-white placeholder-gray-500"
                 />
               </div>
 
@@ -1318,14 +1318,14 @@ export default function ReportFraudForm() {
                   onChange={(e) =>
                     handleInputChange("agreeToTerms", e.target.checked)
                   }
-                  className="mt-1 mr-3 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  className="mt-1 mr-3 h-4 w-4 text-[#006d5b] border-gray-300 rounded focus:ring-[#006d5b]"
                   required
                 />
                 <label htmlFor="terms" className="text-sm text-gray-700">
                   I agree to the{" "}
                   <Link
                     href="/terms"
-                    className="text-blue-600 hover:text-blue-700 underline"
+                    className="text-[#006d5b] hover:text-[#1c2736] underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
