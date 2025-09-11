@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { useToast } from '@/contexts/ToastContext'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from "next/link";
+import dynamic from 'next/dynamic'
+const ReCAPTCHA = dynamic(() => import('react-google-recaptcha'), { ssr: false })
 
 export default function ReportFraudForm() {
   const FORM_STORAGE_KEY = 'reportFraudFormData'
@@ -54,6 +56,8 @@ export default function ReportFraudForm() {
   const { showToast } = useToast()
   const router = useRouter()
   const pathname = usePathname()
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
+  const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''
 
   // Restore saved progress on mount
   useEffect(() => {
@@ -356,6 +360,10 @@ export default function ReportFraudForm() {
       markStepTouched(5)
       return
     }
+    if (!recaptchaToken) {
+      showToast('Please complete the reCAPTCHA challenge.', 'error')
+      return
+    }
     setSubmitting(true)
     try {
       // Convert files to base64
@@ -413,6 +421,8 @@ export default function ReportFraudForm() {
           evidenceFiles: evidenceFilesData,
           // Additional
           additionalComments: formData.additionalComments,
+          // reCAPTCHA
+          recaptchaToken: recaptchaToken,
         }),
       })
       const data = await res.json()
@@ -426,6 +436,7 @@ export default function ReportFraudForm() {
             localStorage.removeItem(FORM_STORAGE_KEY)
             localStorage.removeItem(STEP_STORAGE_KEY)
           } catch {}
+          try { setRecaptchaToken(null) } catch {}
           router.push(target)
           return
         }
@@ -1338,6 +1349,19 @@ export default function ReportFraudForm() {
             </div>
           )}
 
+          {/* reCAPTCHA above navigation */}
+          {currentStep === 5 && RECAPTCHA_SITE_KEY ? (
+            <div className="pt-6">
+              <div className="inline-block">
+                <ReCAPTCHA
+                  sitekey={RECAPTCHA_SITE_KEY}
+                  onChange={(token) => setRecaptchaToken(token)}
+                  onExpired={() => setRecaptchaToken(null)}
+                />
+              </div>
+            </div>
+          ) : null}
+
           {/* Navigation Buttons */}
           <div className="flex justify-between pt-8 border-t border-gray-200">
             <button
@@ -1369,9 +1393,9 @@ export default function ReportFraudForm() {
             ) : (
               <button
                 type="submit"
-                disabled={!isStepValid(5) || submitting}
+                disabled={!isStepValid(5) || submitting || !recaptchaToken}
                 className={`px-8 py-3 rounded-lg font-medium ${
-                  isStepValid(5)
+                  isStepValid(5) && !!recaptchaToken
                     ? "btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                     : "bg-gray-100 text-gray-400 cursor-not-allowed"
                 }`}

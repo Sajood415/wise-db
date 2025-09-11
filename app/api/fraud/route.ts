@@ -72,10 +72,36 @@ export async function POST(req: NextRequest) {
 
             // Additional
             additionalComments,
+            // reCAPTCHA
+            recaptchaToken,
         } = body || {}
 
         if (!reportTitle || !detailedDescription) {
             return NextResponse.json({ error: 'Title and description are required' }, { status: 400 })
+        }
+
+        // Verify reCAPTCHA
+        if (!recaptchaToken) {
+            return NextResponse.json({ error: 'reCAPTCHA verification failed' }, { status: 400 })
+        }
+        try {
+            const secret = process.env.RECAPTCHA_SECRET_KEY
+            if (!secret) {
+                console.warn('RECAPTCHA_SECRET_KEY not set')
+            } else {
+                const verifyRes = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ secret, response: recaptchaToken })
+                })
+                const verifyData: any = await verifyRes.json()
+                if (!verifyData.success) {
+                    return NextResponse.json({ error: 'reCAPTCHA verification failed' }, { status: 400 })
+                }
+            }
+        } catch (e) {
+            console.error('reCAPTCHA verification error', e)
+            return NextResponse.json({ error: 'reCAPTCHA verification failed' }, { status: 400 })
         }
 
         // Identify user (prefer middleware header; fallback to cookie token for public path submissions)

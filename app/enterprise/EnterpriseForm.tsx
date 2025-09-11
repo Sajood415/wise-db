@@ -18,6 +18,7 @@ export default function EnterpriseForm() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [searchesRangeLabel, setSearchesRangeLabel] = useState("");
 
   const industries = [
     "Financial Services",
@@ -40,6 +41,16 @@ export default function EnterpriseForm() {
     "Within 1 month",
     "Within 3 months",
     "Just exploring options",
+  ];
+
+  const searchVolumeOptions: { label: string; value: number }[] = [
+    { label: "0 - 100", value: 100 },
+    { label: "100 - 500", value: 500 },
+    { label: "500 - 1,000", value: 1000 },
+    { label: "1,000 - 5,000", value: 5000 },
+    { label: "5,000 - 10,000", value: 10000 },
+    { label: "10,000 - 50,000", value: 50000 },
+    { label: "50,000+", value: 50000 },
   ];
 
   const handleInputChange = (field: string, value: string) => {
@@ -257,17 +268,27 @@ export default function EnterpriseForm() {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Number of Searches Needed <span className="text-red-600">*</span>
             </label>
-            <input
-              type="text"
-              value={formData.numberOfSearches}
-              onChange={(e) => handleNumericChange("numberOfSearches", e.target.value)}
-              placeholder="e.g., 10000"
-              className={`w-full px-3 py-2 border ${errors.numberOfSearches ? "border-red-500" : "border-gray-300"} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500`}
-              required
-            />
-            {errors.numberOfSearches && (
-              <p className="mt-1 text-sm text-red-600">{errors.numberOfSearches}</p>
-            )}
+            <div className="grid grid-cols-1 gap-2">
+              <select
+                value={formData.numberOfSearches}
+                onChange={(e) => {
+                  const selected = searchVolumeOptions.find(o => String(o.value) === e.target.value)
+                  setSearchesRangeLabel(selected?.label || "")
+                  handleInputChange("numberOfSearches", e.target.value)
+                }}
+                className={`w-full px-3 py-2 border ${errors.numberOfSearches ? "border-red-500" : "border-gray-300"} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white`}
+                required
+              >
+                <option value="" className="text-gray-500">Select range</option>
+                {searchVolumeOptions.map(opt => (
+                  <option key={opt.label} value={opt.value} className="text-gray-900">{opt.label}</option>
+                ))}
+              </select>
+              <p className="text-xs text-gray-500">We’ll tailor pricing based on your selection.</p>
+              {errors.numberOfSearches && (
+                <p className="mt-1 text-sm text-red-600">{errors.numberOfSearches}</p>
+              )}
+            </div>
           </div>
 
           <div>

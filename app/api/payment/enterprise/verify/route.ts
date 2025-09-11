@@ -3,6 +3,7 @@ import Stripe from 'stripe'
 import dbConnect from '@/lib/mongodb'
 import EnterpriseRequest from '@/models/EnterpriseRequest'
 import EnterprisePayment from '@/models/EnterprisePayment'
+import { sendMail } from '@/lib/mailer'
 
 export async function POST(request: NextRequest) {
     try {
@@ -32,7 +33,7 @@ export async function POST(request: NextRequest) {
             const pricingCurrency = String(metadata['pricingCurrency'] || 'USD').toUpperCase()
             const enterpriseAdminEmail = metadata['enterpriseAdminEmail'] || undefined
 
-            const doc = await EnterpriseRequest.findByIdAndUpdate(
+            const doc: any = await EnterpriseRequest.findByIdAndUpdate(
                 enterpriseRequestId,
                 {
                     $set: {
@@ -59,6 +60,26 @@ export async function POST(request: NextRequest) {
                 )
             } catch (e) {
                 console.error('Failed to upsert enterprise payment (verify):', e)
+            }
+
+            // If signup token exists, email the link to the enterprise admin automatically
+            try {
+                if (doc.signupToken && doc.enterpriseAdminEmail) {
+                    const base = (() => { try { const u = new URL(request.url); return `${u.protocol}//${u.host}` } catch { return '' } })()
+                    const params = new URLSearchParams()
+                    params.set('enterprise', String(enterpriseRequestId))
+                    params.set('token', String(doc.signupToken))
+                    params.set('email', String(doc.enterpriseAdminEmail))
+                    const link = base ? `${base}/signup?${params.toString()}` : ''
+                    await sendMail({
+                        to: doc.enterpriseAdminEmail,
+                        subject: 'Payment confirmed — complete your Wise-DB enterprise admin signup',
+                        html: `<p>Your Stripe payment has been confirmed.</p>${link ? `<p>Complete signup: <a href="${link}">${link}</a></p>` : ''}`,
+                        text: link ? `Complete signup: ${link}` : 'Payment confirmed.',
+                    })
+                }
+            } catch (e) {
+                console.error('Failed to send auto signup email after Stripe verify:', e)
             }
             return NextResponse.json({ ok: true, item: doc })
         } else {

@@ -1,252 +1,2502 @@
 [
     {
-        "_id": "df_1001",
-        "title": "Phishing email claiming account suspension",
-        "description": "Received an email impersonating a bank requesting login verification.",
+        "_id": "df_1101",
+        "title": "Fake Amazon delivery notice tricked user into entering card details on a cloned website",
+        "description": "Fake Amazon delivery notice tricked user into entering card details on a cloned website.",
         "type": "email",
         "status": "approved",
         "fraudsterDetails": {
-            "suspiciousEmail": "security@fakebank.example",
-            "suspiciousPhone": "+1-512-555-1200",
-            "suspiciousWebsite": "fakebank-verify.example",
-            "suspiciousName": "Fake Bank Security",
-            "suspiciousCompany": "Fake Bank",
+            "suspiciousEmail": "banking@wellssecure.net",
+            "suspiciousPhone": "+1-202-555-1001",
+            "suspiciousWebsite": "secure-amazon-support.example",
+            "suspiciousName": "PayPal Security Team",
+            "suspiciousCompany": "Amazon",
             "amount": 0,
             "currency": "USD",
-            "date": "2025-07-01T00:00:00.000Z"
+            "date": "2025-10-11T00:00:00"
         },
-        "location": "Austin, TX, US",
+        "location": "Berlin, Germany",
+        "tags": [
+            "amazon",
+            "investment"
+        ],
+        "severity": "low",
+        "createdAt": "2025-09-11T07:34:11.179359",
+        "updatedAt": "2025-09-11T07:34:11.179367"
+    },
+    {
+        "_id": "df_1102",
+        "title": "Fraudster advertised non-existent rental properties and collected deposits",
+        "description": "Fraudster advertised non-existent rental properties and collected deposits.",
+        "type": "identity",
+        "status": "pending",
+        "fraudsterDetails": {
+            "suspiciousEmail": "support@paypal-security.com",
+            "suspiciousPhone": "+1-202-555-1002",
+            "suspiciousWebsite": "irs-taxpay.example",
+            "suspiciousName": "IRS Agent Smith",
+            "suspiciousCompany": "Amazon",
+            "amount": 10601,
+            "currency": "USD",
+            "date": "2025-11-06T00:00:00"
+        },
+        "location": "Berlin, Germany",
+        "tags": [
+            "paypal",
+            "amazon"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.179387",
+        "updatedAt": "2025-09-11T07:34:11.179389"
+    },
+    {
+        "_id": "df_1103",
+        "title": "Fraudster advertised non-existent rental properties and collected deposits",
+        "description": "Fraudster advertised non-existent rental properties and collected deposits.",
+        "type": "other",
+        "status": "approved",
+        "fraudsterDetails": {
+            "suspiciousEmail": "jobs@careerplus.fake",
+            "suspiciousPhone": "+1-202-555-1003",
+            "suspiciousWebsite": "paypal-verify-login.example",
+            "suspiciousName": "IRS Agent Smith",
+            "suspiciousCompany": "Amazon",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-12-28T00:00:00"
+        },
+        "location": "New York, NY, USA",
+        "tags": [
+            "scam",
+            "romance"
+        ],
+        "severity": "high",
+        "createdAt": "2025-09-11T07:34:11.179407",
+        "updatedAt": "2025-09-11T07:34:11.179409"
+    },
+    {
+        "_id": "df_1104",
+        "title": "Scammer sent fake invoices requesting urgent wire transfers",
+        "description": "Scammer sent fake invoices requesting urgent wire transfers.",
+        "type": "website",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "banking@wellssecure.net",
+            "suspiciousPhone": "+1-202-555-1004",
+            "suspiciousWebsite": "paypal-verify-login.example",
+            "suspiciousName": "IRS Agent Smith",
+            "suspiciousCompany": "CareerPlus",
+            "amount": 6738,
+            "currency": "USD",
+            "date": "2025-10-26T00:00:00"
+        },
+        "location": "New York, NY, USA",
+        "tags": [
+            "lottery",
+            "romance"
+        ],
+        "severity": "low",
+        "createdAt": "2025-09-11T07:34:11.179426",
+        "updatedAt": "2025-09-11T07:34:11.179427"
+    },
+    {
+        "_id": "df_1105",
+        "title": "Victim was told they won a lottery but had to pay processing fees upfront",
+        "description": "Victim was told they won a lottery but had to pay processing fees upfront.",
+        "type": "phone",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "jobs@careerplus.fake",
+            "suspiciousPhone": "+1-202-555-1005",
+            "suspiciousWebsite": "cryptomaxx-invest.example",
+            "suspiciousName": "CryptoMaxx Trader",
+            "suspiciousCompany": "Amazon",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-06-27T00:00:00"
+        },
+        "location": "San Francisco, CA, USA",
+        "tags": [
+            "amazon",
+            "irs"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.179441",
+        "updatedAt": "2025-09-11T07:34:11.179443"
+    },
+    {
+        "_id": "df_1106",
+        "title": "Job seeker tricked into paying fees for a fake employment opportunity",
+        "description": "Job seeker tricked into paying fees for a fake employment opportunity.",
+        "type": "phone",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "admin@cryptomaxx.io",
+            "suspiciousPhone": "+1-202-555-1006",
+            "suspiciousWebsite": "cryptomaxx-invest.example",
+            "suspiciousName": "PayPal Security Team",
+            "suspiciousCompany": "IRS",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-05-13T00:00:00"
+        },
+        "location": "San Francisco, CA, USA",
+        "tags": [
+            "lottery",
+            "amazon"
+        ],
+        "severity": "high",
+        "createdAt": "2025-09-11T07:34:11.179457",
+        "updatedAt": "2025-09-11T07:34:11.179459"
+    },
+    {
+        "_id": "df_1107",
+        "title": "Scammer posing as an IRS agent demanded immediate payment via gift cards to avoid arrest",
+        "description": "Scammer posing as an IRS agent demanded immediate payment via gift cards to avoid arrest.",
+        "type": "other",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "admin@cryptomaxx.io",
+            "suspiciousPhone": "+1-202-555-1007",
+            "suspiciousWebsite": "cryptomaxx-invest.example",
+            "suspiciousName": "IRS Agent Smith",
+            "suspiciousCompany": "IRS",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-08-23T00:00:00"
+        },
+        "location": "Sydney, Australia",
+        "tags": [
+            "investment",
+            "whatsapp"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.179479",
+        "updatedAt": "2025-09-11T07:34:11.179482"
+    },
+    {
+        "_id": "df_1108",
+        "title": "Fraudster advertised non-existent rental properties and collected deposits",
+        "description": "Fraudster advertised non-existent rental properties and collected deposits.",
+        "type": "other",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "helpdesk@amazon-secure.com",
+            "suspiciousPhone": "+1-202-555-1008",
+            "suspiciousWebsite": "cryptomaxx-invest.example",
+            "suspiciousName": "IRS Agent Smith",
+            "suspiciousCompany": "Amazon",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-06-26T00:00:00"
+        },
+        "location": "Dubai, UAE",
+        "tags": [
+            "paypal",
+            "phishing"
+        ],
+        "severity": "high",
+        "createdAt": "2025-09-11T07:34:11.179507",
+        "updatedAt": "2025-09-11T07:34:11.179509"
+    },
+    {
+        "_id": "df_1109",
+        "title": "Victim was told they won a lottery but had to pay processing fees upfront",
+        "description": "Victim was told they won a lottery but had to pay processing fees upfront.",
+        "type": "financial",
+        "status": "approved",
+        "fraudsterDetails": {
+            "suspiciousEmail": "login@irs-gov.example",
+            "suspiciousPhone": "+1-202-555-1009",
+            "suspiciousWebsite": "secure-amazon-support.example",
+            "suspiciousName": "IRS Agent Smith",
+            "suspiciousCompany": "PayPal",
+            "amount": 13206,
+            "currency": "USD",
+            "date": "2025-05-26T00:00:00"
+        },
+        "location": "Toronto, Canada",
+        "tags": [
+            "investment",
+            "scam"
+        ],
+        "severity": "high",
+        "createdAt": "2025-09-11T07:34:11.179524",
+        "updatedAt": "2025-09-11T07:34:11.179526"
+    },
+    {
+        "_id": "df_1110",
+        "title": "Romance scammer built trust over months and then requested money for emergency medical bills",
+        "description": "Romance scammer built trust over months and then requested money for emergency medical bills.",
+        "type": "website",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "support@paypal-security.com",
+            "suspiciousPhone": "+1-202-555-1010",
+            "suspiciousWebsite": "wellsfargo-login.example",
+            "suspiciousName": "John Recruiter",
+            "suspiciousCompany": "ScamCorp Ltd",
+            "amount": 11393,
+            "currency": "USD",
+            "date": "2025-02-16T00:00:00"
+        },
+        "location": "London, UK",
+        "tags": [
+            "investment",
+            "crypto"
+        ],
+        "severity": "critical",
+        "createdAt": "2025-09-11T07:34:11.179541",
+        "updatedAt": "2025-09-11T07:34:11.179542"
+    },
+    {
+        "_id": "df_1111",
+        "title": "Romance scammer built trust over months and then requested money for emergency medical bills",
+        "description": "Romance scammer built trust over months and then requested money for emergency medical bills.",
+        "type": "other",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "banking@wellssecure.net",
+            "suspiciousPhone": "+1-202-555-1011",
+            "suspiciousWebsite": "irs-taxpay.example",
+            "suspiciousName": "CryptoMaxx Trader",
+            "suspiciousCompany": "ScamCorp Ltd",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-02-04T00:00:00"
+        },
+        "location": "Dubai, UAE",
+        "tags": [
+            "paypal",
+            "investment"
+        ],
+        "severity": "low",
+        "createdAt": "2025-09-11T07:34:11.179556",
+        "updatedAt": "2025-09-11T07:34:11.179557"
+    },
+    {
+        "_id": "df_1112",
+        "title": "Caller pretended to be from Wells Fargo and requested OTP to 'secure' the victim's account",
+        "description": "Caller pretended to be from Wells Fargo and requested OTP to 'secure' the victim's account.",
+        "type": "financial",
+        "status": "pending",
+        "fraudsterDetails": {
+            "suspiciousEmail": "admin@cryptomaxx.io",
+            "suspiciousPhone": "+1-202-555-1012",
+            "suspiciousWebsite": "wellsfargo-login.example",
+            "suspiciousName": "John Recruiter",
+            "suspiciousCompany": "ScamCorp Ltd",
+            "amount": 302,
+            "currency": "USD",
+            "date": "2025-02-24T00:00:00"
+        },
+        "location": "Berlin, Germany",
+        "tags": [
+            "phishing",
+            "amazon"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.179570",
+        "updatedAt": "2025-09-11T07:34:11.179571"
+    },
+    {
+        "_id": "df_1113",
+        "title": "Caller pretended to be from Wells Fargo and requested OTP to 'secure' the victim's account",
+        "description": "Caller pretended to be from Wells Fargo and requested OTP to 'secure' the victim's account.",
+        "type": "financial",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "login@irs-gov.example",
+            "suspiciousPhone": "+1-202-555-1013",
+            "suspiciousWebsite": "cryptomaxx-invest.example",
+            "suspiciousName": "Lottery Winner Dept",
+            "suspiciousCompany": "ScamCorp Ltd",
+            "amount": 10957,
+            "currency": "USD",
+            "date": "2025-07-21T00:00:00"
+        },
+        "location": "New York, NY, USA",
+        "tags": [
+            "paypal",
+            "romance"
+        ],
+        "severity": "high",
+        "createdAt": "2025-09-11T07:34:11.179584",
+        "updatedAt": "2025-09-11T07:34:11.179585"
+    },
+    {
+        "_id": "df_1114",
+        "title": "Crypto investment site promised 200% return but disappeared after deposits",
+        "description": "Crypto investment site promised 200% return but disappeared after deposits.",
+        "type": "financial",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "admin@cryptomaxx.io",
+            "suspiciousPhone": "+1-202-555-1014",
+            "suspiciousWebsite": "wellsfargo-login.example",
+            "suspiciousName": "Amazon Support",
+            "suspiciousCompany": "IRS",
+            "amount": 2493,
+            "currency": "USD",
+            "date": "2025-03-29T00:00:00"
+        },
+        "location": "New York, NY, USA",
+        "tags": [
+            "phishing",
+            "romance"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.179604",
+        "updatedAt": "2025-09-11T07:34:11.179607"
+    },
+    {
+        "_id": "df_1115",
+        "title": "Crypto investment site promised 200% return but disappeared after deposits",
+        "description": "Crypto investment site promised 200% return but disappeared after deposits.",
+        "type": "financial",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "banking@wellssecure.net",
+            "suspiciousPhone": "+1-202-555-1015",
+            "suspiciousWebsite": "irs-taxpay.example",
+            "suspiciousName": "Lottery Winner Dept",
+            "suspiciousCompany": "IRS",
+            "amount": 7362,
+            "currency": "USD",
+            "date": "2025-08-27T00:00:00"
+        },
+        "location": "Sydney, Australia",
+        "tags": [
+            "romance",
+            "bank"
+        ],
+        "severity": "high",
+        "createdAt": "2025-09-11T07:34:11.179628",
+        "updatedAt": "2025-09-11T07:34:11.179630"
+    },
+    {
+        "_id": "df_1116",
+        "title": "Scammer posing as an IRS agent demanded immediate payment via gift cards to avoid arrest",
+        "description": "Scammer posing as an IRS agent demanded immediate payment via gift cards to avoid arrest.",
+        "type": "phone",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "login@irs-gov.example",
+            "suspiciousPhone": "+1-202-555-1016",
+            "suspiciousWebsite": "cryptomaxx-invest.example",
+            "suspiciousName": "Amazon Support",
+            "suspiciousCompany": "CareerPlus",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-07-20T00:00:00"
+        },
+        "location": "Cape Town, South Africa",
+        "tags": [
+            "bank",
+            "amazon"
+        ],
+        "severity": "low",
+        "createdAt": "2025-09-11T07:34:11.179643",
+        "updatedAt": "2025-09-11T07:34:11.179644"
+    },
+    {
+        "_id": "df_1117",
+        "title": "Victim received an email claiming suspicious login and was asked to verify account credentials via a phishing site",
+        "description": "Victim received an email claiming suspicious login and was asked to verify account credentials via a phishing site.",
+        "type": "financial",
+        "status": "approved",
+        "fraudsterDetails": {
+            "suspiciousEmail": "admin@cryptomaxx.io",
+            "suspiciousPhone": "+1-202-555-1017",
+            "suspiciousWebsite": "irs-taxpay.example",
+            "suspiciousName": "CryptoMaxx Trader",
+            "suspiciousCompany": "IRS",
+            "amount": 4003,
+            "currency": "USD",
+            "date": "2025-09-11T00:00:00"
+        },
+        "location": "San Francisco, CA, USA",
+        "tags": [
+            "whatsapp",
+            "investment"
+        ],
+        "severity": "high",
+        "createdAt": "2025-09-11T07:34:11.179662",
+        "updatedAt": "2025-09-11T07:34:11.179664"
+    },
+    {
+        "_id": "df_1118",
+        "title": "Victim was told they won a lottery but had to pay processing fees upfront",
+        "description": "Victim was told they won a lottery but had to pay processing fees upfront.",
+        "type": "phone",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "jobs@careerplus.fake",
+            "suspiciousPhone": "+1-202-555-1018",
+            "suspiciousWebsite": "irs-taxpay.example",
+            "suspiciousName": "PayPal Security Team",
+            "suspiciousCompany": "CareerPlus",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-02-24T00:00:00"
+        },
+        "location": "London, UK",
+        "tags": [
+            "romance",
+            "amazon"
+        ],
+        "severity": "high",
+        "createdAt": "2025-09-11T07:34:11.179680",
+        "updatedAt": "2025-09-11T07:34:11.179682"
+    },
+    {
+        "_id": "df_1119",
+        "title": "Romance scammer built trust over months and then requested money for emergency medical bills",
+        "description": "Romance scammer built trust over months and then requested money for emergency medical bills.",
+        "type": "identity",
+        "status": "approved",
+        "fraudsterDetails": {
+            "suspiciousEmail": "admin@cryptomaxx.io",
+            "suspiciousPhone": "+1-202-555-1019",
+            "suspiciousWebsite": "paypal-verify-login.example",
+            "suspiciousName": "Amazon Support",
+            "suspiciousCompany": "CryptoMaxx",
+            "amount": 1359,
+            "currency": "USD",
+            "date": "2025-01-05T00:00:00"
+        },
+        "location": "Berlin, Germany",
+        "tags": [
+            "amazon",
+            "lottery"
+        ],
+        "severity": "high",
+        "createdAt": "2025-09-11T07:34:11.179696",
+        "updatedAt": "2025-09-11T07:34:11.179697"
+    },
+    {
+        "_id": "df_1120",
+        "title": "Caller pretended to be from Wells Fargo and requested OTP to 'secure' the victim's account",
+        "description": "Caller pretended to be from Wells Fargo and requested OTP to 'secure' the victim's account.",
+        "type": "other",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "jobs@careerplus.fake",
+            "suspiciousPhone": "+1-202-555-1020",
+            "suspiciousWebsite": "irs-taxpay.example",
+            "suspiciousName": "PayPal Security Team",
+            "suspiciousCompany": "Amazon",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-03-16T00:00:00"
+        },
+        "location": "Austin, TX, USA",
+        "tags": [
+            "identity-theft",
+            "bank"
+        ],
+        "severity": "critical",
+        "createdAt": "2025-09-11T07:34:11.179709",
+        "updatedAt": "2025-09-11T07:34:11.179711"
+    },
+    {
+        "_id": "df_1121",
+        "title": "Victim received an email claiming suspicious login and was asked to verify account credentials via a phishing site",
+        "description": "Victim received an email claiming suspicious login and was asked to verify account credentials via a phishing site.",
+        "type": "phone",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "banking@wellssecure.net",
+            "suspiciousPhone": "+1-202-555-1021",
+            "suspiciousWebsite": "wellsfargo-login.example",
+            "suspiciousName": "CryptoMaxx Trader",
+            "suspiciousCompany": "ScamCorp Ltd",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-07-12T00:00:00"
+        },
+        "location": "Berlin, Germany",
+        "tags": [
+            "paypal",
+            "whatsapp"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.179722",
+        "updatedAt": "2025-09-11T07:34:11.179723"
+    },
+    {
+        "_id": "df_1122",
+        "title": "Victim was told they won a lottery but had to pay processing fees upfront",
+        "description": "Victim was told they won a lottery but had to pay processing fees upfront.",
+        "type": "other",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "helpdesk@amazon-secure.com",
+            "suspiciousPhone": "+1-202-555-1022",
+            "suspiciousWebsite": "wellsfargo-login.example",
+            "suspiciousName": "PayPal Security Team",
+            "suspiciousCompany": "ScamCorp Ltd",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-11-01T00:00:00"
+        },
+        "location": "San Francisco, CA, USA",
+        "tags": [
+            "irs",
+            "romance"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.179734",
+        "updatedAt": "2025-09-11T07:34:11.179736"
+    },
+    {
+        "_id": "df_1123",
+        "title": "Crypto investment site promised 200% return but disappeared after deposits",
+        "description": "Crypto investment site promised 200% return but disappeared after deposits.",
+        "type": "phone",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "jobs@careerplus.fake",
+            "suspiciousPhone": "+1-202-555-1023",
+            "suspiciousWebsite": "paypal-verify-login.example",
+            "suspiciousName": "IRS Agent Smith",
+            "suspiciousCompany": "PayPal",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-08-27T00:00:00"
+        },
+        "location": "Cape Town, South Africa",
+        "tags": [
+            "bank",
+            "amazon"
+        ],
+        "severity": "low",
+        "createdAt": "2025-09-11T07:34:11.179747",
+        "updatedAt": "2025-09-11T07:34:11.179748"
+    },
+    {
+        "_id": "df_1124",
+        "title": "Crypto investment site promised 200% return but disappeared after deposits",
+        "description": "Crypto investment site promised 200% return but disappeared after deposits.",
+        "type": "website",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "admin@cryptomaxx.io",
+            "suspiciousPhone": "+1-202-555-1024",
+            "suspiciousWebsite": "paypal-verify-login.example",
+            "suspiciousName": "IRS Agent Smith",
+            "suspiciousCompany": "ScamCorp Ltd",
+            "amount": 11808,
+            "currency": "USD",
+            "date": "2025-01-05T00:00:00"
+        },
+        "location": "Cape Town, South Africa",
+        "tags": [
+            "irs",
+            "phishing"
+        ],
+        "severity": "low",
+        "createdAt": "2025-09-11T07:34:11.179760",
+        "updatedAt": "2025-09-11T07:34:11.179762"
+    },
+    {
+        "_id": "df_1125",
+        "title": "Crypto investment site promised 200% return but disappeared after deposits",
+        "description": "Crypto investment site promised 200% return but disappeared after deposits.",
+        "type": "phone",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "jobs@careerplus.fake",
+            "suspiciousPhone": "+1-202-555-1025",
+            "suspiciousWebsite": "cryptomaxx-invest.example",
+            "suspiciousName": "John Recruiter",
+            "suspiciousCompany": "CryptoMaxx",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-10-29T00:00:00"
+        },
+        "location": "Toronto, Canada",
+        "tags": [
+            "investment",
+            "whatsapp"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.179774",
+        "updatedAt": "2025-09-11T07:34:11.179776"
+    },
+    {
+        "_id": "df_1126",
+        "title": "Victim was told they won a lottery but had to pay processing fees upfront",
+        "description": "Victim was told they won a lottery but had to pay processing fees upfront.",
+        "type": "phone",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "support@paypal-security.com",
+            "suspiciousPhone": "+1-202-555-1026",
+            "suspiciousWebsite": "wellsfargo-login.example",
+            "suspiciousName": "Lottery Winner Dept",
+            "suspiciousCompany": "PayPal",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-02-18T00:00:00"
+        },
+        "location": "San Francisco, CA, USA",
+        "tags": [
+            "investment",
+            "crypto"
+        ],
+        "severity": "critical",
+        "createdAt": "2025-09-11T07:34:11.179794",
+        "updatedAt": "2025-09-11T07:34:11.179797"
+    },
+    {
+        "_id": "df_1127",
+        "title": "Victim received an email claiming suspicious login and was asked to verify account credentials via a phishing site",
+        "description": "Victim received an email claiming suspicious login and was asked to verify account credentials via a phishing site.",
+        "type": "identity",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "helpdesk@amazon-secure.com",
+            "suspiciousPhone": "+1-202-555-1027",
+            "suspiciousWebsite": "irs-taxpay.example",
+            "suspiciousName": "PayPal Security Team",
+            "suspiciousCompany": "CareerPlus",
+            "amount": 19191,
+            "currency": "USD",
+            "date": "2025-04-05T00:00:00"
+        },
+        "location": "London, UK",
+        "tags": [
+            "whatsapp",
+            "irs"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.179808",
+        "updatedAt": "2025-09-11T07:34:11.179809"
+    },
+    {
+        "_id": "df_1128",
+        "title": "Crypto investment site promised 200% return but disappeared after deposits",
+        "description": "Crypto investment site promised 200% return but disappeared after deposits.",
+        "type": "phone",
+        "status": "pending",
+        "fraudsterDetails": {
+            "suspiciousEmail": "banking@wellssecure.net",
+            "suspiciousPhone": "+1-202-555-1028",
+            "suspiciousWebsite": "paypal-verify-login.example",
+            "suspiciousName": "John Recruiter",
+            "suspiciousCompany": "Amazon",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-11-30T00:00:00"
+        },
+        "location": "New York, NY, USA",
+        "tags": [
+            "lottery",
+            "irs"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.179822",
+        "updatedAt": "2025-09-11T07:34:11.179823"
+    },
+    {
+        "_id": "df_1129",
+        "title": "Job seeker tricked into paying fees for a fake employment opportunity",
+        "description": "Job seeker tricked into paying fees for a fake employment opportunity.",
+        "type": "phone",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "support@paypal-security.com",
+            "suspiciousPhone": "+1-202-555-1029",
+            "suspiciousWebsite": "secure-amazon-support.example",
+            "suspiciousName": "PayPal Security Team",
+            "suspiciousCompany": "Amazon",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-04-26T00:00:00"
+        },
+        "location": "Mumbai, India",
+        "tags": [
+            "identity-theft",
+            "crypto"
+        ],
+        "severity": "high",
+        "createdAt": "2025-09-11T07:34:11.179834",
+        "updatedAt": "2025-09-11T07:34:11.179835"
+    },
+    {
+        "_id": "df_1130",
+        "title": "Crypto investment site promised 200% return but disappeared after deposits",
+        "description": "Crypto investment site promised 200% return but disappeared after deposits.",
+        "type": "website",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "login@irs-gov.example",
+            "suspiciousPhone": "+1-202-555-1030",
+            "suspiciousWebsite": "careerplus-jobs.example",
+            "suspiciousName": "IRS Agent Smith",
+            "suspiciousCompany": "CareerPlus",
+            "amount": 19530,
+            "currency": "USD",
+            "date": "2025-06-07T00:00:00"
+        },
+        "location": "Mumbai, India",
+        "tags": [
+            "crypto",
+            "amazon"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.179847",
+        "updatedAt": "2025-09-11T07:34:11.179848"
+    },
+    {
+        "_id": "df_1131",
+        "title": "Caller pretended to be from Wells Fargo and requested OTP to 'secure' the victim's account",
+        "description": "Caller pretended to be from Wells Fargo and requested OTP to 'secure' the victim's account.",
+        "type": "phone",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "login@irs-gov.example",
+            "suspiciousPhone": "+1-202-555-1031",
+            "suspiciousWebsite": "cryptomaxx-invest.example",
+            "suspiciousName": "John Recruiter",
+            "suspiciousCompany": "CareerPlus",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-02-27T00:00:00"
+        },
+        "location": "Cape Town, South Africa",
+        "tags": [
+            "romance",
+            "amazon"
+        ],
+        "severity": "low",
+        "createdAt": "2025-09-11T07:34:11.179875",
+        "updatedAt": "2025-09-11T07:34:11.179876"
+    },
+    {
+        "_id": "df_1132",
+        "title": "Job seeker tricked into paying fees for a fake employment opportunity",
+        "description": "Job seeker tricked into paying fees for a fake employment opportunity.",
+        "type": "identity",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "support@paypal-security.com",
+            "suspiciousPhone": "+1-202-555-1032",
+            "suspiciousWebsite": "paypal-verify-login.example",
+            "suspiciousName": "John Recruiter",
+            "suspiciousCompany": "IRS",
+            "amount": 14568,
+            "currency": "USD",
+            "date": "2025-08-20T00:00:00"
+        },
+        "location": "Berlin, Germany",
+        "tags": [
+            "irs",
+            "lottery"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.179888",
+        "updatedAt": "2025-09-11T07:34:11.179889"
+    },
+    {
+        "_id": "df_1133",
+        "title": "Job seeker tricked into paying fees for a fake employment opportunity",
+        "description": "Job seeker tricked into paying fees for a fake employment opportunity.",
+        "type": "financial",
+        "status": "pending",
+        "fraudsterDetails": {
+            "suspiciousEmail": "login@irs-gov.example",
+            "suspiciousPhone": "+1-202-555-1033",
+            "suspiciousWebsite": "irs-taxpay.example",
+            "suspiciousName": "CryptoMaxx Trader",
+            "suspiciousCompany": "ScamCorp Ltd",
+            "amount": 8592,
+            "currency": "USD",
+            "date": "2025-06-12T00:00:00"
+        },
+        "location": "London, UK",
+        "tags": [
+            "crypto",
+            "irs"
+        ],
+        "severity": "low",
+        "createdAt": "2025-09-11T07:34:11.179901",
+        "updatedAt": "2025-09-11T07:34:11.179903"
+    },
+    {
+        "_id": "df_1134",
+        "title": "Crypto investment site promised 200% return but disappeared after deposits",
+        "description": "Crypto investment site promised 200% return but disappeared after deposits.",
+        "type": "phone",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "jobs@careerplus.fake",
+            "suspiciousPhone": "+1-202-555-1034",
+            "suspiciousWebsite": "irs-taxpay.example",
+            "suspiciousName": "Amazon Support",
+            "suspiciousCompany": "Amazon",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-06-28T00:00:00"
+        },
+        "location": "Toronto, Canada",
+        "tags": [
+            "identity-theft",
+            "lottery"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.179914",
+        "updatedAt": "2025-09-11T07:34:11.179916"
+    },
+    {
+        "_id": "df_1135",
+        "title": "Scammer posing as an IRS agent demanded immediate payment via gift cards to avoid arrest",
+        "description": "Scammer posing as an IRS agent demanded immediate payment via gift cards to avoid arrest.",
+        "type": "identity",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "jobs@careerplus.fake",
+            "suspiciousPhone": "+1-202-555-1035",
+            "suspiciousWebsite": "paypal-verify-login.example",
+            "suspiciousName": "John Recruiter",
+            "suspiciousCompany": "CareerPlus",
+            "amount": 2924,
+            "currency": "USD",
+            "date": "2025-12-18T00:00:00"
+        },
+        "location": "Sydney, Australia",
+        "tags": [
+            "bank",
+            "crypto"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.179932",
+        "updatedAt": "2025-09-11T07:34:11.179933"
+    },
+    {
+        "_id": "df_1136",
+        "title": "Caller pretended to be from Wells Fargo and requested OTP to 'secure' the victim's account",
+        "description": "Caller pretended to be from Wells Fargo and requested OTP to 'secure' the victim's account.",
+        "type": "other",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "support@paypal-security.com",
+            "suspiciousPhone": "+1-202-555-1036",
+            "suspiciousWebsite": "cryptomaxx-invest.example",
+            "suspiciousName": "IRS Agent Smith",
+            "suspiciousCompany": "PayPal",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-06-27T00:00:00"
+        },
+        "location": "London, UK",
+        "tags": [
+            "scam",
+            "investment"
+        ],
+        "severity": "low",
+        "createdAt": "2025-09-11T07:34:11.179945",
+        "updatedAt": "2025-09-11T07:34:11.179946"
+    },
+    {
+        "_id": "df_1137",
+        "title": "Fake Amazon delivery notice tricked user into entering card details on a cloned website",
+        "description": "Fake Amazon delivery notice tricked user into entering card details on a cloned website.",
+        "type": "website",
+        "status": "approved",
+        "fraudsterDetails": {
+            "suspiciousEmail": "banking@wellssecure.net",
+            "suspiciousPhone": "+1-202-555-1037",
+            "suspiciousWebsite": "wellsfargo-login.example",
+            "suspiciousName": "John Recruiter",
+            "suspiciousCompany": "IRS",
+            "amount": 9745,
+            "currency": "USD",
+            "date": "2025-11-03T00:00:00"
+        },
+        "location": "Dubai, UAE",
+        "tags": [
+            "paypal",
+            "phishing"
+        ],
+        "severity": "high",
+        "createdAt": "2025-09-11T07:34:11.179961",
+        "updatedAt": "2025-09-11T07:34:11.179963"
+    },
+    {
+        "_id": "df_1138",
+        "title": "Caller pretended to be from Wells Fargo and requested OTP to 'secure' the victim's account",
+        "description": "Caller pretended to be from Wells Fargo and requested OTP to 'secure' the victim's account.",
+        "type": "website",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "admin@cryptomaxx.io",
+            "suspiciousPhone": "+1-202-555-1038",
+            "suspiciousWebsite": "secure-amazon-support.example",
+            "suspiciousName": "IRS Agent Smith",
+            "suspiciousCompany": "ScamCorp Ltd",
+            "amount": 4221,
+            "currency": "USD",
+            "date": "2025-03-24T00:00:00"
+        },
+        "location": "London, UK",
+        "tags": [
+            "scam",
+            "bank"
+        ],
+        "severity": "critical",
+        "createdAt": "2025-09-11T07:34:11.179982",
+        "updatedAt": "2025-09-11T07:34:11.179985"
+    },
+    {
+        "_id": "df_1139",
+        "title": "Scammer sent fake invoices requesting urgent wire transfers",
+        "description": "Scammer sent fake invoices requesting urgent wire transfers.",
+        "type": "phone",
+        "status": "pending",
+        "fraudsterDetails": {
+            "suspiciousEmail": "helpdesk@amazon-secure.com",
+            "suspiciousPhone": "+1-202-555-1039",
+            "suspiciousWebsite": "wellsfargo-login.example",
+            "suspiciousName": "PayPal Security Team",
+            "suspiciousCompany": "ScamCorp Ltd",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-08-15T00:00:00"
+        },
+        "location": "San Francisco, CA, USA",
+        "tags": [
+            "amazon",
+            "identity-theft"
+        ],
+        "severity": "high",
+        "createdAt": "2025-09-11T07:34:11.180003",
+        "updatedAt": "2025-09-11T07:34:11.180005"
+    },
+    {
+        "_id": "df_1140",
+        "title": "Caller pretended to be from Wells Fargo and requested OTP to 'secure' the victim's account",
+        "description": "Caller pretended to be from Wells Fargo and requested OTP to 'secure' the victim's account.",
+        "type": "website",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "support@paypal-security.com",
+            "suspiciousPhone": "+1-202-555-1040",
+            "suspiciousWebsite": "wellsfargo-login.example",
+            "suspiciousName": "Lottery Winner Dept",
+            "suspiciousCompany": "Amazon",
+            "amount": 7110,
+            "currency": "USD",
+            "date": "2025-10-11T00:00:00"
+        },
+        "location": "London, UK",
+        "tags": [
+            "identity-theft",
+            "crypto"
+        ],
+        "severity": "low",
+        "createdAt": "2025-09-11T07:34:11.180018",
+        "updatedAt": "2025-09-11T07:34:11.180019"
+    },
+    {
+        "_id": "df_1141",
+        "title": "Victim received an email claiming suspicious login and was asked to verify account credentials via a phishing site",
+        "description": "Victim received an email claiming suspicious login and was asked to verify account credentials via a phishing site.",
+        "type": "identity",
+        "status": "pending",
+        "fraudsterDetails": {
+            "suspiciousEmail": "login@irs-gov.example",
+            "suspiciousPhone": "+1-202-555-1041",
+            "suspiciousWebsite": "wellsfargo-login.example",
+            "suspiciousName": "IRS Agent Smith",
+            "suspiciousCompany": "IRS",
+            "amount": 14199,
+            "currency": "USD",
+            "date": "2025-10-06T00:00:00"
+        },
+        "location": "Mumbai, India",
+        "tags": [
+            "romance",
+            "investment"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.180031",
+        "updatedAt": "2025-09-11T07:34:11.180032"
+    },
+    {
+        "_id": "df_1142",
+        "title": "Victim received an email claiming suspicious login and was asked to verify account credentials via a phishing site",
+        "description": "Victim received an email claiming suspicious login and was asked to verify account credentials via a phishing site.",
+        "type": "website",
+        "status": "pending",
+        "fraudsterDetails": {
+            "suspiciousEmail": "banking@wellssecure.net",
+            "suspiciousPhone": "+1-202-555-1042",
+            "suspiciousWebsite": "paypal-verify-login.example",
+            "suspiciousName": "IRS Agent Smith",
+            "suspiciousCompany": "PayPal",
+            "amount": 8496,
+            "currency": "USD",
+            "date": "2025-08-27T00:00:00"
+        },
+        "location": "San Francisco, CA, USA",
+        "tags": [
+            "amazon",
+            "crypto"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.180044",
+        "updatedAt": "2025-09-11T07:34:11.180046"
+    },
+    {
+        "_id": "df_1143",
+        "title": "Caller pretended to be from Wells Fargo and requested OTP to 'secure' the victim's account",
+        "description": "Caller pretended to be from Wells Fargo and requested OTP to 'secure' the victim's account.",
+        "type": "website",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "login@irs-gov.example",
+            "suspiciousPhone": "+1-202-555-1043",
+            "suspiciousWebsite": "careerplus-jobs.example",
+            "suspiciousName": "John Recruiter",
+            "suspiciousCompany": "IRS",
+            "amount": 239,
+            "currency": "USD",
+            "date": "2025-04-11T00:00:00"
+        },
+        "location": "Austin, TX, USA",
+        "tags": [
+            "investment",
+            "irs"
+        ],
+        "severity": "low",
+        "createdAt": "2025-09-11T07:34:11.180057",
+        "updatedAt": "2025-09-11T07:34:11.180058"
+    },
+    {
+        "_id": "df_1144",
+        "title": "Scammer posing as an IRS agent demanded immediate payment via gift cards to avoid arrest",
+        "description": "Scammer posing as an IRS agent demanded immediate payment via gift cards to avoid arrest.",
+        "type": "identity",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "admin@cryptomaxx.io",
+            "suspiciousPhone": "+1-202-555-1044",
+            "suspiciousWebsite": "careerplus-jobs.example",
+            "suspiciousName": "John Recruiter",
+            "suspiciousCompany": "CryptoMaxx",
+            "amount": 10548,
+            "currency": "USD",
+            "date": "2025-12-19T00:00:00"
+        },
+        "location": "Cape Town, South Africa",
+        "tags": [
+            "irs",
+            "identity-theft"
+        ],
+        "severity": "low",
+        "createdAt": "2025-09-11T07:34:11.180070",
+        "updatedAt": "2025-09-11T07:34:11.180071"
+    },
+    {
+        "_id": "df_1145",
+        "title": "Job seeker tricked into paying fees for a fake employment opportunity",
+        "description": "Job seeker tricked into paying fees for a fake employment opportunity.",
+        "type": "other",
+        "status": "pending",
+        "fraudsterDetails": {
+            "suspiciousEmail": "banking@wellssecure.net",
+            "suspiciousPhone": "+1-202-555-1045",
+            "suspiciousWebsite": "cryptomaxx-invest.example",
+            "suspiciousName": "PayPal Security Team",
+            "suspiciousCompany": "ScamCorp Ltd",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-12-21T00:00:00"
+        },
+        "location": "Berlin, Germany",
+        "tags": [
+            "identity-theft",
+            "investment"
+        ],
+        "severity": "high",
+        "createdAt": "2025-09-11T07:34:11.180082",
+        "updatedAt": "2025-09-11T07:34:11.180083"
+    },
+    {
+        "_id": "df_1146",
+        "title": "Scammer sent fake invoices requesting urgent wire transfers",
+        "description": "Scammer sent fake invoices requesting urgent wire transfers.",
+        "type": "website",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "support@paypal-security.com",
+            "suspiciousPhone": "+1-202-555-1046",
+            "suspiciousWebsite": "cryptomaxx-invest.example",
+            "suspiciousName": "Amazon Support",
+            "suspiciousCompany": "CareerPlus",
+            "amount": 8159,
+            "currency": "USD",
+            "date": "2025-02-24T00:00:00"
+        },
+        "location": "Berlin, Germany",
+        "tags": [
+            "bank",
+            "investment"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.180095",
+        "updatedAt": "2025-09-11T07:34:11.180097"
+    },
+    {
+        "_id": "df_1147",
+        "title": "Romance scammer built trust over months and then requested money for emergency medical bills",
+        "description": "Romance scammer built trust over months and then requested money for emergency medical bills.",
+        "type": "website",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "helpdesk@amazon-secure.com",
+            "suspiciousPhone": "+1-202-555-1047",
+            "suspiciousWebsite": "wellsfargo-login.example",
+            "suspiciousName": "IRS Agent Smith",
+            "suspiciousCompany": "PayPal",
+            "amount": 5782,
+            "currency": "USD",
+            "date": "2025-08-26T00:00:00"
+        },
+        "location": "Mumbai, India",
+        "tags": [
+            "amazon",
+            "bank"
+        ],
+        "severity": "high",
+        "createdAt": "2025-09-11T07:34:11.180115",
+        "updatedAt": "2025-09-11T07:34:11.180116"
+    },
+    {
+        "_id": "df_1148",
+        "title": "Crypto investment site promised 200% return but disappeared after deposits",
+        "description": "Crypto investment site promised 200% return but disappeared after deposits.",
+        "type": "financial",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "helpdesk@amazon-secure.com",
+            "suspiciousPhone": "+1-202-555-1048",
+            "suspiciousWebsite": "paypal-verify-login.example",
+            "suspiciousName": "Lottery Winner Dept",
+            "suspiciousCompany": "CareerPlus",
+            "amount": 4902,
+            "currency": "USD",
+            "date": "2025-02-21T00:00:00"
+        },
+        "location": "Toronto, Canada",
+        "tags": [
+            "identity-theft",
+            "crypto"
+        ],
+        "severity": "low",
+        "createdAt": "2025-09-11T07:34:11.180128",
+        "updatedAt": "2025-09-11T07:34:11.180130"
+    },
+    {
+        "_id": "df_1149",
+        "title": "Romance scammer built trust over months and then requested money for emergency medical bills",
+        "description": "Romance scammer built trust over months and then requested money for emergency medical bills.",
+        "type": "email",
+        "status": "approved",
+        "fraudsterDetails": {
+            "suspiciousEmail": "support@paypal-security.com",
+            "suspiciousPhone": "+1-202-555-1049",
+            "suspiciousWebsite": "paypal-verify-login.example",
+            "suspiciousName": "IRS Agent Smith",
+            "suspiciousCompany": "PayPal",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-03-02T00:00:00"
+        },
+        "location": "Austin, TX, USA",
+        "tags": [
+            "irs",
+            "phishing"
+        ],
+        "severity": "high",
+        "createdAt": "2025-09-11T07:34:11.180143",
+        "updatedAt": "2025-09-11T07:34:11.180144"
+    },
+    {
+        "_id": "df_1150",
+        "title": "Victim was told they won a lottery but had to pay processing fees upfront",
+        "description": "Victim was told they won a lottery but had to pay processing fees upfront.",
+        "type": "other",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "jobs@careerplus.fake",
+            "suspiciousPhone": "+1-202-555-1050",
+            "suspiciousWebsite": "wellsfargo-login.example",
+            "suspiciousName": "CryptoMaxx Trader",
+            "suspiciousCompany": "ScamCorp Ltd",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-05-02T00:00:00"
+        },
+        "location": "San Francisco, CA, USA",
+        "tags": [
+            "amazon",
+            "crypto"
+        ],
+        "severity": "low",
+        "createdAt": "2025-09-11T07:34:11.180155",
+        "updatedAt": "2025-09-11T07:34:11.180157"
+    },
+    {
+        "_id": "df_1151",
+        "title": "Caller pretended to be from Wells Fargo and requested OTP to 'secure' the victim's account",
+        "description": "Caller pretended to be from Wells Fargo and requested OTP to 'secure' the victim's account.",
+        "type": "phone",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "jobs@careerplus.fake",
+            "suspiciousPhone": "+1-202-555-1051",
+            "suspiciousWebsite": "careerplus-jobs.example",
+            "suspiciousName": "Lottery Winner Dept",
+            "suspiciousCompany": "Amazon",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-04-15T00:00:00"
+        },
+        "location": "Dubai, UAE",
+        "tags": [
+            "identity-theft",
+            "whatsapp"
+        ],
+        "severity": "low",
+        "createdAt": "2025-09-11T07:34:11.180167",
+        "updatedAt": "2025-09-11T07:34:11.180169"
+    },
+    {
+        "_id": "df_1152",
+        "title": "Job seeker tricked into paying fees for a fake employment opportunity",
+        "description": "Job seeker tricked into paying fees for a fake employment opportunity.",
+        "type": "financial",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "login@irs-gov.example",
+            "suspiciousPhone": "+1-202-555-1052",
+            "suspiciousWebsite": "cryptomaxx-invest.example",
+            "suspiciousName": "Amazon Support",
+            "suspiciousCompany": "IRS",
+            "amount": 6288,
+            "currency": "USD",
+            "date": "2025-06-12T00:00:00"
+        },
+        "location": "Berlin, Germany",
+        "tags": [
+            "paypal",
+            "phishing"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.180180",
+        "updatedAt": "2025-09-11T07:34:11.180181"
+    },
+    {
+        "_id": "df_1153",
+        "title": "Job seeker tricked into paying fees for a fake employment opportunity",
+        "description": "Job seeker tricked into paying fees for a fake employment opportunity.",
+        "type": "phone",
+        "status": "approved",
+        "fraudsterDetails": {
+            "suspiciousEmail": "support@paypal-security.com",
+            "suspiciousPhone": "+1-202-555-1053",
+            "suspiciousWebsite": "irs-taxpay.example",
+            "suspiciousName": "Amazon Support",
+            "suspiciousCompany": "CryptoMaxx",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-01-02T00:00:00"
+        },
+        "location": "Toronto, Canada",
+        "tags": [
+            "scam",
+            "bank"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.180193",
+        "updatedAt": "2025-09-11T07:34:11.180196"
+    },
+    {
+        "_id": "df_1154",
+        "title": "Job seeker tricked into paying fees for a fake employment opportunity",
+        "description": "Job seeker tricked into paying fees for a fake employment opportunity.",
+        "type": "other",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "admin@cryptomaxx.io",
+            "suspiciousPhone": "+1-202-555-1054",
+            "suspiciousWebsite": "careerplus-jobs.example",
+            "suspiciousName": "CryptoMaxx Trader",
+            "suspiciousCompany": "CryptoMaxx",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-09-16T00:00:00"
+        },
+        "location": "New York, NY, USA",
+        "tags": [
+            "phishing",
+            "irs"
+        ],
+        "severity": "critical",
+        "createdAt": "2025-09-11T07:34:11.180213",
+        "updatedAt": "2025-09-11T07:34:11.180216"
+    },
+    {
+        "_id": "df_1155",
+        "title": "Caller pretended to be from Wells Fargo and requested OTP to 'secure' the victim's account",
+        "description": "Caller pretended to be from Wells Fargo and requested OTP to 'secure' the victim's account.",
+        "type": "other",
+        "status": "approved",
+        "fraudsterDetails": {
+            "suspiciousEmail": "helpdesk@amazon-secure.com",
+            "suspiciousPhone": "+1-202-555-1055",
+            "suspiciousWebsite": "wellsfargo-login.example",
+            "suspiciousName": "CryptoMaxx Trader",
+            "suspiciousCompany": "CareerPlus",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-09-07T00:00:00"
+        },
+        "location": "San Francisco, CA, USA",
+        "tags": [
+            "romance",
+            "irs"
+        ],
+        "severity": "low",
+        "createdAt": "2025-09-11T07:34:11.180233",
+        "updatedAt": "2025-09-11T07:34:11.180235"
+    },
+    {
+        "_id": "df_1156",
+        "title": "Victim was told they won a lottery but had to pay processing fees upfront",
+        "description": "Victim was told they won a lottery but had to pay processing fees upfront.",
+        "type": "financial",
+        "status": "pending",
+        "fraudsterDetails": {
+            "suspiciousEmail": "helpdesk@amazon-secure.com",
+            "suspiciousPhone": "+1-202-555-1056",
+            "suspiciousWebsite": "secure-amazon-support.example",
+            "suspiciousName": "Lottery Winner Dept",
+            "suspiciousCompany": "CryptoMaxx",
+            "amount": 1074,
+            "currency": "USD",
+            "date": "2025-09-18T00:00:00"
+        },
+        "location": "Cape Town, South Africa",
+        "tags": [
+            "bank",
+            "scam"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.180246",
+        "updatedAt": "2025-09-11T07:34:11.180248"
+    },
+    {
+        "_id": "df_1157",
+        "title": "Scammer sent fake invoices requesting urgent wire transfers",
+        "description": "Scammer sent fake invoices requesting urgent wire transfers.",
+        "type": "phone",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "support@paypal-security.com",
+            "suspiciousPhone": "+1-202-555-1057",
+            "suspiciousWebsite": "irs-taxpay.example",
+            "suspiciousName": "CryptoMaxx Trader",
+            "suspiciousCompany": "IRS",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-03-23T00:00:00"
+        },
+        "location": "Cape Town, South Africa",
+        "tags": [
+            "romance",
+            "amazon"
+        ],
+        "severity": "low",
+        "createdAt": "2025-09-11T07:34:11.180258",
+        "updatedAt": "2025-09-11T07:34:11.180259"
+    },
+    {
+        "_id": "df_1158",
+        "title": "Fraudster advertised non-existent rental properties and collected deposits",
+        "description": "Fraudster advertised non-existent rental properties and collected deposits.",
+        "type": "phone",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "support@paypal-security.com",
+            "suspiciousPhone": "+1-202-555-1058",
+            "suspiciousWebsite": "wellsfargo-login.example",
+            "suspiciousName": "John Recruiter",
+            "suspiciousCompany": "PayPal",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-04-12T00:00:00"
+        },
+        "location": "New York, NY, USA",
+        "tags": [
+            "scam",
+            "investment"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.180276",
+        "updatedAt": "2025-09-11T07:34:11.180279"
+    },
+    {
+        "_id": "df_1159",
+        "title": "Victim was told they won a lottery but had to pay processing fees upfront",
+        "description": "Victim was told they won a lottery but had to pay processing fees upfront.",
+        "type": "email",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "banking@wellssecure.net",
+            "suspiciousPhone": "+1-202-555-1059",
+            "suspiciousWebsite": "paypal-verify-login.example",
+            "suspiciousName": "PayPal Security Team",
+            "suspiciousCompany": "IRS",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-09-20T00:00:00"
+        },
+        "location": "Austin, TX, USA",
+        "tags": [
+            "crypto",
+            "amazon"
+        ],
+        "severity": "high",
+        "createdAt": "2025-09-11T07:34:11.180384",
+        "updatedAt": "2025-09-11T07:34:11.180386"
+    },
+    {
+        "_id": "df_1160",
+        "title": "Victim was told they won a lottery but had to pay processing fees upfront",
+        "description": "Victim was told they won a lottery but had to pay processing fees upfront.",
+        "type": "identity",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "support@paypal-security.com",
+            "suspiciousPhone": "+1-202-555-1060",
+            "suspiciousWebsite": "wellsfargo-login.example",
+            "suspiciousName": "Amazon Support",
+            "suspiciousCompany": "PayPal",
+            "amount": 12413,
+            "currency": "USD",
+            "date": "2025-09-27T00:00:00"
+        },
+        "location": "Mumbai, India",
+        "tags": [
+            "investment",
+            "romance"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.180400",
+        "updatedAt": "2025-09-11T07:34:11.180401"
+    },
+    {
+        "_id": "df_1161",
+        "title": "Fake Amazon delivery notice tricked user into entering card details on a cloned website",
+        "description": "Fake Amazon delivery notice tricked user into entering card details on a cloned website.",
+        "type": "email",
+        "status": "approved",
+        "fraudsterDetails": {
+            "suspiciousEmail": "banking@wellssecure.net",
+            "suspiciousPhone": "+1-202-555-1061",
+            "suspiciousWebsite": "paypal-verify-login.example",
+            "suspiciousName": "Amazon Support",
+            "suspiciousCompany": "Amazon",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-06-06T00:00:00"
+        },
+        "location": "Sydney, Australia",
+        "tags": [
+            "whatsapp",
+            "lottery"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.180413",
+        "updatedAt": "2025-09-11T07:34:11.180414"
+    },
+    {
+        "_id": "df_1162",
+        "title": "Victim was told they won a lottery but had to pay processing fees upfront",
+        "description": "Victim was told they won a lottery but had to pay processing fees upfront.",
+        "type": "other",
+        "status": "pending",
+        "fraudsterDetails": {
+            "suspiciousEmail": "jobs@careerplus.fake",
+            "suspiciousPhone": "+1-202-555-1062",
+            "suspiciousWebsite": "secure-amazon-support.example",
+            "suspiciousName": "Lottery Winner Dept",
+            "suspiciousCompany": "IRS",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-12-20T00:00:00"
+        },
+        "location": "New York, NY, USA",
+        "tags": [
+            "crypto",
+            "irs"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.180427",
+        "updatedAt": "2025-09-11T07:34:11.180429"
+    },
+    {
+        "_id": "df_1163",
+        "title": "Fake Amazon delivery notice tricked user into entering card details on a cloned website",
+        "description": "Fake Amazon delivery notice tricked user into entering card details on a cloned website.",
+        "type": "identity",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "helpdesk@amazon-secure.com",
+            "suspiciousPhone": "+1-202-555-1063",
+            "suspiciousWebsite": "wellsfargo-login.example",
+            "suspiciousName": "PayPal Security Team",
+            "suspiciousCompany": "PayPal",
+            "amount": 16596,
+            "currency": "USD",
+            "date": "2025-06-02T00:00:00"
+        },
+        "location": "Mumbai, India",
+        "tags": [
+            "amazon",
+            "irs"
+        ],
+        "severity": "high",
+        "createdAt": "2025-09-11T07:34:11.180440",
+        "updatedAt": "2025-09-11T07:34:11.180441"
+    },
+    {
+        "_id": "df_1164",
+        "title": "Fake Amazon delivery notice tricked user into entering card details on a cloned website",
+        "description": "Fake Amazon delivery notice tricked user into entering card details on a cloned website.",
+        "type": "phone",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "login@irs-gov.example",
+            "suspiciousPhone": "+1-202-555-1064",
+            "suspiciousWebsite": "wellsfargo-login.example",
+            "suspiciousName": "John Recruiter",
+            "suspiciousCompany": "ScamCorp Ltd",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-08-10T00:00:00"
+        },
+        "location": "Austin, TX, USA",
         "tags": [
             "phishing",
             "bank"
         ],
         "severity": "low",
-        "createdAt": "2025-07-02T10:00:00.000Z",
-        "updatedAt": "2025-07-02T10:00:00.000Z"
+        "createdAt": "2025-09-11T07:34:11.180462",
+        "updatedAt": "2025-09-11T07:34:11.180463"
     },
     {
-        "_id": "df_1002",
-        "title": "Tech support scam via phone",
-        "description": "Caller claimed to be from Microsoft asking for remote access.",
-        "type": "phone",
-        "status": "approved",
+        "_id": "df_1165",
+        "title": "Victim received an email claiming suspicious login and was asked to verify account credentials via a phishing site",
+        "description": "Victim received an email claiming suspicious login and was asked to verify account credentials via a phishing site.",
+        "type": "other",
+        "status": "rejected",
         "fraudsterDetails": {
-            "suspiciousEmail": "support@ms-secure.example",
-            "suspiciousPhone": "+1-206-555-0173",
-            "suspiciousWebsite": "ms-secure.example",
-            "suspiciousName": "MS Support Scammer",
-            "suspiciousCompany": "Fake Microsoft Support",
-            "amount": 200,
-            "currency": "USD",
-            "date": "2025-06-15T00:00:00.000Z"
-        },
-        "location": "Seattle, WA, US",
-        "tags": [
-            "tech support",
-            "remote access"
-        ],
-        "severity": "medium",
-        "createdAt": "2025-06-16T09:00:00.000Z",
-        "updatedAt": "2025-06-16T09:00:00.000Z"
-    },
-    {
-        "_id": "df_1003",
-        "title": "Fake online store - non-delivery",
-        "description": "Paid for electronics, website disappeared after purchase.",
-        "type": "website",
-        "status": "approved",
-        "fraudsterDetails": {
-            "suspiciousEmail": "orders@shop-electro.example",
-            "suspiciousPhone": "+1-416-555-0102",
-            "suspiciousWebsite": "shop-electro.example",
-            "suspiciousName": "Shop Electro Scam",
-            "suspiciousCompany": "Fake Electronics Store",
-            "amount": 349.99,
-            "currency": "USD",
-            "date": "2025-05-20T00:00:00.000Z"
-        },
-        "location": "Toronto, ON, CA",
-        "tags": [
-            "ecommerce",
-            "non-delivery"
-        ],
-        "severity": "high",
-        "createdAt": "2025-05-21T14:30:00.000Z",
-        "updatedAt": "2025-05-21T14:30:00.000Z"
-    },
-    {
-        "_id": "df_1004",
-        "title": "Identity theft via data breach reuse",
-        "description": "Unauthorized credit account opened using leaked info.",
-        "type": "identity",
-        "status": "approved",
-        "fraudsterDetails": {
-            "suspiciousEmail": "identity@breach-alerts.example",
-            "suspiciousPhone": "+1-312-555-2230",
-            "suspiciousWebsite": "breach-alerts.example",
-            "suspiciousName": "Identity Thief",
-            "suspiciousCompany": "Fake Breach Alerts",
+            "suspiciousEmail": "helpdesk@amazon-secure.com",
+            "suspiciousPhone": "+1-202-555-1065",
+            "suspiciousWebsite": "careerplus-jobs.example",
+            "suspiciousName": "PayPal Security Team",
+            "suspiciousCompany": "Amazon",
             "amount": 0,
             "currency": "USD",
-            "date": "2025-03-12T00:00:00.000Z"
+            "date": "2025-08-23T00:00:00"
         },
-        "location": "Chicago, IL, US",
+        "location": "Dubai, UAE",
         "tags": [
-            "identity theft",
-            "breach"
-        ],
-        "severity": "medium",
-        "createdAt": "2025-03-13T08:00:00.000Z",
-        "updatedAt": "2025-03-13T08:00:00.000Z"
-    },
-    {
-        "_id": "df_1005",
-        "title": "Investment scam promising high returns",
-        "description": "Crypto investment platform promised 20% weekly returns.",
-        "type": "financial",
-        "status": "approved",
-        "fraudsterDetails": {
-            "suspiciousEmail": "hello@cryptogains.fake",
-            "suspiciousPhone": "+44 20 7946 0958",
-            "suspiciousWebsite": "cryptogains.fake",
-            "suspiciousName": "Crypto Gains Scam",
-            "suspiciousCompany": "Fake Crypto Platform",
-            "amount": 1500,
-            "currency": "USD",
-            "date": "2025-04-05T00:00:00.000Z"
-        },
-        "location": "London, ENG, GB",
-        "tags": [
-            "investment",
-            "crypto"
-        ],
-        "severity": "high",
-        "createdAt": "2025-04-06T11:45:00.000Z",
-        "updatedAt": "2025-04-06T11:45:00.000Z"
-    },
-    {
-        "_id": "df_1006",
-        "title": "Romance scam on social media",
-        "description": "Scammer built trust over weeks and requested gift cards.",
-        "type": "financial",
-        "status": "approved",
-        "fraudsterDetails": {
-            "suspiciousEmail": "contact@romance-help.example",
-            "suspiciousPhone": "+61 2 5550 0130",
-            "suspiciousWebsite": "romance-help.example",
-            "suspiciousName": "Romance Scammer",
-            "suspiciousCompany": "Fake Romance Service",
-            "amount": 600,
-            "currency": "USD",
-            "date": "2025-02-14T00:00:00.000Z"
-        },
-        "location": "Sydney, NSW, AU",
-        "tags": [
-            "romance",
-            "gift cards"
-        ],
-        "severity": "medium",
-        "createdAt": "2025-02-15T16:00:00.000Z",
-        "updatedAt": "2025-02-15T16:00:00.000Z"
-    },
-    {
-        "_id": "df_1007",
-        "title": "Business email compromise invoice fraud",
-        "description": "Vendor invoice details were altered leading to mispayment.",
-        "type": "email",
-        "status": "approved",
-        "fraudsterDetails": {
-            "suspiciousEmail": "ap@vendor-payments.example",
-            "suspiciousPhone": "+1-212-555-4420",
-            "suspiciousWebsite": "vendor-payments.example",
-            "suspiciousName": "BEC Scammer",
-            "suspiciousCompany": "Fake Vendor",
-            "amount": 9200,
-            "currency": "USD",
-            "date": "2025-01-30T00:00:00.000Z"
-        },
-        "location": "New York, NY, US",
-        "tags": [
-            "BEC",
-            "invoice"
+            "bank",
+            "lottery"
         ],
         "severity": "critical",
-        "createdAt": "2025-01-31T10:15:00.000Z",
-        "updatedAt": "2025-01-31T10:15:00.000Z"
+        "createdAt": "2025-09-11T07:34:11.180477",
+        "updatedAt": "2025-09-11T07:34:11.180479"
     },
     {
-        "_id": "df_1008",
-        "title": "Lottery scam message",
-        "description": "SMS claimed I won a prize, requested processing fee.",
+        "_id": "df_1166",
+        "title": "Caller pretended to be from Wells Fargo and requested OTP to 'secure' the victim's account",
+        "description": "Caller pretended to be from Wells Fargo and requested OTP to 'secure' the victim's account.",
+        "type": "identity",
+        "status": "pending",
+        "fraudsterDetails": {
+            "suspiciousEmail": "admin@cryptomaxx.io",
+            "suspiciousPhone": "+1-202-555-1066",
+            "suspiciousWebsite": "cryptomaxx-invest.example",
+            "suspiciousName": "John Recruiter",
+            "suspiciousCompany": "ScamCorp Ltd",
+            "amount": 10991,
+            "currency": "USD",
+            "date": "2025-01-10T00:00:00"
+        },
+        "location": "Toronto, Canada",
+        "tags": [
+            "amazon",
+            "scam"
+        ],
+        "severity": "critical",
+        "createdAt": "2025-09-11T07:34:11.180492",
+        "updatedAt": "2025-09-11T07:34:11.180493"
+    },
+    {
+        "_id": "df_1167",
+        "title": "Fraudster advertised non-existent rental properties and collected deposits",
+        "description": "Fraudster advertised non-existent rental properties and collected deposits.",
+        "type": "other",
+        "status": "approved",
+        "fraudsterDetails": {
+            "suspiciousEmail": "jobs@careerplus.fake",
+            "suspiciousPhone": "+1-202-555-1067",
+            "suspiciousWebsite": "irs-taxpay.example",
+            "suspiciousName": "John Recruiter",
+            "suspiciousCompany": "CareerPlus",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-03-14T00:00:00"
+        },
+        "location": "Sydney, Australia",
+        "tags": [
+            "paypal",
+            "whatsapp"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.180504",
+        "updatedAt": "2025-09-11T07:34:11.180505"
+    },
+    {
+        "_id": "df_1168",
+        "title": "Victim received an email claiming suspicious login and was asked to verify account credentials via a phishing site",
+        "description": "Victim received an email claiming suspicious login and was asked to verify account credentials via a phishing site.",
+        "type": "phone",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "helpdesk@amazon-secure.com",
+            "suspiciousPhone": "+1-202-555-1068",
+            "suspiciousWebsite": "wellsfargo-login.example",
+            "suspiciousName": "CryptoMaxx Trader",
+            "suspiciousCompany": "CareerPlus",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-06-16T00:00:00"
+        },
+        "location": "London, UK",
+        "tags": [
+            "paypal",
+            "crypto"
+        ],
+        "severity": "low",
+        "createdAt": "2025-09-11T07:34:11.180516",
+        "updatedAt": "2025-09-11T07:34:11.180517"
+    },
+    {
+        "_id": "df_1169",
+        "title": "Job seeker tricked into paying fees for a fake employment opportunity",
+        "description": "Job seeker tricked into paying fees for a fake employment opportunity.",
+        "type": "email",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "jobs@careerplus.fake",
+            "suspiciousPhone": "+1-202-555-1069",
+            "suspiciousWebsite": "secure-amazon-support.example",
+            "suspiciousName": "Lottery Winner Dept",
+            "suspiciousCompany": "CryptoMaxx",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-09-25T00:00:00"
+        },
+        "location": "San Francisco, CA, USA",
+        "tags": [
+            "scam",
+            "paypal"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.180527",
+        "updatedAt": "2025-09-11T07:34:11.180529"
+    },
+    {
+        "_id": "df_1170",
+        "title": "Victim was told they won a lottery but had to pay processing fees upfront",
+        "description": "Victim was told they won a lottery but had to pay processing fees upfront.",
+        "type": "identity",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "jobs@careerplus.fake",
+            "suspiciousPhone": "+1-202-555-1070",
+            "suspiciousWebsite": "irs-taxpay.example",
+            "suspiciousName": "CryptoMaxx Trader",
+            "suspiciousCompany": "IRS",
+            "amount": 2938,
+            "currency": "USD",
+            "date": "2025-09-24T00:00:00"
+        },
+        "location": "Cape Town, South Africa",
+        "tags": [
+            "identity-theft",
+            "phishing"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.180540",
+        "updatedAt": "2025-09-11T07:34:11.180541"
+    },
+    {
+        "_id": "df_1171",
+        "title": "Victim received an email claiming suspicious login and was asked to verify account credentials via a phishing site",
+        "description": "Victim received an email claiming suspicious login and was asked to verify account credentials via a phishing site.",
+        "type": "phone",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "support@paypal-security.com",
+            "suspiciousPhone": "+1-202-555-1071",
+            "suspiciousWebsite": "cryptomaxx-invest.example",
+            "suspiciousName": "John Recruiter",
+            "suspiciousCompany": "ScamCorp Ltd",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-12-31T00:00:00"
+        },
+        "location": "Austin, TX, USA",
+        "tags": [
+            "crypto",
+            "irs"
+        ],
+        "severity": "low",
+        "createdAt": "2025-09-11T07:34:11.180558",
+        "updatedAt": "2025-09-11T07:34:11.180560"
+    },
+    {
+        "_id": "df_1172",
+        "title": "Job seeker tricked into paying fees for a fake employment opportunity",
+        "description": "Job seeker tricked into paying fees for a fake employment opportunity.",
+        "type": "email",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "helpdesk@amazon-secure.com",
+            "suspiciousPhone": "+1-202-555-1072",
+            "suspiciousWebsite": "cryptomaxx-invest.example",
+            "suspiciousName": "PayPal Security Team",
+            "suspiciousCompany": "PayPal",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-10-07T00:00:00"
+        },
+        "location": "London, UK",
+        "tags": [
+            "bank",
+            "romance"
+        ],
+        "severity": "high",
+        "createdAt": "2025-09-11T07:34:11.180577",
+        "updatedAt": "2025-09-11T07:34:11.180580"
+    },
+    {
+        "_id": "df_1173",
+        "title": "Victim was told they won a lottery but had to pay processing fees upfront",
+        "description": "Victim was told they won a lottery but had to pay processing fees upfront.",
         "type": "phone",
         "status": "approved",
         "fraudsterDetails": {
-            "suspiciousEmail": "claims@lotto-prize.example",
-            "suspiciousPhone": "+91 22 5550 1200",
-            "suspiciousWebsite": "lotto-prize.example",
-            "suspiciousName": "Lottery Scammer",
-            "suspiciousCompany": "Fake Lottery Service",
-            "amount": 50,
+            "suspiciousEmail": "jobs@careerplus.fake",
+            "suspiciousPhone": "+1-202-555-1073",
+            "suspiciousWebsite": "irs-taxpay.example",
+            "suspiciousName": "Amazon Support",
+            "suspiciousCompany": "PayPal",
+            "amount": 0,
             "currency": "USD",
-            "date": "2025-06-01T00:00:00.000Z"
+            "date": "2025-10-13T00:00:00"
         },
-        "location": "Mumbai, MH, IN",
+        "location": "Mumbai, India",
         "tags": [
             "lottery",
-            "sms"
+            "whatsapp"
         ],
-        "severity": "low",
-        "createdAt": "2025-06-01T12:00:00.000Z",
-        "updatedAt": "2025-06-01T12:00:00.000Z"
+        "severity": "critical",
+        "createdAt": "2025-09-11T07:34:11.180593",
+        "updatedAt": "2025-09-11T07:34:11.180594"
     },
     {
-        "_id": "df_1009",
-        "title": "Fake charity after natural disaster",
-        "description": "Donation site turned out to be fraudulent.",
-        "type": "website",
-        "status": "approved",
+        "_id": "df_1174",
+        "title": "Fraudster advertised non-existent rental properties and collected deposits",
+        "description": "Fraudster advertised non-existent rental properties and collected deposits.",
+        "type": "email",
+        "status": "pending",
         "fraudsterDetails": {
-            "suspiciousEmail": "donate@relief-aid.example",
-            "suspiciousPhone": "+1-303-555-0142",
-            "suspiciousWebsite": "relief-aid.example",
-            "suspiciousName": "Charity Scammer",
-            "suspiciousCompany": "Fake Relief Organization",
-            "amount": 120,
+            "suspiciousEmail": "support@paypal-security.com",
+            "suspiciousPhone": "+1-202-555-1074",
+            "suspiciousWebsite": "careerplus-jobs.example",
+            "suspiciousName": "Amazon Support",
+            "suspiciousCompany": "CryptoMaxx",
+            "amount": 0,
             "currency": "USD",
-            "date": "2025-05-10T00:00:00.000Z"
+            "date": "2025-03-13T00:00:00"
         },
-        "location": "Denver, CO, US",
+        "location": "San Francisco, CA, USA",
         "tags": [
-            "charity",
-            "donation"
+            "scam",
+            "whatsapp"
         ],
-        "severity": "medium",
-        "createdAt": "2025-05-11T09:00:00.000Z",
-        "updatedAt": "2025-05-11T09:00:00.000Z"
+        "severity": "critical",
+        "createdAt": "2025-09-11T07:34:11.180605",
+        "updatedAt": "2025-09-11T07:34:11.180606"
     },
     {
-        "_id": "df_1010",
-        "title": "Wire transfer fraud via spoofed email",
-        "description": "Finance team received spoofed CEO email to wire funds.",
+        "_id": "df_1175",
+        "title": "Victim received an email claiming suspicious login and was asked to verify account credentials via a phishing site",
+        "description": "Victim received an email claiming suspicious login and was asked to verify account credentials via a phishing site.",
         "type": "email",
         "status": "approved",
         "fraudsterDetails": {
-            "suspiciousEmail": "ceo@company-wire.example",
-            "suspiciousPhone": "+1-415-555-0901",
-            "suspiciousWebsite": "company-wire.example",
-            "suspiciousName": "CEO Spoofer",
-            "suspiciousCompany": "Fake Company",
-            "amount": 15000,
+            "suspiciousEmail": "helpdesk@amazon-secure.com",
+            "suspiciousPhone": "+1-202-555-1075",
+            "suspiciousWebsite": "cryptomaxx-invest.example",
+            "suspiciousName": "CryptoMaxx Trader",
+            "suspiciousCompany": "IRS",
+            "amount": 0,
             "currency": "USD",
-            "date": "2025-03-22T00:00:00.000Z"
+            "date": "2025-09-25T00:00:00"
         },
-        "location": "San Francisco, CA, US",
+        "location": "Dubai, UAE",
         "tags": [
-            "spoofing",
-            "wire"
+            "romance",
+            "crypto"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.180618",
+        "updatedAt": "2025-09-11T07:34:11.180620"
+    },
+    {
+        "_id": "df_1176",
+        "title": "Victim received an email claiming suspicious login and was asked to verify account credentials via a phishing site",
+        "description": "Victim received an email claiming suspicious login and was asked to verify account credentials via a phishing site.",
+        "type": "email",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "support@paypal-security.com",
+            "suspiciousPhone": "+1-202-555-1076",
+            "suspiciousWebsite": "secure-amazon-support.example",
+            "suspiciousName": "IRS Agent Smith",
+            "suspiciousCompany": "PayPal",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-02-02T00:00:00"
+        },
+        "location": "Dubai, UAE",
+        "tags": [
+            "phishing",
+            "irs"
+        ],
+        "severity": "low",
+        "createdAt": "2025-09-11T07:34:11.180630",
+        "updatedAt": "2025-09-11T07:34:11.180632"
+    },
+    {
+        "_id": "df_1177",
+        "title": "Scammer posing as an IRS agent demanded immediate payment via gift cards to avoid arrest",
+        "description": "Scammer posing as an IRS agent demanded immediate payment via gift cards to avoid arrest.",
+        "type": "financial",
+        "status": "pending",
+        "fraudsterDetails": {
+            "suspiciousEmail": "admin@cryptomaxx.io",
+            "suspiciousPhone": "+1-202-555-1077",
+            "suspiciousWebsite": "secure-amazon-support.example",
+            "suspiciousName": "Amazon Support",
+            "suspiciousCompany": "ScamCorp Ltd",
+            "amount": 12878,
+            "currency": "USD",
+            "date": "2025-09-02T00:00:00"
+        },
+        "location": "Sydney, Australia",
+        "tags": [
+            "bank",
+            "paypal"
         ],
         "severity": "critical",
-        "createdAt": "2025-03-23T08:30:00.000Z",
-        "updatedAt": "2025-03-23T08:30:00.000Z"
+        "createdAt": "2025-09-11T07:34:11.180643",
+        "updatedAt": "2025-09-11T07:34:11.180644"
+    },
+    {
+        "_id": "df_1178",
+        "title": "Crypto investment site promised 200% return but disappeared after deposits",
+        "description": "Crypto investment site promised 200% return but disappeared after deposits.",
+        "type": "phone",
+        "status": "pending",
+        "fraudsterDetails": {
+            "suspiciousEmail": "jobs@careerplus.fake",
+            "suspiciousPhone": "+1-202-555-1078",
+            "suspiciousWebsite": "irs-taxpay.example",
+            "suspiciousName": "CryptoMaxx Trader",
+            "suspiciousCompany": "CareerPlus",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-01-23T00:00:00"
+        },
+        "location": "Berlin, Germany",
+        "tags": [
+            "scam",
+            "lottery"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.180655",
+        "updatedAt": "2025-09-11T07:34:11.180657"
+    },
+    {
+        "_id": "df_1179",
+        "title": "Job seeker tricked into paying fees for a fake employment opportunity",
+        "description": "Job seeker tricked into paying fees for a fake employment opportunity.",
+        "type": "phone",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "admin@cryptomaxx.io",
+            "suspiciousPhone": "+1-202-555-1079",
+            "suspiciousWebsite": "cryptomaxx-invest.example",
+            "suspiciousName": "PayPal Security Team",
+            "suspiciousCompany": "ScamCorp Ltd",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-08-25T00:00:00"
+        },
+        "location": "London, UK",
+        "tags": [
+            "crypto",
+            "investment"
+        ],
+        "severity": "high",
+        "createdAt": "2025-09-11T07:34:11.180667",
+        "updatedAt": "2025-09-11T07:34:11.180669"
+    },
+    {
+        "_id": "df_1180",
+        "title": "Fraudster advertised non-existent rental properties and collected deposits",
+        "description": "Fraudster advertised non-existent rental properties and collected deposits.",
+        "type": "other",
+        "status": "approved",
+        "fraudsterDetails": {
+            "suspiciousEmail": "admin@cryptomaxx.io",
+            "suspiciousPhone": "+1-202-555-1080",
+            "suspiciousWebsite": "careerplus-jobs.example",
+            "suspiciousName": "CryptoMaxx Trader",
+            "suspiciousCompany": "IRS",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-03-20T00:00:00"
+        },
+        "location": "Dubai, UAE",
+        "tags": [
+            "lottery",
+            "scam"
+        ],
+        "severity": "low",
+        "createdAt": "2025-09-11T07:34:11.180686",
+        "updatedAt": "2025-09-11T07:34:11.180689"
+    },
+    {
+        "_id": "df_1181",
+        "title": "Scammer posing as an IRS agent demanded immediate payment via gift cards to avoid arrest",
+        "description": "Scammer posing as an IRS agent demanded immediate payment via gift cards to avoid arrest.",
+        "type": "email",
+        "status": "approved",
+        "fraudsterDetails": {
+            "suspiciousEmail": "support@paypal-security.com",
+            "suspiciousPhone": "+1-202-555-1081",
+            "suspiciousWebsite": "wellsfargo-login.example",
+            "suspiciousName": "IRS Agent Smith",
+            "suspiciousCompany": "CareerPlus",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-01-28T00:00:00"
+        },
+        "location": "Toronto, Canada",
+        "tags": [
+            "amazon",
+            "identity-theft"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.180712",
+        "updatedAt": "2025-09-11T07:34:11.180714"
+    },
+    {
+        "_id": "df_1182",
+        "title": "Scammer sent fake invoices requesting urgent wire transfers",
+        "description": "Scammer sent fake invoices requesting urgent wire transfers.",
+        "type": "other",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "banking@wellssecure.net",
+            "suspiciousPhone": "+1-202-555-1082",
+            "suspiciousWebsite": "cryptomaxx-invest.example",
+            "suspiciousName": "Amazon Support",
+            "suspiciousCompany": "PayPal",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-01-15T00:00:00"
+        },
+        "location": "New York, NY, USA",
+        "tags": [
+            "phishing",
+            "whatsapp"
+        ],
+        "severity": "high",
+        "createdAt": "2025-09-11T07:34:11.180726",
+        "updatedAt": "2025-09-11T07:34:11.180727"
+    },
+    {
+        "_id": "df_1183",
+        "title": "Romance scammer built trust over months and then requested money for emergency medical bills",
+        "description": "Romance scammer built trust over months and then requested money for emergency medical bills.",
+        "type": "phone",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "helpdesk@amazon-secure.com",
+            "suspiciousPhone": "+1-202-555-1083",
+            "suspiciousWebsite": "cryptomaxx-invest.example",
+            "suspiciousName": "Amazon Support",
+            "suspiciousCompany": "Amazon",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-10-26T00:00:00"
+        },
+        "location": "London, UK",
+        "tags": [
+            "bank",
+            "investment"
+        ],
+        "severity": "low",
+        "createdAt": "2025-09-11T07:34:11.180740",
+        "updatedAt": "2025-09-11T07:34:11.180743"
+    },
+    {
+        "_id": "df_1184",
+        "title": "Caller pretended to be from Wells Fargo and requested OTP to 'secure' the victim's account",
+        "description": "Caller pretended to be from Wells Fargo and requested OTP to 'secure' the victim's account.",
+        "type": "phone",
+        "status": "approved",
+        "fraudsterDetails": {
+            "suspiciousEmail": "login@irs-gov.example",
+            "suspiciousPhone": "+1-202-555-1084",
+            "suspiciousWebsite": "cryptomaxx-invest.example",
+            "suspiciousName": "Amazon Support",
+            "suspiciousCompany": "PayPal",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-03-16T00:00:00"
+        },
+        "location": "Dubai, UAE",
+        "tags": [
+            "bank",
+            "investment"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.180760",
+        "updatedAt": "2025-09-11T07:34:11.180764"
+    },
+    {
+        "_id": "df_1185",
+        "title": "Scammer sent fake invoices requesting urgent wire transfers",
+        "description": "Scammer sent fake invoices requesting urgent wire transfers.",
+        "type": "identity",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "login@irs-gov.example",
+            "suspiciousPhone": "+1-202-555-1085",
+            "suspiciousWebsite": "paypal-verify-login.example",
+            "suspiciousName": "Lottery Winner Dept",
+            "suspiciousCompany": "PayPal",
+            "amount": 1696,
+            "currency": "USD",
+            "date": "2025-10-28T00:00:00"
+        },
+        "location": "Austin, TX, USA",
+        "tags": [
+            "crypto",
+            "whatsapp"
+        ],
+        "severity": "critical",
+        "createdAt": "2025-09-11T07:34:11.180776",
+        "updatedAt": "2025-09-11T07:34:11.180778"
+    },
+    {
+        "_id": "df_1186",
+        "title": "Fake Amazon delivery notice tricked user into entering card details on a cloned website",
+        "description": "Fake Amazon delivery notice tricked user into entering card details on a cloned website.",
+        "type": "identity",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "helpdesk@amazon-secure.com",
+            "suspiciousPhone": "+1-202-555-1086",
+            "suspiciousWebsite": "secure-amazon-support.example",
+            "suspiciousName": "IRS Agent Smith",
+            "suspiciousCompany": "Amazon",
+            "amount": 7929,
+            "currency": "USD",
+            "date": "2025-10-03T00:00:00"
+        },
+        "location": "San Francisco, CA, USA",
+        "tags": [
+            "phishing",
+            "identity-theft"
+        ],
+        "severity": "high",
+        "createdAt": "2025-09-11T07:34:11.180789",
+        "updatedAt": "2025-09-11T07:34:11.180791"
+    },
+    {
+        "_id": "df_1187",
+        "title": "Crypto investment site promised 200% return but disappeared after deposits",
+        "description": "Crypto investment site promised 200% return but disappeared after deposits.",
+        "type": "website",
+        "status": "approved",
+        "fraudsterDetails": {
+            "suspiciousEmail": "login@irs-gov.example",
+            "suspiciousPhone": "+1-202-555-1087",
+            "suspiciousWebsite": "wellsfargo-login.example",
+            "suspiciousName": "CryptoMaxx Trader",
+            "suspiciousCompany": "IRS",
+            "amount": 17134,
+            "currency": "USD",
+            "date": "2025-12-03T00:00:00"
+        },
+        "location": "Cape Town, South Africa",
+        "tags": [
+            "phishing",
+            "amazon"
+        ],
+        "severity": "low",
+        "createdAt": "2025-09-11T07:34:11.180803",
+        "updatedAt": "2025-09-11T07:34:11.180804"
+    },
+    {
+        "_id": "df_1188",
+        "title": "Victim was told they won a lottery but had to pay processing fees upfront",
+        "description": "Victim was told they won a lottery but had to pay processing fees upfront.",
+        "type": "financial",
+        "status": "approved",
+        "fraudsterDetails": {
+            "suspiciousEmail": "admin@cryptomaxx.io",
+            "suspiciousPhone": "+1-202-555-1088",
+            "suspiciousWebsite": "paypal-verify-login.example",
+            "suspiciousName": "Lottery Winner Dept",
+            "suspiciousCompany": "CareerPlus",
+            "amount": 1035,
+            "currency": "USD",
+            "date": "2025-03-28T00:00:00"
+        },
+        "location": "San Francisco, CA, USA",
+        "tags": [
+            "scam",
+            "paypal"
+        ],
+        "severity": "high",
+        "createdAt": "2025-09-11T07:34:11.180816",
+        "updatedAt": "2025-09-11T07:34:11.180818"
+    },
+    {
+        "_id": "df_1189",
+        "title": "Job seeker tricked into paying fees for a fake employment opportunity",
+        "description": "Job seeker tricked into paying fees for a fake employment opportunity.",
+        "type": "financial",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "helpdesk@amazon-secure.com",
+            "suspiciousPhone": "+1-202-555-1089",
+            "suspiciousWebsite": "cryptomaxx-invest.example",
+            "suspiciousName": "PayPal Security Team",
+            "suspiciousCompany": "PayPal",
+            "amount": 1850,
+            "currency": "USD",
+            "date": "2025-02-01T00:00:00"
+        },
+        "location": "New York, NY, USA",
+        "tags": [
+            "paypal",
+            "bank"
+        ],
+        "severity": "low",
+        "createdAt": "2025-09-11T07:34:11.180829",
+        "updatedAt": "2025-09-11T07:34:11.180830"
+    },
+    {
+        "_id": "df_1190",
+        "title": "Romance scammer built trust over months and then requested money for emergency medical bills",
+        "description": "Romance scammer built trust over months and then requested money for emergency medical bills.",
+        "type": "website",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "jobs@careerplus.fake",
+            "suspiciousPhone": "+1-202-555-1090",
+            "suspiciousWebsite": "careerplus-jobs.example",
+            "suspiciousName": "IRS Agent Smith",
+            "suspiciousCompany": "CareerPlus",
+            "amount": 16728,
+            "currency": "USD",
+            "date": "2025-09-26T00:00:00"
+        },
+        "location": "Dubai, UAE",
+        "tags": [
+            "investment",
+            "identity-theft"
+        ],
+        "severity": "critical",
+        "createdAt": "2025-09-11T07:34:11.180841",
+        "updatedAt": "2025-09-11T07:34:11.180843"
+    },
+    {
+        "_id": "df_1191",
+        "title": "Job seeker tricked into paying fees for a fake employment opportunity",
+        "description": "Job seeker tricked into paying fees for a fake employment opportunity.",
+        "type": "website",
+        "status": "under_review",
+        "fraudsterDetails": {
+            "suspiciousEmail": "banking@wellssecure.net",
+            "suspiciousPhone": "+1-202-555-1091",
+            "suspiciousWebsite": "wellsfargo-login.example",
+            "suspiciousName": "IRS Agent Smith",
+            "suspiciousCompany": "IRS",
+            "amount": 19457,
+            "currency": "USD",
+            "date": "2025-07-02T00:00:00"
+        },
+        "location": "New York, NY, USA",
+        "tags": [
+            "lottery",
+            "amazon"
+        ],
+        "severity": "high",
+        "createdAt": "2025-09-11T07:34:11.180854",
+        "updatedAt": "2025-09-11T07:34:11.180856"
+    },
+    {
+        "_id": "df_1192",
+        "title": "Victim was told they won a lottery but had to pay processing fees upfront",
+        "description": "Victim was told they won a lottery but had to pay processing fees upfront.",
+        "type": "phone",
+        "status": "pending",
+        "fraudsterDetails": {
+            "suspiciousEmail": "admin@cryptomaxx.io",
+            "suspiciousPhone": "+1-202-555-1092",
+            "suspiciousWebsite": "irs-taxpay.example",
+            "suspiciousName": "Lottery Winner Dept",
+            "suspiciousCompany": "IRS",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-01-20T00:00:00"
+        },
+        "location": "Sydney, Australia",
+        "tags": [
+            "identity-theft",
+            "lottery"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.180874",
+        "updatedAt": "2025-09-11T07:34:11.180877"
+    },
+    {
+        "_id": "df_1193",
+        "title": "Job seeker tricked into paying fees for a fake employment opportunity",
+        "description": "Job seeker tricked into paying fees for a fake employment opportunity.",
+        "type": "other",
+        "status": "approved",
+        "fraudsterDetails": {
+            "suspiciousEmail": "support@paypal-security.com",
+            "suspiciousPhone": "+1-202-555-1093",
+            "suspiciousWebsite": "irs-taxpay.example",
+            "suspiciousName": "PayPal Security Team",
+            "suspiciousCompany": "PayPal",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-01-14T00:00:00"
+        },
+        "location": "Cape Town, South Africa",
+        "tags": [
+            "investment",
+            "paypal"
+        ],
+        "severity": "low",
+        "createdAt": "2025-09-11T07:34:11.180893",
+        "updatedAt": "2025-09-11T07:34:11.180896"
+    },
+    {
+        "_id": "df_1194",
+        "title": "Romance scammer built trust over months and then requested money for emergency medical bills",
+        "description": "Romance scammer built trust over months and then requested money for emergency medical bills.",
+        "type": "phone",
+        "status": "pending",
+        "fraudsterDetails": {
+            "suspiciousEmail": "admin@cryptomaxx.io",
+            "suspiciousPhone": "+1-202-555-1094",
+            "suspiciousWebsite": "wellsfargo-login.example",
+            "suspiciousName": "CryptoMaxx Trader",
+            "suspiciousCompany": "PayPal",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-05-05T00:00:00"
+        },
+        "location": "San Francisco, CA, USA",
+        "tags": [
+            "crypto",
+            "romance"
+        ],
+        "severity": "high",
+        "createdAt": "2025-09-11T07:34:11.180912",
+        "updatedAt": "2025-09-11T07:34:11.180913"
+    },
+    {
+        "_id": "df_1195",
+        "title": "Victim was told they won a lottery but had to pay processing fees upfront",
+        "description": "Victim was told they won a lottery but had to pay processing fees upfront.",
+        "type": "other",
+        "status": "approved",
+        "fraudsterDetails": {
+            "suspiciousEmail": "helpdesk@amazon-secure.com",
+            "suspiciousPhone": "+1-202-555-1095",
+            "suspiciousWebsite": "paypal-verify-login.example",
+            "suspiciousName": "Lottery Winner Dept",
+            "suspiciousCompany": "PayPal",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-04-28T00:00:00"
+        },
+        "location": "London, UK",
+        "tags": [
+            "scam",
+            "paypal"
+        ],
+        "severity": "high",
+        "createdAt": "2025-09-11T07:34:11.180924",
+        "updatedAt": "2025-09-11T07:34:11.180926"
+    },
+    {
+        "_id": "df_1196",
+        "title": "Fraudster advertised non-existent rental properties and collected deposits",
+        "description": "Fraudster advertised non-existent rental properties and collected deposits.",
+        "type": "financial",
+        "status": "pending",
+        "fraudsterDetails": {
+            "suspiciousEmail": "support@paypal-security.com",
+            "suspiciousPhone": "+1-202-555-1096",
+            "suspiciousWebsite": "paypal-verify-login.example",
+            "suspiciousName": "Amazon Support",
+            "suspiciousCompany": "Amazon",
+            "amount": 12797,
+            "currency": "USD",
+            "date": "2025-04-12T00:00:00"
+        },
+        "location": "Berlin, Germany",
+        "tags": [
+            "irs",
+            "bank"
+        ],
+        "severity": "low",
+        "createdAt": "2025-09-11T07:34:11.180937",
+        "updatedAt": "2025-09-11T07:34:11.180938"
+    },
+    {
+        "_id": "df_1197",
+        "title": "Job seeker tricked into paying fees for a fake employment opportunity",
+        "description": "Job seeker tricked into paying fees for a fake employment opportunity.",
+        "type": "identity",
+        "status": "pending",
+        "fraudsterDetails": {
+            "suspiciousEmail": "login@irs-gov.example",
+            "suspiciousPhone": "+1-202-555-1097",
+            "suspiciousWebsite": "careerplus-jobs.example",
+            "suspiciousName": "Lottery Winner Dept",
+            "suspiciousCompany": "CryptoMaxx",
+            "amount": 763,
+            "currency": "USD",
+            "date": "2025-06-29T00:00:00"
+        },
+        "location": "Dubai, UAE",
+        "tags": [
+            "amazon",
+            "romance"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.180950",
+        "updatedAt": "2025-09-11T07:34:11.180952"
+    },
+    {
+        "_id": "df_1198",
+        "title": "Victim was told they won a lottery but had to pay processing fees upfront",
+        "description": "Victim was told they won a lottery but had to pay processing fees upfront.",
+        "type": "phone",
+        "status": "pending",
+        "fraudsterDetails": {
+            "suspiciousEmail": "banking@wellssecure.net",
+            "suspiciousPhone": "+1-202-555-1098",
+            "suspiciousWebsite": "careerplus-jobs.example",
+            "suspiciousName": "Lottery Winner Dept",
+            "suspiciousCompany": "ScamCorp Ltd",
+            "amount": 0,
+            "currency": "USD",
+            "date": "2025-09-05T00:00:00"
+        },
+        "location": "San Francisco, CA, USA",
+        "tags": [
+            "irs",
+            "paypal"
+        ],
+        "severity": "critical",
+        "createdAt": "2025-09-11T07:34:11.180962",
+        "updatedAt": "2025-09-11T07:34:11.180965"
+    },
+    {
+        "_id": "df_1199",
+        "title": "Fake Amazon delivery notice tricked user into entering card details on a cloned website",
+        "description": "Fake Amazon delivery notice tricked user into entering card details on a cloned website.",
+        "type": "identity",
+        "status": "pending",
+        "fraudsterDetails": {
+            "suspiciousEmail": "admin@cryptomaxx.io",
+            "suspiciousPhone": "+1-202-555-1099",
+            "suspiciousWebsite": "wellsfargo-login.example",
+            "suspiciousName": "CryptoMaxx Trader",
+            "suspiciousCompany": "PayPal",
+            "amount": 12032,
+            "currency": "USD",
+            "date": "2025-03-26T00:00:00"
+        },
+        "location": "Berlin, Germany",
+        "tags": [
+            "irs",
+            "crypto"
+        ],
+        "severity": "low",
+        "createdAt": "2025-09-11T07:34:11.180976",
+        "updatedAt": "2025-09-11T07:34:11.180977"
+    },
+    {
+        "_id": "df_1200",
+        "title": "Scammer posing as an IRS agent demanded immediate payment via gift cards to avoid arrest",
+        "description": "Scammer posing as an IRS agent demanded immediate payment via gift cards to avoid arrest.",
+        "type": "identity",
+        "status": "rejected",
+        "fraudsterDetails": {
+            "suspiciousEmail": "banking@wellssecure.net",
+            "suspiciousPhone": "+1-202-555-1100",
+            "suspiciousWebsite": "irs-taxpay.example",
+            "suspiciousName": "IRS Agent Smith",
+            "suspiciousCompany": "CareerPlus",
+            "amount": 1277,
+            "currency": "USD",
+            "date": "2025-06-07T00:00:00"
+        },
+        "location": "New York, NY, USA",
+        "tags": [
+            "bank",
+            "whatsapp"
+        ],
+        "severity": "medium",
+        "createdAt": "2025-09-11T07:34:11.180990",
+        "updatedAt": "2025-09-11T07:34:11.180991"
     }
 ]

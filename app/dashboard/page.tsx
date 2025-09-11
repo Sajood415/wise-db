@@ -52,7 +52,7 @@ export default function DashboardPage() {
   const [myReports, setMyReports] = useState<MyReportsResponse | null>(null)
   const [activeTab, setActiveTab] = useState<"overview" | "my_reports" | "search" | "users">("overview")
   const [searchLoading, setSearchLoading] = useState(false)
-  const [searchForm, setSearchForm] = useState({ q: "", type: "", severity: "", email: "", phone: "", minAmount: "", maxAmount: "" })
+  const [searchForm, setSearchForm] = useState({ q: "", type: "", severity: "", email: "", phone: "", minAmount: "", maxAmount: "", fuzziness: 0 })
   const [searchResults, setSearchResults] = useState<FraudItem[] | null>(null)
   const [searchMeta, setSearchMeta] = useState<{ source: 'real' | 'dummy'; searchesUsed: number; searchLimit: number } | null>(null)
   const [searchStatus, setSearchStatus] = useState<SearchStatus | null>(null)
@@ -151,7 +151,7 @@ export default function DashboardPage() {
   }, [activeTab, auth?.role])
 
   const stats = useMemo(() => {
-    return [
+    const allStats = [
       {
         label: "Total Reports",
         value: overview?.totals.totalReports ?? 0,
@@ -177,7 +177,17 @@ export default function DashboardPage() {
         icon: "🔎",
       },
     ]
-  }, [overview])
+    const role = auth?.role || ''
+    const canSeeTotal = role === 'sub_admin' || role === 'super_admin'
+    return canSeeTotal ? allStats : allStats.filter(s => s.label !== 'Total Reports')
+  }, [overview, auth?.role])
+
+  const statsGridCols = useMemo(() => {
+    const n = (stats || []).length
+    if (n <= 1) return 'grid-cols-1 md:grid-cols-1 lg:grid-cols-1'
+    if (n === 2) return 'grid-cols-1 md:grid-cols-2 lg:grid-cols-2'
+    return 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+  }, [stats])
 
   const limitReached = useMemo(() => {
     if (!searchStatus) return false
@@ -212,6 +222,9 @@ export default function DashboardPage() {
         severity: searchForm.severity || undefined,
         email: searchForm.email || undefined,
         phone: searchForm.phone || undefined,
+      }
+      if (typeof searchForm.fuzziness === 'number' && searchForm.fuzziness > 0) {
+        payload.fuzziness = Math.max(0, Math.min(100, Math.floor(searchForm.fuzziness)))
       }
       const min = parseFloat(searchForm.minAmount)
       const max = parseFloat(searchForm.maxAmount)
@@ -319,14 +332,7 @@ export default function DashboardPage() {
                     </svg>
                     {searchStatus.searchesUsed} / {searchStatus.searchLimit === -1 ? '∞' : searchStatus.searchLimit} searches used
                   </span>
-                  {searchStatus.canAccessRealData && (
-                    <span className="flex items-center">
-                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      Real Data Access
-                    </span>
-                  )}
+                  {/* removed explicit real/dummy data access indicator */}
                 </div>
               </div>
             </div>
@@ -352,7 +358,7 @@ export default function DashboardPage() {
 
       {/* Stat cards - only for Overview */}
       {activeTab === "overview" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className={`grid ${statsGridCols} gap-6`}>
           {stats.map((s) => (
             <div key={s.label} className="bg-white rounded-lg shadow p-6">
               <div className="flex items-center">
@@ -402,14 +408,7 @@ export default function DashboardPage() {
               </svg>
               <span className="font-medium">Export My Data</span>
             </button>
-            {!(searchStatus?.type === 'enterprise_package' || (auth?.role && auth.role.startsWith('enterprise')) ) && (
-              <Link href="/dashboard/payment" className="w-full inline-flex items-center gap-3 rounded-lg border border-blue-200 px-4 py-3 bg-blue-50 text-blue-700 hover:bg-blue-100 transition">
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                </svg>
-                <span className="font-medium">Upgrade Plan</span>
-              </Link>
-            )}
+            
           </div>
         </section>
 
@@ -432,7 +431,7 @@ export default function DashboardPage() {
                   <p className="text-xs text-gray-500">{new Date(item.updatedAt).toLocaleDateString()}</p>
                 </div>
                 {item.type === 'search' ? (
-                  <span className={`text-xs px-2 py-1 rounded-full ${item.status === 'real' ? 'bg-blue-50 text-blue-700' : 'bg-gray-100 text-gray-700'}`}>{item.status}</span>
+                  <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700">Completed</span>
                 ) : (
                   <span className={`text-xs px-2 py-1 rounded-full ${
                     item.status === 'approved'
@@ -544,8 +543,16 @@ export default function DashboardPage() {
               <label className="block text-xs text-gray-600 mb-1">Max amount</label>
               <input disabled={searchBlocked} value={searchForm.maxAmount} onChange={(e)=>setSearchForm(s=>({...s,maxAmount:e.target.value.replace(/[^\d.]/g,'')}))} placeholder="1000.00" className="w-full border rounded-md px-3 py-2 text-sm text-black bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:opacity-60 disabled:cursor-not-allowed" />
             </div>
+            <div className="lg:col-span-3">
+              <label className="block text-xs text-gray-600 mb-1">Fuzziness</label>
+              <div className="flex items-center gap-3">
+                <input type="range" min={0} max={100} step={5} disabled={searchBlocked} value={searchForm.fuzziness} onChange={(e)=> setSearchForm(s=>({...s, fuzziness: Number(e.target.value)}))} className="w-full" />
+                <span className="text-xs text-gray-700 w-10 text-right">{searchForm.fuzziness}%</span>
+              </div>
+              <p className="text-[11px] text-gray-500 mt-1">0% = exact order, 100% = very flexible match</p>
+            </div>
             <div className="lg:col-span-3 flex items-end justify-end gap-3">
-              <button type="button" onClick={()=>{setSearchForm({q:"",type:"",severity:"",email:"",phone:"",minAmount:"",maxAmount:""}); setSearchResults(null);}} className="px-4 py-2 rounded-md border text-gray-700">Reset</button>
+              <button type="button" onClick={()=>{setSearchForm({q:"",type:"",severity:"",email:"",phone:"",minAmount:"",maxAmount:"", fuzziness: 0}); setSearchResults(null);}} className="px-4 py-2 rounded-md border text-gray-700">Reset</button>
               <button type="submit" disabled={searchLoading || searchBlocked} className="px-4 py-2 rounded-md bg-gray-900 text-white disabled:opacity-60">{searchLoading? 'Searching...' : 'Search'}</button>
             </div>
           </form>

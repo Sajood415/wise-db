@@ -8,6 +8,7 @@ export interface ISearchLog extends Document {
     country?: string
     minAmount?: number
     maxAmount?: number
+    fuzziness?: number
     source: 'real' | 'dummy'
     createdAt: Date
     updatedAt: Date
@@ -21,6 +22,7 @@ const SearchLogSchema = new Schema<ISearchLog>({
     country: { type: String, trim: true },
     minAmount: { type: Number },
     maxAmount: { type: Number },
+    fuzziness: { type: Number, min: 0, max: 100 },
     source: { type: String, enum: ['real', 'dummy'], required: true },
 }, { timestamps: true })
 

@@ -6,6 +6,7 @@ import dbConnect from '@/lib/mongodb'
 import Fraud from '@/models/Fraud'
 import User from '@/models/User'
 import SearchLog from '@/models/SearchLog'
+import { sendMail } from '@/lib/mailer'
 
 type SearchQuery = {
     q?: string
@@ -15,20 +16,44 @@ type SearchQuery = {
     phone?: string
     minAmount?: number
     maxAmount?: number
+    fuzziness?: number // 0-100 percentage controlling fuzzy token gap matching
     // removed: country, status from UI
 }
 
-function buildFilter({ q, type, severity, email, phone, minAmount, maxAmount }: SearchQuery) {
+function escapeRegexLiteral(input: string) {
+    return input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+function buildFuzzyRegex(q: string, fuzzinessPct: number) {
+    const safe = q.trim().replace(/\s+/g, ' ')
+    const tokens = safe.split(' ').map(t => escapeRegexLiteral(t))
+    if (tokens.length === 0) return null
+    const pct = Math.max(0, Math.min(100, Math.floor(fuzzinessPct)))
+    // Allow up to N arbitrary characters between tokens based on pct
+    // 0% => strict spaces only; 100% => up to 50 chars gap between tokens
+    const maxGap = pct === 0 ? 1 : Math.min(50, Math.max(3, Math.round(pct / 2)))
+    const gap = pct === 0 ? '\\s+' : `[\\s\\S]{0,${maxGap}}`
+    const pattern = tokens.join(gap)
+    try {
+        return new RegExp(pattern, 'i')
+    } catch {
+        return null
+    }
+}
+
+function buildFilter({ q, type, severity, email, phone, minAmount, maxAmount, fuzziness }: SearchQuery) {
     const filter: any = {}
     const and: any[] = []
     if (q) {
-        const rx = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i')
+        const fuzzyRx = buildFuzzyRegex(q, typeof fuzziness === 'number' ? fuzziness : 0)
+        const strictRx = new RegExp(escapeRegexLiteral(q), 'i')
+        const rx = fuzzyRx || strictRx
         and.push({ $or: [{ title: rx }, { description: rx }, { tags: rx }] })
     }
     if (type) and.push({ type })
     if (severity) and.push({ severity })
-    if (email) and.push({ $or: [{ 'fraudsterDetails.suspiciousEmail': new RegExp(email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') }] })
-    if (phone) and.push({ $or: [{ 'fraudsterDetails.suspiciousPhone': new RegExp(phone.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') }] })
+    if (email) and.push({ $or: [{ 'fraudsterDetails.suspiciousEmail': new RegExp(escapeRegexLiteral(email), 'i') }] })
+    if (phone) and.push({ $or: [{ 'fraudsterDetails.suspiciousPhone': new RegExp(escapeRegexLiteral(phone), 'i') }] })
     if (typeof minAmount === 'number') and.push({ 'fraudsterDetails.amount': { $gte: minAmount } })
     if (typeof maxAmount === 'number') and.push({ 'fraudsterDetails.amount': { ...(filter['fraudsterDetails.amount'] || {}), $lte: maxAmount } })
     if (and.length) filter.$and = and
@@ -47,7 +72,7 @@ export async function POST(request: NextRequest) {
         if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
         const body = await request.json()
-        const { q, type, severity, email, phone, minAmount, maxAmount } = (body || {}) as SearchQuery
+        const { q, type, severity, email, phone, minAmount, maxAmount, fuzziness } = (body || {}) as SearchQuery
 
         const trialExpired = user.isTrialExpired()
         if (user.subscription?.type === 'free_trial' && user.subscription?.trialEndsAt && trialExpired && user.subscription.status !== 'expired') {
@@ -84,16 +109,16 @@ export async function POST(request: NextRequest) {
         let results: any[] = []
 
         if (canUseReal) {
-            const filter = buildFilter({ q, type, severity, email, phone, minAmount, maxAmount })
+            const filter = buildFilter({ q, type, severity, email, phone, minAmount, maxAmount, fuzziness })
             results = await Fraud.find(filter).sort({ _id: -1 }).limit(50).lean()
         } else {
             // Dummy data
             const filePath = path.join(process.cwd(), 'data', 'dummy-frauds.json')
             const raw = await fs.readFile(filePath, 'utf8')
             const all: any[] = JSON.parse(raw)
-            const rx = q ? new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') : null
-            const emailRx = email ? new RegExp(email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') : null
-            const phoneRx = phone ? new RegExp(phone.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') : null
+            const rx = q ? (buildFuzzyRegex(q, typeof fuzziness === 'number' ? fuzziness : 0) || new RegExp(escapeRegexLiteral(q), 'i')) : null
+            const emailRx = email ? new RegExp(escapeRegexLiteral(email), 'i') : null
+            const phoneRx = phone ? new RegExp(escapeRegexLiteral(phone), 'i') : null
             results = all.filter((r) => {
                 if (type && r.type !== type) return false
                 if (severity && r.severity !== severity) return false
@@ -115,6 +140,24 @@ export async function POST(request: NextRequest) {
                     if (admin && admin.subscription && admin.subscription.type === 'enterprise_package' && admin.subscription.searchLimit !== -1) {
                         admin.subscription.searchesUsed = (admin.subscription.searchesUsed || 0) + 1
                         await admin.save()
+
+                        // Notify enterprise admin at 90% usage if not already notified
+                        try {
+                            const used = admin.subscription.searchesUsed || 0
+                            const limit = admin.subscription.searchLimit || 0
+                            const pct = limit > 0 ? (used / limit) : 0
+                            if (limit > 0 && pct >= 0.9 && !admin.subscription.lowQuotaNotified) {
+                                const remaining = Math.max(0, limit - used)
+                                const subject = 'Wise-DB: You have 10% searches remaining'
+                                const text = `Hi ${admin.firstName || ''},\n\nYour enterprise search allowance is almost used up.\nUsed: ${used} of ${limit}. Remaining: ${remaining}.\n\nConsider topping up or contacting sales.\n\n— Wise-DB`
+                                const html = `<p>Hi ${admin.firstName || ''},</p><p>Your enterprise search allowance is almost used up.</p><p><strong>Used:</strong> ${used} of ${limit}. <strong>Remaining:</strong> ${remaining}.</p><p>Consider topping up or contacting sales.</p><p>— Wise-DB</p>`
+                                if (admin.email) {
+                                    await sendMail({ to: admin.email, subject, text, html })
+                                    admin.subscription.lowQuotaNotified = true
+                                    await admin.save()
+                                }
+                            }
+                        } catch { }
                     }
                 } catch { }
                 // Also track this user's personal search count
@@ -125,6 +168,26 @@ export async function POST(request: NextRequest) {
             } else {
                 user.subscription.searchesUsed = (user.subscription.searchesUsed || 0) + 1
                 await user.save()
+
+                // Notify paid individual at 90% usage if not already notified
+                try {
+                    if (user.subscription && user.subscription.type === 'paid_package' && user.subscription.searchLimit && user.subscription.searchLimit > 0) {
+                        const used = user.subscription.searchesUsed || 0
+                        const limit = user.subscription.searchLimit || 0
+                        const pct = limit > 0 ? (used / limit) : 0
+                        if (pct >= 0.9 && !user.subscription.lowQuotaNotified) {
+                            const remaining = Math.max(0, limit - used)
+                            const subject = 'Wise-DB: You have 10% searches remaining'
+                            const text = `Hi ${user.firstName || ''},\n\nYour search allowance is almost used up.\nUsed: ${used} of ${limit}. Remaining: ${remaining}.\n\nUpgrade or top up to avoid interruptions.\n\n— Wise-DB`
+                            const html = `<p>Hi ${user.firstName || ''},</p><p>Your search allowance is almost used up.</p><p><strong>Used:</strong> ${used} of ${limit}. <strong>Remaining:</strong> ${remaining}.</p><p>Upgrade or top up to avoid interruptions.</p><p>— Wise-DB</p>`
+                            if (user.email) {
+                                await sendMail({ to: user.email, subject, text, html })
+                                user.subscription.lowQuotaNotified = true
+                                await user.save()
+                            }
+                        }
+                    }
+                } catch { }
             }
         }
 
@@ -136,6 +199,7 @@ export async function POST(request: NextRequest) {
             // status and country not used in current UI; omit
             minAmount: typeof minAmount === 'number' ? minAmount : undefined,
             maxAmount: typeof maxAmount === 'number' ? maxAmount : undefined,
+            fuzziness: typeof fuzziness === 'number' ? Math.max(0, Math.min(100, Math.floor(fuzziness))) : undefined,
             source: canUseReal ? 'real' : 'dummy',
         })
 

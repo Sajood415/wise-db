@@ -9,15 +9,18 @@ export default function EnterpriseRequestDetail({ params }: { params: Params }) 
   const { showToast } = useToast()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [activeTab, setActiveTab] = useState<'overview' | 'payment' | 'signup'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'payment'>('overview')
   const [item, setItem] = useState<any | null>(null)
   const [enterpriseId, setEnterpriseId] = useState<string>('')
   const [signupTtl, setSignupTtl] = useState<number>(72)
   const [stripeOpen, setStripeOpen] = useState(false)
   const [manualOpen, setManualOpen] = useState(false)
+  const [sendOpen, setSendOpen] = useState(false)
   const [stripeForm, setStripeForm] = useState<{ pricingAmount?: string | number; pricingCurrency?: string; allowanceSearches?: string | number; allowanceUsers?: string | number }>({})
   const [payments, setPayments] = useState<any[]>([])
   const [manualForm, setManualForm] = useState<{ paymentMethod?: string; paymentTxnId?: string; paymentTxnDate?: string; paymentNotes?: string; paymentReceived?: boolean; pricingAmount?: string | number; pricingCurrency?: string; allowanceSearches?: string | number; allowanceUsers?: string | number }>({})
+  const [sendForm, setSendForm] = useState<{ enterpriseAdminEmail?: string; paymentMethod?: 'stripe' | 'bank_transfer'; pricingAmount?: string | number; pricingCurrency?: string; allowanceSearches?: string | number; allowanceUsers?: string | number; signupTokenTtlHours?: string | number; bankAccountName?: string; bankAccountNumber?: string; bankName?: string; bankSwift?: string; paymentReference?: string }>({})
+  const [sendBusy, setSendBusy] = useState(false)
 
   useEffect(() => {
     (async () => {
@@ -114,10 +117,9 @@ export default function EnterpriseRequestDetail({ params }: { params: Params }) 
       </div>
 
       <div className="w-full bg-gray-100 rounded-md p-1">
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 gap-2">
           <button onClick={() => setActiveTab('overview')} className={`w-full text-center py-2 rounded-md text-sm font-medium transition ${activeTab === 'overview' ? 'bg-white text-blue-700 shadow' : 'text-gray-600 hover:text-gray-900'}`}>Overview</button>
           <button onClick={() => setActiveTab('payment')} className={`w-full text-center py-2 rounded-md text-sm font-medium transition ${activeTab === 'payment' ? 'bg-white text-blue-700 shadow' : 'text-gray-600 hover:text-gray-900'}`}>Payment</button>
-          <button onClick={() => setActiveTab('signup')} className={`w-full text-center py-2 rounded-md text-sm font-medium transition ${activeTab === 'signup' ? 'bg-white text-blue-700 shadow' : 'text-gray-600 hover:text-gray-900'}`}>Signup</button>
         </div>
       </div>
 
@@ -166,7 +168,16 @@ export default function EnterpriseRequestDetail({ params }: { params: Params }) 
               </div>
               <div>
                 <dt className="text-gray-600">Number of Searches</dt>
-                <dd className="text-black">{item.numberOfSearches}</dd>
+                <dd className="text-black">{(() => {
+                  const n = Number(item.numberOfSearches || 0)
+                  if (n <= 100) return '0 - 100'
+                  if (n <= 500) return '100 - 500'
+                  if (n <= 1000) return '500 - 1,000'
+                  if (n <= 5000) return '1,000 - 5,000'
+                  if (n <= 10000) return '5,000 - 10,000'
+                  if (n <= 50000) return '10,000 - 50,000'
+                  return `${Number(n).toLocaleString()}+`
+                })()}</dd>
               </div>
               <div>
                 <dt className="text-gray-600">Number of Users</dt>
@@ -182,50 +193,22 @@ export default function EnterpriseRequestDetail({ params }: { params: Params }) 
       )}
 
       {activeTab === 'payment' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4">
           <div className="bg-white rounded-lg border p-6 flex flex-col justify-between">
             <div>
-              <h2 className="font-medium text-gray-900">Stripe Link / Pricing</h2>
-              <p className="text-sm text-gray-600 mt-1">Create a Stripe checkout link with pricing and allowances.</p>
+              <h2 className="font-medium text-gray-900">Send Payment Email</h2>
+              <p className="text-sm text-gray-600 mt-1">Email Stripe link or bank details along with a signup link.</p>
               <div className="mt-3 text-sm text-gray-700 space-y-1">
-                <p>Amount: <span className="font-medium">{item.pricingAmount ?? '-'}</span> {item.pricingCurrency || ''}</p>
-                <p>Included Searches: <span className="font-medium">{item.allowanceSearches ?? '-'}</span></p>
-                <p>Users Allowed: <span className="font-medium">{item.allowanceUsers ?? '-'}</span></p>
-                {item.stripeCheckoutUrl && (
-                  <p>Checkout: <a href={item.stripeCheckoutUrl} target="_blank" className="text-blue-700 underline">Open link</a></p>
-                )}
+                <p>To: <span className="font-medium">{item.enterpriseAdminEmail || item.businessEmail || '-'}</span></p>
               </div>
             </div>
             <div className="pt-4">
-              <button onClick={() => { setStripeForm({ pricingAmount: item.pricingAmount ?? '', pricingCurrency: item.pricingCurrency || 'USD', allowanceSearches: item.allowanceSearches ?? '', allowanceUsers: item.allowanceUsers ?? '' }); setStripeOpen(true) }} className="px-4 py-2 rounded-md bg-gray-900 text-white w-full">Create / Update Stripe Link</button>
+              <button onClick={() => { setSendForm({ enterpriseAdminEmail: item.enterpriseAdminEmail || item.businessEmail, paymentMethod: 'stripe', pricingAmount: item.pricingAmount ?? '', pricingCurrency: item.pricingCurrency || 'USD', allowanceSearches: item.allowanceSearches ?? '', allowanceUsers: item.allowanceUsers ?? '', signupTokenTtlHours: 72 }); setSendOpen(true) }} className="px-4 py-2 rounded-md bg-gray-900 text-white w-full">Send Payment Email</button>
             </div>
           </div>
+          
 
-          <div className="bg-white rounded-lg border p-6 flex flex-col justify-between">
-            <div>
-              <h2 className="font-medium text-gray-900">Manual Payment</h2>
-              <p className="text-sm text-gray-600 mt-1">Record a manual payment with transaction details.</p>
-              <div className="mt-3 text-sm text-gray-700 space-y-1">
-                {lastManualPayment ? (
-                  <>
-                    <p>Last manual payment:</p>
-                    <p>Method: <span className="font-medium">{lastManualPayment.method}</span></p>
-                    <p>Amount: <span className="font-medium">{lastManualPayment.amount} {lastManualPayment.currency}</span></p>
-                    <p>Reference: <span className="font-medium">{lastManualPayment.metadata?.paymentTxnId || '-'}</span></p>
-                    <p>Date: <span className="font-medium">{new Date(lastManualPayment.paidAt || lastManualPayment.createdAt).toLocaleString()}</span></p>
-                    <p>Status: <span className={`font-medium ${lastManualPayment.status === 'completed' ? 'text-emerald-700' : 'text-gray-700'}`}>{lastManualPayment.status}</span></p>
-                  </>
-                ) : (
-                  <p className="text-gray-600">No manual payments recorded yet.</p>
-                )}
-              </div>
-            </div>
-            <div className="pt-4">
-              <button onClick={() => { setManualForm({ paymentMethod: '', paymentTxnId: '', paymentTxnDate: '', paymentNotes: '', paymentReceived: true, pricingAmount: item.pricingAmount ?? '', pricingCurrency: item.pricingCurrency || 'USD', allowanceSearches: item.allowanceSearches ?? '', allowanceUsers: item.allowanceUsers ?? '' }); setManualOpen(true) }} className="px-4 py-2 rounded-md bg-gray-900 text-white w-full">Record Manual Payment</button>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg border p-6">
+          <div className="bg-white rounded-lg border p-6 overflow-x-auto">
             <h2 className="font-medium text-gray-900">Payment History</h2>
             <p className="text-sm text-gray-600 mt-1">All transactions (Stripe and manual).</p>
             <div className="mt-3 overflow-x-auto">
@@ -237,6 +220,7 @@ export default function EnterpriseRequestDetail({ params }: { params: Params }) 
                     <th className="py-2 pr-3">Amount</th>
                     <th className="py-2 pr-3">Status</th>
                     <th className="py-2 pr-3">Reference</th>
+                    <th className="py-2 pr-3">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -250,41 +234,30 @@ export default function EnterpriseRequestDetail({ params }: { params: Params }) 
                       <td className="py-2 pr-3 text-gray-900">{p.amount} {p.currency}</td>
                       <td className="py-2 pr-3"><span className={`px-2 py-0.5 rounded text-xs ${p.status === 'completed' ? 'bg-emerald-100 text-emerald-700' : p.status === 'pending' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-700'}`}>{p.status}</span></td>
                       <td className="py-2 pr-3 text-gray-900">{p.stripePaymentIntentId || p.metadata?.paymentTxnId || '-'}</td>
+                      <td className="py-2 pr-3 text-gray-900">
+                        {(p.method && p.method !== 'stripe' && p.status === 'pending') && (
+                          <button onClick={() => {
+                            setManualForm({
+                              paymentMethod: p.method,
+                              paymentTxnId: p.metadata?.paymentTxnId || '',
+                              paymentTxnDate: p.paidAt ? new Date(p.paidAt).toISOString().slice(0,10) : '',
+                              paymentNotes: p.metadata?.paymentNotes || '',
+                              paymentReceived: true,
+                              pricingAmount: p.amount,
+                              pricingCurrency: p.currency,
+                              allowanceSearches: p.allowanceSearches,
+                              allowanceUsers: p.allowanceUsers,
+                            });
+                            setManualOpen(true);
+                          }} className="text-xs px-3 py-1 rounded border">Mark received</button>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           </div>
-        </div>
-      )}
-
-      {activeTab === 'signup' && (
-        <div className="bg-white rounded-lg border p-4 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div>
-              <label className="block text-xs text-gray-600 mb-1">Enterprise Admin Email</label>
-              <input defaultValue={item.enterpriseAdminEmail || ''} onBlur={async(e)=>{ const v=(e.target as HTMLInputElement).value; await patch({ enterpriseAdminEmail: v }); showToast('Saved admin email','success') }} className="w-full border rounded-md px-3 py-2 text-sm text-black" placeholder="admin@company.com" />
-            </div>
-            <div>
-              <label className="block text-xs text-gray-600 mb-1">Signup token TTL (hours)</label>
-              <input type="number" min={1} value={signupTtl} onChange={(e)=> setSignupTtl(Number(e.target.value) || 1)} className="w-full border rounded-md px-3 py-2 text-sm text-black" />
-            </div>
-            <div className="flex items-end">
-              <button disabled={saving || !item.paymentReceived} title={!item.paymentReceived ? 'Complete payment first' : ''} onClick={async()=>{
-                const resp = await patch({ action: 'generate_signup_token', signupTokenTtlHours: signupTtl, enterpriseAdminEmail: item.enterpriseAdminEmail })
-                if (resp?.signupLink) {
-                  try { await navigator.clipboard.writeText(resp.signupLink); showToast('Signup link copied to clipboard', 'success') } catch { showToast('Signup link generated', 'success') }
-                }
-              }} className="px-4 py-2 rounded-md bg-gray-900 text-white disabled:opacity-60">{saving ? 'Generating...' : 'Generate & Copy Link'}</button>
-            </div>
-          </div>
-
-          {item.signupToken && (
-            <div className="text-sm text-gray-700">
-              <p>Signup token set. Expires: {item.signupTokenExpiresAt ? new Date(item.signupTokenExpiresAt).toLocaleString() : 'N/A'}</p>
-            </div>
-          )}
         </div>
       )}
 
@@ -296,7 +269,7 @@ export default function EnterpriseRequestDetail({ params }: { params: Params }) 
 
       {/* Stripe Modal */}
       {stripeOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-gray-900/30 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-lg mx-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-lg font-semibold text-gray-900">Create / Update Stripe Link</h3>
@@ -361,7 +334,7 @@ export default function EnterpriseRequestDetail({ params }: { params: Params }) 
 
       {/* Manual Payment Modal */}
       {manualOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-gray-900/30 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-lg mx-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-lg font-semibold text-gray-900">Record Manual Payment</h3>
@@ -443,6 +416,142 @@ export default function EnterpriseRequestDetail({ params }: { params: Params }) 
                   !Number.isNaN(Number(manualForm.allowanceUsers)) && Number(manualForm.allowanceUsers) >= 1
                 ) ? 'bg-gray-900' : 'bg-gray-400 cursor-not-allowed'}`}
               >Save</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Send Payment Email Modal */}
+      {sendOpen && (
+        <div className="fixed inset-0 bg-gray-900/30 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-3xl mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Send Payment Email</h3>
+                <p className="text-sm text-gray-600">Email Stripe link or bank details, plus the signup link.</p>
+              </div>
+              <button onClick={()=> setSendOpen(false)} className="w-8 h-8 rounded-full border text-black">✕</button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="md:col-span-2">
+                  <label className="block text-xs text-gray-600 mb-1">To (enterprise admin email)</label>
+                  <input value={sendForm.enterpriseAdminEmail || ''} onChange={(e)=> setSendForm(f=>({...f, enterpriseAdminEmail: e.target.value }))} className="w-full border rounded-md px-3 py-2 text-sm text-black" placeholder="admin@company.com" />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">Token TTL (hours)</label>
+                  <input type="number" min={1} value={String(sendForm.signupTokenTtlHours ?? '72')} onChange={(e)=> setSendForm(f=>({...f, signupTokenTtlHours: e.target.value }))} className="w-full border rounded-md px-3 py-2 text-sm text-black" />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs text-gray-600 mb-2">Payment Method</label>
+                <div className="inline-flex rounded-md border bg-gray-50 p-1">
+                  <button onClick={()=> setSendForm(f=>({...f, paymentMethod: 'stripe' }))} className={`px-3 py-1 rounded ${sendForm.paymentMethod !== 'bank_transfer' ? 'bg-white text-blue-700 shadow' : 'text-gray-600'}`}>Stripe</button>
+                  <button onClick={()=> setSendForm(f=>({...f, paymentMethod: 'bank_transfer' }))} className={`px-3 py-1 rounded ${sendForm.paymentMethod === 'bank_transfer' ? 'bg-white text-blue-700 shadow' : 'text-gray-600'}`}>Bank Transfer</button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">Amount</label>
+                  <input value={String(sendForm.pricingAmount ?? '')} onChange={(e)=> setSendForm(f=>({...f, pricingAmount: e.target.value }))} className="w-full border rounded-md px-3 py-2 text-sm text-black" placeholder="0.00" />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">Currency</label>
+                  <input value={sendForm.pricingCurrency || 'USD'} onChange={(e)=> setSendForm(f=>({...f, pricingCurrency: e.target.value }))} className="w-full border rounded-md px-3 py-2 text-sm text-black" placeholder="USD" />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">Searches Included</label>
+                  <input value={String(sendForm.allowanceSearches ?? '')} onChange={(e)=> setSendForm(f=>({...f, allowanceSearches: e.target.value }))} className="w-full border rounded-md px-3 py-2 text-sm text-black" placeholder="e.g. 10000" />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">Users Allowed</label>
+                  <input value={String(sendForm.allowanceUsers ?? '')} onChange={(e)=> setSendForm(f=>({...f, allowanceUsers: e.target.value }))} className="w-full border rounded-md px-3 py-2 text-sm text-black" placeholder="e.g. 25" />
+                </div>
+              </div>
+
+              {sendForm.paymentMethod === 'bank_transfer' && (
+                <div className="rounded-md border p-4 bg-gray-50">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">Account Name</label>
+                      <input value={sendForm.bankAccountName || ''} onChange={(e)=> setSendForm(f=>({...f, bankAccountName: e.target.value }))} className="w-full border rounded-md px-3 py-2 text-sm text-black" />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">Account / IBAN</label>
+                      <input value={sendForm.bankAccountNumber || ''} onChange={(e)=> setSendForm(f=>({...f, bankAccountNumber: e.target.value }))} className="w-full border rounded-md px-3 py-2 text-sm text-black" />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">Bank</label>
+                      <input value={sendForm.bankName || ''} onChange={(e)=> setSendForm(f=>({...f, bankName: e.target.value }))} className="w-full border rounded-md px-3 py-2 text-sm text-black" />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">SWIFT/BIC</label>
+                      <input value={sendForm.bankSwift || ''} onChange={(e)=> setSendForm(f=>({...f, bankSwift: e.target.value }))} className="w-full border rounded-md px-3 py-2 text-sm text-black" />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="block text-xs text-gray-600 mb-1">Payment Reference</label>
+                      <input value={sendForm.paymentReference || ''} onChange={(e)=> setSendForm(f=>({...f, paymentReference: e.target.value }))} className="w-full border rounded-md px-3 py-2 text-sm text-black" placeholder="Include this reference in transfer" />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex justify-end gap-2 pt-2">
+                <button onClick={()=> setSendOpen(false)} className="px-4 py-2 rounded-md border text-gray-700">Cancel</button>
+                {(() => {
+                  const emailOk = Boolean((sendForm.enterpriseAdminEmail || '').trim())
+                  const amtOk = Number(sendForm.pricingAmount) > 0
+                  const searchesOk = Number(sendForm.allowanceSearches) >= 1
+                  const usersOk = Number(sendForm.allowanceUsers) >= 1
+                  const canSubmit = emailOk && amtOk && searchesOk && usersOk && !sendBusy
+                  return (
+                    <button disabled={!canSubmit} onClick={async()=>{
+                      if (!canSubmit) return
+                      setSendBusy(true)
+                      const payload: any = {
+                        action: 'send_payment_email',
+                        enterpriseAdminEmail: sendForm.enterpriseAdminEmail,
+                        paymentMethod: sendForm.paymentMethod || 'stripe',
+                        pricingAmount: Number(sendForm.pricingAmount),
+                        pricingCurrency: (sendForm.pricingCurrency || 'USD').toString().toUpperCase(),
+                        allowanceSearches: Number(sendForm.allowanceSearches),
+                        allowanceUsers: Number(sendForm.allowanceUsers),
+                        signupTokenTtlHours: Number(sendForm.signupTokenTtlHours || 72),
+                        bankAccountName: sendForm.bankAccountName || '',
+                        bankAccountNumber: sendForm.bankAccountNumber || '',
+                        bankName: sendForm.bankName || '',
+                        bankSwift: sendForm.bankSwift || '',
+                        paymentReference: sendForm.paymentReference || '',
+                      }
+                      try {
+                        const res = await fetch(`/api/admin/enterprise/${enterpriseId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'x-user-role': 'super_admin' }, body: JSON.stringify(payload) })
+                        const data = await res.json()
+                        if (!res.ok) { showToast(data?.error || 'Failed to send email', 'error'); return }
+                        setItem(data.item)
+                        setSendOpen(false)
+                        showToast('Email sent', 'success')
+                        try { await reload(enterpriseId) } catch {}
+                      } catch (e: any) {
+                        showToast(e.message || 'Failed to send email', 'error')
+                      } finally {
+                        setSendBusy(false)
+                      }
+                    }} className={`px-4 py-2 rounded-md text-white ${canSubmit ? 'bg-gray-900' : 'bg-gray-400 cursor-not-allowed'}`}>
+                      {sendBusy ? (
+                        <span className="inline-flex items-center">
+                          <span className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></span>
+                          Sending...
+                        </span>
+                      ) : (
+                        'Send Email'
+                      )}
+                    </button>
+                  )
+                })()}
+              </div>
             </div>
           </div>
         </div>

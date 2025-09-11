@@ -14,6 +14,7 @@ export interface IUser extends Document {
         searchesUsed: number;
         searchLimit: number;
         canAccessRealData: boolean; // false for free trial (dummy data), true for paid
+        lowQuotaNotified?: boolean; // true when 90% usage email sent for current period
     };
     packageName?: string; // Track which package user purchased
     company?: {
@@ -98,6 +99,10 @@ const UserSchema = new Schema<IUser>({
         canAccessRealData: {
             type: Boolean,
             default: false // false = dummy data, true = real fraud data
+        },
+        lowQuotaNotified: {
+            type: Boolean,
+            default: false
         }
     },
     company: {
