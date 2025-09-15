@@ -4,6 +4,7 @@ import dbConnect from '@/lib/mongodb'
 import EnterpriseRequest from '@/models/EnterpriseRequest'
 import EnterprisePayment from '@/models/EnterprisePayment'
 import { sendMail } from '@/lib/mailer'
+import { emailTemplates } from '@/lib/emailTemplates'
 
 export async function POST(request: NextRequest) {
     try {
@@ -71,12 +72,8 @@ export async function POST(request: NextRequest) {
                     params.set('token', String(doc.signupToken))
                     params.set('email', String(doc.enterpriseAdminEmail))
                     const link = base ? `${base}/signup?${params.toString()}` : ''
-                    await sendMail({
-                        to: doc.enterpriseAdminEmail,
-                        subject: 'Payment confirmed — complete your Wise-DB enterprise admin signup',
-                        html: `<p>Your Stripe payment has been confirmed.</p>${link ? `<p>Complete signup: <a href="${link}">${link}</a></p>` : ''}`,
-                        text: link ? `Complete signup: ${link}` : 'Payment confirmed.',
-                    })
+                    const t = emailTemplates.enterprisePaymentReceivedSignup
+                    await sendMail({ to: doc.enterpriseAdminEmail, subject: t.subject({}), text: t.text({ signupLink: link }), html: t.html({ signupLink: link }) })
                 }
             } catch (e) {
                 console.error('Failed to send auto signup email after Stripe verify:', e)

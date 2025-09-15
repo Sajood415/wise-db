@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import dbConnect from '@/lib/mongodb'
 import Fraud from '@/models/Fraud'
 import User from '@/models/User'
+import Payment from '@/models/Payment'
+import EnterprisePayment from '@/models/EnterprisePayment'
 
 function pctChange(current: number, previous: number): number {
     if (!Number.isFinite(previous) || previous === 0) {
@@ -48,8 +50,19 @@ export async function GET(request: NextRequest) {
             User.countDocuments({ createdAt: { $gte: startOfLastMonth, $lt: startOfThisMonth }, isActive: true, ...nonAdminRoleFilter }),
         ])
 
-        // Revenue placeholder (will be sourced from purchases later)
-        const monthlyRevenueValue = 0
+        // Monthly revenue: sum of completed individual payments and enterprise payments in current month
+        const [subAgg, entAgg] = await Promise.all([
+            Payment.aggregate([
+                { $match: { status: 'completed', createdAt: { $gte: startOfThisMonth, $lt: now } } },
+                { $group: { _id: null, total: { $sum: '$amount' } } }
+            ]).catch(() => [] as any[]),
+            EnterprisePayment.aggregate([
+                { $match: { status: 'completed', paidAt: { $gte: startOfThisMonth, $lt: now } } },
+                { $group: { _id: null, total: { $sum: '$amount' } } }
+            ]).catch(() => [] as any[]),
+        ])
+        const monthlyRevenueValue = (subAgg && subAgg[0]?.total ? Number(subAgg[0].total) : 0)
+            + (entAgg && entAgg[0]?.total ? Number(entAgg[0].total) : 0)
 
         return NextResponse.json({
             totalReports: {

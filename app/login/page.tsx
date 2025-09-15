@@ -152,6 +152,12 @@ function LoginPageInner() {
               )}
             </button>
 
+            <div className="text-center">
+              <Link href="/forgot-password" className="text-sm text-[#006d5b] hover:text-[#1c2736] font-medium hover:underline transition-colors duration-200">
+                Forgot your password?
+              </Link>
+            </div>
+
                          <div className="text-center">
                <p className="text-sm text-gray-600">
                  Don't have an account?{' '}

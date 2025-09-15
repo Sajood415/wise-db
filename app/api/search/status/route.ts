@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import dbConnect from '@/lib/mongodb'
 import User from '@/models/User'
+import { sendMail } from '@/lib/mailer'
+import { emailTemplates } from '@/lib/emailTemplates'
 
 // GET /api/search/status -> returns subscription summary for current user
 export async function GET(request: NextRequest) {
@@ -25,6 +27,22 @@ export async function GET(request: NextRequest) {
         }
 
         const sub = user.subscription || {}
+        const now = new Date()
+        const pkgEnds = sub.packageEndsAt ? new Date(sub.packageEndsAt) : undefined
+        const isPackageExpired = !!(pkgEnds && now > pkgEnds && sub.type !== 'free_trial')
+        // Send 7-day expiry reminder once
+        if (pkgEnds && !isPackageExpired && sub.type !== 'free_trial') {
+            const msLeft = pkgEnds.getTime() - now.getTime()
+            const daysLeft = Math.ceil(msLeft / (1000 * 60 * 60 * 24))
+            if (daysLeft === 7 && !sub.expiryReminderSent && user.email) {
+                try {
+                    const t = emailTemplates.packageExpiryReminder
+                    await sendMail({ to: user.email, subject: t.subject({}), text: t.text({ firstName: (user as any).firstName, expiryDate: pkgEnds.toDateString() }), html: t.html({ firstName: (user as any).firstName, expiryDate: pkgEnds.toDateString() }) })
+                    user.subscription.expiryReminderSent = true
+                    await user.save()
+                } catch { }
+            }
+        }
 
         // Defaults to the user's own subscription
         let effectiveUsed = sub.searchesUsed || 0
@@ -54,6 +72,8 @@ export async function GET(request: NextRequest) {
             remainingSearches: remaining,
             isTrialExpired: user.subscription?.type === 'free_trial' && user.subscription?.trialEndsAt ? (new Date() > new Date(user.subscription.trialEndsAt)) : false,
             packageName: (user as any).packageName || null,
+            isPackageExpired,
+            packageEndsAt: pkgEnds || null,
         })
     } catch (error) {
         console.error('Search status error:', error)

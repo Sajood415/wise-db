@@ -15,6 +15,7 @@ export interface IUser extends Document {
         searchLimit: number;
         canAccessRealData: boolean; // false for free trial (dummy data), true for paid
         lowQuotaNotified?: boolean; // true when 90% usage email sent for current period
+        expiryReminderSent?: boolean; // true when 7-day reminder has been sent for current package period
     };
     packageName?: string; // Track which package user purchased
     company?: {
@@ -33,6 +34,8 @@ export interface IUser extends Document {
     lastLogin?: Date;
     isActive: boolean;
     emailVerified: boolean;
+    passwordResetToken?: string;
+    passwordResetExpires?: Date;
     createdAt: Date;
     updatedAt: Date;
 
@@ -103,6 +106,10 @@ const UserSchema = new Schema<IUser>({
         lowQuotaNotified: {
             type: Boolean,
             default: false
+        },
+        expiryReminderSent: {
+            type: Boolean,
+            default: false
         }
     },
     company: {
@@ -150,6 +157,12 @@ const UserSchema = new Schema<IUser>({
     emailVerified: {
         type: Boolean,
         default: false
+    },
+    passwordResetToken: {
+        type: String
+    },
+    passwordResetExpires: {
+        type: Date
     },
     packageName: {
         type: String

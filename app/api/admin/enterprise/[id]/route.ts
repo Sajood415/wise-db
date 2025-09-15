@@ -4,6 +4,7 @@ import EnterpriseRequest from '@/models/EnterpriseRequest'
 import EnterprisePayment from '@/models/EnterprisePayment'
 import Stripe from 'stripe'
 import { sendMail } from '@/lib/mailer'
+import { emailTemplates } from '@/lib/emailTemplates'
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
@@ -95,12 +96,8 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
             try {
                 const to = update.enterpriseAdminEmail || (body.enterpriseAdminEmail ? String(body.enterpriseAdminEmail) : '')
                 if (to) {
-                    await sendMail({
-                        to,
-                        subject: 'Your Wise-DB Enterprise Admin Signup Link',
-                        html: `<p>Hello,</p><p>Your enterprise admin signup link is ready:</p><p><a href="${generatedSignupLink}">${generatedSignupLink}</a></p><p>This link expires on ${update.signupTokenExpiresAt?.toISOString() || 'N/A'}.</p>`,
-                        text: `Signup link: ${generatedSignupLink}`,
-                    })
+                    const t = emailTemplates.enterpriseSignupLink
+                    await sendMail({ to, subject: t.subject({}), text: t.text({ signupLink: generatedSignupLink }), html: t.html({ signupLink: generatedSignupLink, expires: update.signupTokenExpiresAt?.toISOString() }) })
                 }
             } catch (e) {
                 console.error('Failed to send signup link email:', e)
@@ -205,30 +202,11 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
                 const shortStripe = session.url?.replace(/^https?:\/\//, '')
                 const shortSignup = signupLink?.replace(/^https?:\/\//, '')
                 const contact = existing.contactName ? ` ${existing.contactName}` : ''
-                const bodyHtml = `
-<div style="font-family:Inter,Arial,sans-serif;line-height:1.7;color:#0f172a">
-  <p style="margin:0 0 12px 0">Hello${contact},</p>
-  <p style="margin:0 0 12px 0;color:#334155">Thank you for choosing <strong>Wise‑DB</strong>. Please complete the payment and then finish your enterprise admin signup.</p>
-  <div style="margin:16px 0;padding:14px;border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc">
-    ${existing.companyName ? `<div style=\"margin-bottom:6px\"><strong>Company:</strong> ${existing.companyName}</div>` : ''}
-    <div style="margin-bottom:6px"><strong>Amount:</strong> ${pricingAmount} ${pricingCurrency}</div>
-    <div style="margin-bottom:0"><strong>Includes:</strong> ${allowanceSearches} searches • ${allowanceUsers} users</div>
-  </div>
-  <div style="margin:14px 0">
-    <a href="${session.url}" style="display:inline-block;background:#0f172a;color:#fff;text-decoration:none;padding:10px 14px;border-radius:8px;">Pay with Stripe</a>
-    <div style="margin-top:6px;color:#475569;font-size:13px"><strong>Link:</strong> <a href="${session.url}" style="color:#1d4ed8;text-decoration:underline">${shortStripe}</a></div>
-  </div>
-  <div style="margin:16px 0 12px 0">
-    <div style="margin:0 0 6px 0"><strong>Admin signup (after payment confirmation):</strong></div>
-    <a href="${signupLink}" style="display:inline-block;background:#1d4ed8;color:#fff;text-decoration:none;padding:10px 14px;border-radius:8px;">Open Signup</a>
-    <div style="margin-top:6px;color:#475569;font-size:13px"><strong>Link:</strong> <a href="${signupLink}" style="color:#1d4ed8;text-decoration:underline">${shortSignup}</a></div>
-  </div>
-  <p style="margin:12px 0 0 0;color:#334155">Regards,<br/>Wise‑DB Team</p>
-  <hr style="border:none;border-top:1px solid #e5e7eb;margin:16px 0"/>
-  <p style="margin:0;color:#94a3b8;font-size:12px">If you’ve already paid, the signup link will work once payment is confirmed automatically.</p>
-</div>`
                 try {
-                    if (enterpriseAdminEmail) await sendMail({ to: enterpriseAdminEmail, subject: 'Wise-DB Enterprise — Payment & Signup', html: bodyHtml, text: `Pay: ${session.url}\nSignup: ${signupLink}` })
+                    if (enterpriseAdminEmail) {
+                        const t = emailTemplates.enterpriseStripePaymentAndSignup
+                        await sendMail({ to: enterpriseAdminEmail, subject: t.subject({}), text: t.text({ stripeUrl: (session.url || ''), signupLink }), html: t.html({ contactName: existing.contactName, companyName: existing.companyName, amount: pricingAmount, currency: pricingCurrency, searches: allowanceSearches, users: allowanceUsers, stripeUrl: (session.url || ''), shortStripeUrl: shortStripe, signupLink, shortSignupLink: shortSignup }) })
+                    }
                 } catch (e) { console.error('Failed to send stripe email:', e) }
 
                 const updated: any = await EnterpriseRequest.findByIdAndUpdate(id, { $set: { stripeCheckoutUrl: session.url } }, { new: true }).lean()
@@ -246,30 +224,11 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
                 }
                 const shortSignup2 = signupLink?.replace(/^https?:\/\//, '')
                 const contact2 = existing.contactName ? ` ${existing.contactName}` : ''
-                const bodyHtml = `
-<div style="font-family:Inter,Arial,sans-serif;line-height:1.7;color:#0f172a">
-  <p style="margin:0 0 12px 0">Hello${contact2},</p>
-  <p style="margin:0 0 12px 0;color:#334155">Please complete your <strong>Wise‑DB</strong> enterprise purchase via bank transfer, then finish your admin signup.</p>
-  <div style="margin:16px 0;padding:14px;border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc">
-    ${existing.companyName ? `<div style=\"margin-bottom:6px\"><strong>Company:</strong> ${existing.companyName}</div>` : ''}
-    <div style="margin-bottom:6px"><strong>Amount:</strong> ${pricingAmount} ${pricingCurrency}</div>
-    <div style="margin-bottom:0"><strong>Includes:</strong> ${allowanceSearches} searches • ${allowanceUsers} users</div>
-  </div>
-  <div style="margin:16px 0;padding:14px;border:1px dashed #e5e7eb;border-radius:12px;background:#fff">
-    <div style="margin-bottom:6px"><strong>Account Name:</strong> ${bank.accountName}</div>
-    <div style="margin-bottom:6px"><strong>Account / IBAN:</strong> ${bank.accountNumber}</div>
-    <div style="margin-bottom:6px"><strong>Bank:</strong> ${bank.bankName}</div>
-    <div style="margin-bottom:6px"><strong>SWIFT/BIC:</strong> ${bank.swift}</div>
-    <div style="margin-bottom:0"><strong>Reference:</strong> ${bank.reference}</div>
-  </div>
-  <div style="margin:12px 0 0 0"><strong>Admin signup (after payment is confirmed):</strong></div>
-  <div style="margin:6px 0 0 0;color:#475569;font-size:13px"><strong>Link:</strong> <a href="${signupLink}" style="color:#1d4ed8;text-decoration:underline">${shortSignup2}</a></div>
-  <p style="margin:16px 0 0 0;color:#334155">Regards,<br/>Wise‑DB Team</p>
-  <hr style="border:none;border-top:1px solid #e5e7eb;margin:16px 0"/>
-  <p style="margin:0;color:#94a3b8;font-size:12px">We’ll enable the signup link once we confirm your transfer.</p>
-</div>`
                 try {
-                    if (enterpriseAdminEmail) await sendMail({ to: enterpriseAdminEmail, subject: 'Wise-DB Enterprise — Bank Details & Signup', html: bodyHtml, text: `Amount: ${pricingAmount} ${pricingCurrency}\nIncludes: ${allowanceSearches} searches / ${allowanceUsers} users\nSignup: ${signupLink}` })
+                    if (enterpriseAdminEmail) {
+                        const t = emailTemplates.enterpriseBankAndSignup
+                        await sendMail({ to: enterpriseAdminEmail, subject: t.subject({}), text: t.text({ amount: pricingAmount, currency: pricingCurrency, searches: allowanceSearches, users: allowanceUsers, signupLink }), html: t.html({ contactName: existing.contactName, companyName: existing.companyName, amount: pricingAmount, currency: pricingCurrency, searches: allowanceSearches, users: allowanceUsers, bankAccountName: bank.accountName, bankAccountNumber: bank.accountNumber, bankName: bank.bankName, bankSwift: bank.swift, paymentReference: bank.reference, signupLink, shortSignupLink: shortSignup2 }) })
+                    }
                 } catch (e) { console.error('Failed to send bank email:', e) }
                 const updated: any = await EnterpriseRequest.findById(id).lean()
                 return NextResponse.json({ item: updated, signupLink })
@@ -347,12 +306,8 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
                         params.set('token', String(current.signupToken))
                         if (current.enterpriseAdminEmail) params.set('email', String(current.enterpriseAdminEmail))
                         const link = origin ? `${origin}/signup?${params.toString()}` : ''
-                        await sendMail({
-                            to: current.enterpriseAdminEmail,
-                            subject: 'Payment received — complete your Wise-DB enterprise admin signup',
-                            html: `<p>Your payment has been recorded.</p>${link ? `<p>Complete signup: <a href="${link}">${link}</a></p>` : ''}`,
-                            text: link ? `Complete signup: ${link}` : 'Payment received.',
-                        })
+                        const t = emailTemplates.enterprisePaymentReceivedSignup
+                        await sendMail({ to: current.enterpriseAdminEmail, subject: t.subject({}), text: t.text({ signupLink: link }), html: t.html({ signupLink: link }) })
                     }
                 } catch (e) {
                     console.error('Failed to send payment receipt/signup email:', e)

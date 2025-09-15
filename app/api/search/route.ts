@@ -7,6 +7,7 @@ import Fraud from '@/models/Fraud'
 import User from '@/models/User'
 import SearchLog from '@/models/SearchLog'
 import { sendMail } from '@/lib/mailer'
+import { emailTemplates } from '@/lib/emailTemplates'
 
 type SearchQuery = {
     q?: string
@@ -75,6 +76,10 @@ export async function POST(request: NextRequest) {
         const { q, type, severity, email, phone, minAmount, maxAmount, fuzziness } = (body || {}) as SearchQuery
 
         const trialExpired = user.isTrialExpired()
+        // Package expiry enforcement for paid and enterprise
+        const now = new Date()
+        const pkgEnds = user.subscription?.packageEndsAt ? new Date(user.subscription.packageEndsAt) : undefined
+        const isPackageExpired = !!(pkgEnds && now > pkgEnds && user.subscription?.type !== 'free_trial')
         if (user.subscription?.type === 'free_trial' && user.subscription?.trialEndsAt && trialExpired && user.subscription.status !== 'expired') {
             user.subscription.status = 'expired'
             try { await user.save() } catch { }
@@ -96,6 +101,9 @@ export async function POST(request: NextRequest) {
         }
 
         const isUnlimited = effectiveLimit === -1
+        if (isPackageExpired) {
+            return NextResponse.json({ error: 'Your plan has expired. Renew to continue searching.' }, { status: 403 })
+        }
         if ((user.role === 'individual' && isFreeTrial && trialExpired) || (!isUnlimited && effectiveUsed >= effectiveLimit)) {
             const msg = (user.role === 'individual' && isFreeTrial && trialExpired)
                 ? 'Your free trial has expired. Upgrade to continue searching.'
@@ -148,11 +156,9 @@ export async function POST(request: NextRequest) {
                             const pct = limit > 0 ? (used / limit) : 0
                             if (limit > 0 && pct >= 0.9 && !admin.subscription.lowQuotaNotified) {
                                 const remaining = Math.max(0, limit - used)
-                                const subject = 'Wise-DB: You have 10% searches remaining'
-                                const text = `Hi ${admin.firstName || ''},\n\nYour enterprise search allowance is almost used up.\nUsed: ${used} of ${limit}. Remaining: ${remaining}.\n\nConsider topping up or contacting sales.\n\n— Wise-DB`
-                                const html = `<p>Hi ${admin.firstName || ''},</p><p>Your enterprise search allowance is almost used up.</p><p><strong>Used:</strong> ${used} of ${limit}. <strong>Remaining:</strong> ${remaining}.</p><p>Consider topping up or contacting sales.</p><p>— Wise-DB</p>`
                                 if (admin.email) {
-                                    await sendMail({ to: admin.email, subject, text, html })
+                                    const t = emailTemplates.lowQuotaEnterpriseAdmin
+                                    await sendMail({ to: admin.email, subject: t.subject({}), text: t.text({ firstName: admin.firstName, used, limit, remaining }), html: t.html({ firstName: admin.firstName, used, limit, remaining }) })
                                     admin.subscription.lowQuotaNotified = true
                                     await admin.save()
                                 }
@@ -177,11 +183,9 @@ export async function POST(request: NextRequest) {
                         const pct = limit > 0 ? (used / limit) : 0
                         if (pct >= 0.9 && !user.subscription.lowQuotaNotified) {
                             const remaining = Math.max(0, limit - used)
-                            const subject = 'Wise-DB: You have 10% searches remaining'
-                            const text = `Hi ${user.firstName || ''},\n\nYour search allowance is almost used up.\nUsed: ${used} of ${limit}. Remaining: ${remaining}.\n\nUpgrade or top up to avoid interruptions.\n\n— Wise-DB`
-                            const html = `<p>Hi ${user.firstName || ''},</p><p>Your search allowance is almost used up.</p><p><strong>Used:</strong> ${used} of ${limit}. <strong>Remaining:</strong> ${remaining}.</p><p>Upgrade or top up to avoid interruptions.</p><p>— Wise-DB</p>`
                             if (user.email) {
-                                await sendMail({ to: user.email, subject, text, html })
+                                const t = emailTemplates.lowQuotaIndividual
+                                await sendMail({ to: user.email, subject: t.subject({}), text: t.text({ firstName: user.firstName, used, limit, remaining }), html: t.html({ firstName: user.firstName, used, limit, remaining }) })
                                 user.subscription.lowQuotaNotified = true
                                 await user.save()
                             }

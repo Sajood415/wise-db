@@ -19,7 +19,7 @@ export default function EnterpriseRequestDetail({ params }: { params: Params }) 
   const [stripeForm, setStripeForm] = useState<{ pricingAmount?: string | number; pricingCurrency?: string; allowanceSearches?: string | number; allowanceUsers?: string | number }>({})
   const [payments, setPayments] = useState<any[]>([])
   const [manualForm, setManualForm] = useState<{ paymentMethod?: string; paymentTxnId?: string; paymentTxnDate?: string; paymentNotes?: string; paymentReceived?: boolean; pricingAmount?: string | number; pricingCurrency?: string; allowanceSearches?: string | number; allowanceUsers?: string | number }>({})
-  const [sendForm, setSendForm] = useState<{ enterpriseAdminEmail?: string; paymentMethod?: 'stripe' | 'bank_transfer'; pricingAmount?: string | number; pricingCurrency?: string; allowanceSearches?: string | number; allowanceUsers?: string | number; signupTokenTtlHours?: string | number; bankAccountName?: string; bankAccountNumber?: string; bankName?: string; bankSwift?: string; paymentReference?: string }>({})
+  const [sendForm, setSendForm] = useState<{ enterpriseAdminEmail?: string; paymentMethod?: 'stripe' | 'bank_transfer'; pricingAmount?: string | number; pricingCurrency?: string; allowanceSearches?: string | number; allowanceUsers?: string | number; signupTokenTtlHours?: string | number; bankAccountName?: string; bankTradingName?: string; bankAccountNumber?: string; bankName?: string; bankSwift?: string; paymentReference?: string }>({})
   const [sendBusy, setSendBusy] = useState(false)
 
   useEffect(() => {
@@ -449,7 +449,14 @@ export default function EnterpriseRequestDetail({ params }: { params: Params }) 
                 <label className="block text-xs text-gray-600 mb-2">Payment Method</label>
                 <div className="inline-flex rounded-md border bg-gray-50 p-1">
                   <button onClick={()=> setSendForm(f=>({...f, paymentMethod: 'stripe' }))} className={`px-3 py-1 rounded ${sendForm.paymentMethod !== 'bank_transfer' ? 'bg-white text-blue-700 shadow' : 'text-gray-600'}`}>Stripe</button>
-                  <button onClick={()=> setSendForm(f=>({...f, paymentMethod: 'bank_transfer' }))} className={`px-3 py-1 rounded ${sendForm.paymentMethod === 'bank_transfer' ? 'bg-white text-blue-700 shadow' : 'text-gray-600'}`}>Bank Transfer</button>
+                  <button onClick={()=> setSendForm(f=>({
+                    ...f,
+                    paymentMethod: 'bank_transfer',
+                    bankAccountName: 'AB Compliance Limited',
+                    bankTradingName: 'AB Compliance Ltd',
+                    bankAccountNumber: '03-0502-0512495-000',
+                    bankName: 'Westpac NZ',
+                  }))} className={`px-3 py-1 rounded ${sendForm.paymentMethod === 'bank_transfer' ? 'bg-white text-blue-700 shadow' : 'text-gray-600'}`}>Bank Transfer</button>
                 </div>
               </div>
 
@@ -476,25 +483,22 @@ export default function EnterpriseRequestDetail({ params }: { params: Params }) 
                 <div className="rounded-md border p-4 bg-gray-50">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs text-gray-600 mb-1">Account Name</label>
-                      <input value={sendForm.bankAccountName || ''} onChange={(e)=> setSendForm(f=>({...f, bankAccountName: e.target.value }))} className="w-full border rounded-md px-3 py-2 text-sm text-black" />
+                      <label className="block text-xs text-gray-600 mb-1">Account holder</label>
+                      <input value={sendForm.bankAccountName || ''} disabled className="w-full border rounded-md px-3 py-2 text-sm text-black bg-gray-100" />
                     </div>
                     <div>
-                      <label className="block text-xs text-gray-600 mb-1">Account / IBAN</label>
-                      <input value={sendForm.bankAccountNumber || ''} onChange={(e)=> setSendForm(f=>({...f, bankAccountNumber: e.target.value }))} className="w-full border rounded-md px-3 py-2 text-sm text-black" />
+                      <label className="block text-xs text-gray-600 mb-1">Trading name</label>
+                      <input value={sendForm.bankTradingName || ''} disabled className="w-full border rounded-md px-3 py-2 text-sm text-black bg-gray-100" />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">Account number</label>
+                      <input value={sendForm.bankAccountNumber || ''} disabled className="w-full border rounded-md px-3 py-2 text-sm text-black bg-gray-100" />
                     </div>
                     <div>
                       <label className="block text-xs text-gray-600 mb-1">Bank</label>
-                      <input value={sendForm.bankName || ''} onChange={(e)=> setSendForm(f=>({...f, bankName: e.target.value }))} className="w-full border rounded-md px-3 py-2 text-sm text-black" />
+                      <input value={sendForm.bankName || ''} disabled className="w-full border rounded-md px-3 py-2 text-sm text-black bg-gray-100" />
                     </div>
-                    <div>
-                      <label className="block text-xs text-gray-600 mb-1">SWIFT/BIC</label>
-                      <input value={sendForm.bankSwift || ''} onChange={(e)=> setSendForm(f=>({...f, bankSwift: e.target.value }))} className="w-full border rounded-md px-3 py-2 text-sm text-black" />
-                    </div>
-                    <div className="md:col-span-2">
-                      <label className="block text-xs text-gray-600 mb-1">Payment Reference</label>
-                      <input value={sendForm.paymentReference || ''} onChange={(e)=> setSendForm(f=>({...f, paymentReference: e.target.value }))} className="w-full border rounded-md px-3 py-2 text-sm text-black" placeholder="Include this reference in transfer" />
-                    </div>
+                    <p className="md:col-span-2 text-xs text-gray-600">These bank details will be included in the email.</p>
                   </div>
                 </div>
               )}
@@ -521,8 +525,9 @@ export default function EnterpriseRequestDetail({ params }: { params: Params }) 
                         allowanceUsers: Number(sendForm.allowanceUsers),
                         signupTokenTtlHours: Number(sendForm.signupTokenTtlHours || 72),
                         bankAccountName: sendForm.bankAccountName || '',
-                        bankAccountNumber: sendForm.bankAccountNumber || '',
-                        bankName: sendForm.bankName || '',
+                        bankTradingName: sendForm.bankTradingName || 'AB Compliance Ltd',
+                        bankAccountNumber: sendForm.bankAccountNumber || '03-0502-0512495-000',
+                        bankName: sendForm.bankName || 'Westpac NZ',
                         bankSwift: sendForm.bankSwift || '',
                         paymentReference: sendForm.paymentReference || '',
                       }

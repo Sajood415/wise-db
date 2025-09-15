@@ -44,6 +44,8 @@ export async function POST(request: NextRequest) {
                 searchesUsed: 0,
                 searchLimit: Number(er.allowanceSearches || 0),
                 canAccessRealData: true,
+                packageEndsAt: (() => { try { const d = new Date(); d.setDate(d.getDate() + 30); return d } catch { return undefined } })(),
+                expiryReminderSent: false,
             },
         })
 
