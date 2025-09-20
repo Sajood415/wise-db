@@ -3,6 +3,8 @@ import mongoose from 'mongoose'
 import { jwtVerify } from 'jose'
 import connectToDatabase from '@/lib/mongodb'
 import Fraud from '@/models/Fraud'
+import { writeFile, mkdir } from 'fs/promises'
+import path from 'path'
 
 function mapFraudType(inputType?: string): 'email' | 'phone' | 'website' | 'identity' | 'financial' | 'other' {
     const type = (inputType || '').toLowerCase()
@@ -31,50 +33,176 @@ export async function POST(req: NextRequest) {
     try {
         await connectToDatabase()
 
-        const body = await req.json()
+        const contentType = req.headers.get('content-type') || ''
 
-        const {
-            // Basic Information
-            reportTitle,
-            detailedDescription,
-            fraudType,
-            incidentDate,
+        // Common variables populated from either JSON or multipart form-data
+        let reportTitle: string | undefined
+        let detailedDescription: string | undefined
+        let fraudType: string | undefined
+        let incidentDate: string | undefined
 
-            // Reporter Information
-            reporterType,
-            reporterName,
-            reporterEmail,
-            reporterPhone,
-            reporterGender,
-            reporterLocation,
+        let reporterType: string | undefined
+        let reporterName: string | undefined
+        let reporterEmail: string | undefined
+        let reporterPhone: string | undefined
+        let reporterGender: string | undefined
+        let reporterLocation: string | undefined
 
-            // Fraudster Details (who committed the fraud)
-            fraudsterName,
-            fraudsterType,
-            fraudsterCompany,
-            fraudsterEmail,
-            fraudsterGender,
-            fraudsterContact,
-            fraudsterAddress,
-            fraudsterDescription,
+        let fraudsterName: string | undefined
+        let fraudsterType: string | undefined
+        let fraudsterCompany: string | undefined
+        let fraudsterEmail: string | undefined
+        let fraudsterGender: string | undefined
+        let fraudsterContact: string | undefined
+        let fraudsterAddress: string | undefined
+        let fraudsterDescription: string | undefined
 
-            // Financial Impact
-            actualLoss,
-            attemptedLoss,
-            currency,
-            paymentMethods,
-            transactionDetails,
+        let actualLoss: any
+        let attemptedLoss: any
+        let currency: string | undefined
+        let paymentMethods: string | undefined
+        let transactionDetails: string | undefined
 
-            // Evidence & Documentation
-            websitesSocialMedia,
-            evidenceDescription,
-            evidenceFiles, // This will be an array of file data
+        let websitesSocialMedia: string | undefined
+        let evidenceDescription: string | undefined
+        let additionalComments: string | undefined
+        let recaptchaToken: string | null | undefined
 
-            // Additional
-            additionalComments,
-            // reCAPTCHA
-            recaptchaToken,
-        } = body || {}
+        // Evidence containers
+        const screenshots: string[] = []
+        const documents: string[] = []
+
+        if (contentType.includes('multipart/form-data')) {
+            // Parse multipart form-data and save files to disk
+            const form = await req.formData()
+
+            // Helper to get string values
+            const s = (key: string) => {
+                const v = form.get(key)
+                return typeof v === 'string' ? v : undefined
+            }
+
+            // Extract fields
+            reportTitle = s('reportTitle')
+            detailedDescription = s('detailedDescription')
+            fraudType = s('fraudType')
+            incidentDate = s('incidentDate')
+
+            reporterType = s('reporterType')
+            reporterName = s('reporterName')
+            reporterEmail = s('reporterEmail')
+            reporterPhone = s('reporterPhone')
+            reporterGender = s('reporterGender')
+            reporterLocation = s('reporterLocation')
+
+            fraudsterName = s('fraudsterName')
+            fraudsterType = s('fraudsterType')
+            fraudsterCompany = s('fraudsterCompany')
+            fraudsterEmail = s('fraudsterEmail')
+            fraudsterGender = s('fraudsterGender')
+            fraudsterContact = s('fraudsterContact')
+            fraudsterAddress = s('fraudsterAddress')
+            fraudsterDescription = s('fraudsterDescription')
+
+            actualLoss = s('actualLoss')
+            attemptedLoss = s('attemptedLoss')
+            currency = s('currency')
+            paymentMethods = s('paymentMethods')
+            transactionDetails = s('transactionDetails')
+
+            websitesSocialMedia = s('websitesSocialMedia')
+            evidenceDescription = s('evidenceDescription')
+            additionalComments = s('additionalComments')
+            recaptchaToken = s('recaptchaToken')
+
+            // Server-side file validation and saving
+            const MAX_BYTES = 10 * 1024 * 1024 // 10MB
+            const allowedMimeTypes = new Set([
+                'application/pdf',
+                'image/png',
+                'image/jpeg',
+            ])
+
+            const uploadRoot = path.join(process.cwd(), 'public', 'uploads', 'evidence')
+            await mkdir(uploadRoot, { recursive: true })
+
+            const files = form.getAll('evidenceFiles') as unknown as File[]
+            for (const file of files) {
+                if (!file) continue
+                const type = (file as any).type as string | undefined
+                const size = (file as any).size as number | undefined
+                const name = (file as any).name as string | undefined
+
+                if (!type || !allowedMimeTypes.has(type)) {
+                    return NextResponse.json({ error: `Unsupported file type: ${type || 'unknown'}` }, { status: 400 })
+                }
+                if (size && size > MAX_BYTES) {
+                    return NextResponse.json({ error: `File exceeds 10MB limit: ${name}` }, { status: 400 })
+                }
+
+                const arrayBuffer = await (file as any).arrayBuffer()
+                const buffer = Buffer.from(arrayBuffer)
+
+                const extFromName = name && name.includes('.') ? name.substring(name.lastIndexOf('.')) : ''
+                const ext = extFromName || (type === 'image/png' ? '.png' : type === 'image/jpeg' ? '.jpg' : type === 'application/pdf' ? '.pdf' : '')
+                const safeBase = (name || 'file').replace(/[^a-zA-Z0-9._-]+/g, '_')
+                const unique = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+                const filename = `${unique}_${safeBase}${ext ? '' : ''}` // keep original ext if present
+                const filepath = path.join(uploadRoot, filename)
+                await writeFile(filepath, buffer)
+
+                const publicUrl = `/uploads/evidence/${filename}`
+                if (type.startsWith('image/')) {
+                    screenshots.push(publicUrl)
+                } else {
+                    documents.push(publicUrl)
+                }
+            }
+        } else {
+            // JSON body fallback (legacy path: expects base64 strings)
+            const body = await req.json()
+
+            reportTitle = body?.reportTitle
+            detailedDescription = body?.detailedDescription
+            fraudType = body?.fraudType
+            incidentDate = body?.incidentDate
+
+            reporterType = body?.reporterType
+            reporterName = body?.reporterName
+            reporterEmail = body?.reporterEmail
+            reporterPhone = body?.reporterPhone
+            reporterGender = body?.reporterGender
+            reporterLocation = body?.reporterLocation
+
+            fraudsterName = body?.fraudsterName
+            fraudsterType = body?.fraudsterType
+            fraudsterCompany = body?.fraudsterCompany
+            fraudsterEmail = body?.fraudsterEmail
+            fraudsterGender = body?.fraudsterGender
+            fraudsterContact = body?.fraudsterContact
+            fraudsterAddress = body?.fraudsterAddress
+            fraudsterDescription = body?.fraudsterDescription
+
+            actualLoss = body?.actualLoss
+            attemptedLoss = body?.attemptedLoss
+            currency = body?.currency
+            paymentMethods = body?.paymentMethods
+            transactionDetails = body?.transactionDetails
+
+            websitesSocialMedia = body?.websitesSocialMedia
+            evidenceDescription = body?.evidenceDescription
+            additionalComments = body?.additionalComments
+            recaptchaToken = body?.recaptchaToken
+
+            const uploadedFiles = body?.evidenceFiles || []
+            uploadedFiles.forEach((file: any) => {
+                if (file?.type && String(file.type).startsWith('image/')) {
+                    screenshots.push(file.data || file.url || '')
+                } else {
+                    documents.push(file?.data || file?.url || '')
+                }
+            })
+        }
 
         if (!reportTitle || !detailedDescription) {
             return NextResponse.json({ error: 'Title and description are required' }, { status: 400 })
@@ -119,18 +247,7 @@ export async function POST(req: NextRequest) {
             }
         }
 
-        // Process evidence files - convert to URLs or base64 strings
-        const uploadedFiles = body.evidenceFiles || []
-        const screenshots: string[] = []
-        const documents: string[] = []
-
-        uploadedFiles.forEach((file: any) => {
-            if (file.type && file.type.startsWith('image/')) {
-                screenshots.push(file.data || file.url || '')
-            } else {
-                documents.push(file.data || file.url || '')
-            }
-        })
+        // screenshots and documents have been prepared above depending on content type
 
         // Build additional info from various fields
         const additionalInfoParts = [

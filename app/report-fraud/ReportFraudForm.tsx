@@ -366,64 +366,47 @@ export default function ReportFraudForm() {
     }
     setSubmitting(true)
     try {
-      // Convert files to base64
-      const evidenceFilesData = await Promise.all(
-        formData.evidenceFiles.map(async (file) => {
-          return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = () => {
-              resolve({
-                name: file.name,
-                type: file.type,
-                size: file.size,
-                data: reader.result as string
-              });
-            };
-            reader.readAsDataURL(file);
-          });
-        })
-      );
+      // Build multipart form data
+      const fd = new FormData()
+      // Basic
+      fd.append('fraudType', formData.fraudType)
+      fd.append('incidentDate', formData.incidentDate)
+      fd.append('reportTitle', formData.reportTitle)
+      // Reporter
+      fd.append('reporterType', formData.reporterType)
+      fd.append('reporterName', formData.reporterName)
+      fd.append('reporterEmail', formData.reporterEmail)
+      fd.append('reporterPhone', formData.reporterPhone)
+      fd.append('reporterGender', formData.reporterGender)
+      fd.append('reporterLocation', formData.reporterLocation)
+      // Fraudster
+      fd.append('fraudsterName', formData.fraudsterName)
+      fd.append('fraudsterType', formData.fraudsterType)
+      fd.append('fraudsterCompany', formData.fraudsterCompany)
+      fd.append('fraudsterEmail', formData.fraudsterEmail)
+      fd.append('fraudsterGender', formData.fraudsterGender)
+      fd.append('fraudsterContact', formData.fraudsterContact)
+      fd.append('fraudsterAddress', formData.fraudsterAddress)
+      fd.append('fraudsterDescription', formData.fraudsterDescription)
+      // Financial
+      fd.append('actualLoss', String(formData.actualLoss))
+      fd.append('attemptedLoss', String(formData.attemptedLoss))
+      fd.append('currency', formData.currency)
+      fd.append('paymentMethods', formData.paymentMethods)
+      fd.append('transactionDetails', formData.transactionDetails)
+      // Evidence
+      fd.append('detailedDescription', formData.detailedDescription)
+      fd.append('websitesSocialMedia', formData.websitesSocialMedia)
+      fd.append('evidenceDescription', formData.evidenceDescription)
+      formData.evidenceFiles.forEach((file) => fd.append('evidenceFiles', file))
+      // Additional
+      fd.append('additionalComments', formData.additionalComments)
+      // reCAPTCHA
+      if (recaptchaToken) fd.append('recaptchaToken', recaptchaToken)
 
       const res = await fetch('/api/fraud', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          // Basic
-          fraudType: formData.fraudType,
-          incidentDate: formData.incidentDate,
-          reportTitle: formData.reportTitle,
-          // Reporter
-          reporterType: formData.reporterType,
-          reporterName: formData.reporterName,
-          reporterEmail: formData.reporterEmail,
-          reporterPhone: formData.reporterPhone,
-          reporterGender: formData.reporterGender,
-          reporterLocation: formData.reporterLocation,
-          // Fraudster
-          fraudsterName: formData.fraudsterName,
-          fraudsterType: formData.fraudsterType,
-          fraudsterCompany: formData.fraudsterCompany,
-          fraudsterEmail: formData.fraudsterEmail,
-          fraudsterGender: formData.fraudsterGender,
-          fraudsterContact: formData.fraudsterContact,
-          fraudsterAddress: formData.fraudsterAddress,
-          fraudsterDescription: formData.fraudsterDescription,
-          // Financial
-          actualLoss: formData.actualLoss,
-          attemptedLoss: formData.attemptedLoss,
-          currency: formData.currency,
-          paymentMethods: formData.paymentMethods,
-          transactionDetails: formData.transactionDetails,
-          // Evidence
-          detailedDescription: formData.detailedDescription,
-          websitesSocialMedia: formData.websitesSocialMedia,
-          evidenceDescription: formData.evidenceDescription,
-          evidenceFiles: evidenceFilesData,
-          // Additional
-          additionalComments: formData.additionalComments,
-          // reCAPTCHA
-          recaptchaToken: recaptchaToken,
-        }),
+        body: fd,
       })
       const data = await res.json()
       if (res.ok) {

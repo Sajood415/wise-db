@@ -32,7 +32,9 @@ export async function middleware(request: NextRequest) {
         '/api/enterprise$',
         '/dashboard/payment/success',
         '/dashboard/payment/cancel',
-        '/api/payment/enterprise/verify'
+        '/api/payment/enterprise/verify',
+        // public uploads
+        '/uploads'
     ];
 
     // Check if the current path is public
@@ -45,7 +47,7 @@ export async function middleware(request: NextRequest) {
     });
 
     // Skip authentication for public paths and static files
-    if (isPublicPath || pathname.startsWith('/_next') || pathname.startsWith('/api/public')) {
+    if (isPublicPath || pathname.startsWith('/_next') || pathname.startsWith('/api/public') || pathname.startsWith('/uploads/')) {
         return NextResponse.next();
     }
 
