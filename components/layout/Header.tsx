@@ -133,12 +133,22 @@ const Header = () => {
           {/* Desktop CTA Buttons */}
           <div className="hidden md:flex items-center space-x-4">
             {isLoggedIn ? (
-              <Link
-                href={getDashboardPath(userRole)}
-                className="text-sm font-semibold bg-[#43d49d] text-[#1c2736] hover:bg-[#3bc58f] px-4 py-2 rounded-lg transition-colors"
-              >
-                Dashboard
-              </Link>
+              <>
+                {userRole === 'enterprise_admin' && (
+                  <Link
+                    href="/enterprise/dashboard/api"
+                    className="text-sm font-medium px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                  >
+                    API Access
+                  </Link>
+                )}
+                <Link
+                  href={getDashboardPath(userRole)}
+                  className="text-sm font-semibold bg-[#43d49d] text-[#1c2736] hover:bg-[#3bc58f] px-4 py-2 rounded-lg transition-colors"
+                >
+                  Dashboard
+                </Link>
+              </>
             ) : (
               <>
                 <Link
@@ -209,13 +219,24 @@ const Header = () => {
               })}
               <div className={`${isHovered ? 'border-t border-white/10' : 'border-t border-gray-200'} pt-3 mt-3`}>
                 {isLoggedIn ? (
-                  <Link
-                    href={getDashboardPath(userRole)}
-                    className="block text-center mt-2 mx-3 text-sm font-semibold bg-[#43d49d] text-[#1c2736] hover:bg-[#3bc58f] px-4 py-2 rounded-lg transition-colors"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Dashboard
-                  </Link>
+                  <>
+                    {userRole === 'enterprise_admin' && (
+                      <Link
+                        href="/enterprise/dashboard/api"
+                        className={`block px-3 py-2 text-base font-medium transition-colors duration-200 ${isHovered ? 'text-white/80 hover:text-white' : 'text-[#1c2736]/80 hover:text-[#1c2736]'}`}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        API Access
+                      </Link>
+                    )}
+                    <Link
+                      href={getDashboardPath(userRole)}
+                      className="block text-center mt-2 mx-3 text-sm font-semibold bg-[#43d49d] text-[#1c2736] hover:bg-[#3bc58f] px-4 py-2 rounded-lg transition-colors"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Dashboard
+                    </Link>
+                  </>
                 ) : (
                   <>
                     <Link

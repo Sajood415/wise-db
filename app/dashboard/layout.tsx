@@ -94,6 +94,16 @@ const DashboardHeader = ({ user, onLogout }: { user: any, onLogout: () => void }
                 Upgrade Plan
               </Link>
             )}
+          {user?.role === 'enterprise_admin' && (
+            <>
+              <Link href="/enterprise/dashboard/api" className="hidden md:inline-flex items-center text-sm font-semibold border border-gray-200 text-gray-700 hover:bg-gray-50 px-3 py-1.5 rounded-lg transition-colors">
+                API Access
+              </Link>
+              <Link href="/enterprise/dashboard/api" className="md:hidden inline-flex items-center text-sm font-semibold text-blue-700 underline">
+                API Access
+              </Link>
+            </>
+          )}
             <div className="text-right">
               <p className="text-sm font-medium text-gray-900">
                 {user?.firstName} {user?.lastName}

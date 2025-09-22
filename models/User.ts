@@ -36,6 +36,8 @@ export interface IUser extends Document {
     emailVerified: boolean;
     passwordResetToken?: string;
     passwordResetExpires?: Date;
+    apiAuthToken?: string;
+    apiAuthTokenCreatedAt?: Date;
     createdAt: Date;
     updatedAt: Date;
 
@@ -170,6 +172,12 @@ const UserSchema = new Schema<IUser>({
 }, {
     timestamps: true
 });
+
+// API auth token for enterprise integrations
+UserSchema.add({
+    apiAuthToken: { type: String, index: true },
+    apiAuthTokenCreatedAt: { type: Date }
+})
 
 // Middleware to set permissions based on role
 UserSchema.pre<IUser>('save', function (next: any) {

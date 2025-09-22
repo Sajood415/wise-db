@@ -28,6 +28,7 @@ export async function middleware(request: NextRequest) {
         '/api/auth/forgot-password',
         '/api/auth/reset-password',
         '/api/fraud',
+        '/api/external',
         '/api/help',
         '/api/enterprise$',
         '/dashboard/payment/success',
