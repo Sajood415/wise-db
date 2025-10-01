@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import { jwtVerify } from 'jose'
 import connectToDatabase from '@/lib/mongodb'
 import Fraud from '@/models/Fraud'
+import { put } from '@vercel/blob'
 import { writeFile, mkdir } from 'fs/promises'
 import path from 'path'
 
@@ -73,7 +74,7 @@ export async function POST(req: NextRequest) {
         const documents: string[] = []
 
         if (contentType.includes('multipart/form-data')) {
-            // Parse multipart form-data and save files to disk
+            // Parse multipart form-data and upload files to storage
             const form = await req.formData()
 
             // Helper to get string values
@@ -124,8 +125,6 @@ export async function POST(req: NextRequest) {
             ])
 
             const uploadRoot = path.join(process.cwd(), 'public', 'uploads', 'evidence')
-            await mkdir(uploadRoot, { recursive: true })
-
             const files = form.getAll('evidenceFiles') as unknown as File[]
             for (const file of files) {
                 if (!file) continue
@@ -144,14 +143,28 @@ export async function POST(req: NextRequest) {
                 const buffer = Buffer.from(arrayBuffer)
 
                 const extFromName = name && name.includes('.') ? name.substring(name.lastIndexOf('.')) : ''
-                const ext = extFromName || (type === 'image/png' ? '.png' : type === 'image/jpeg' ? '.jpg' : type === 'application/pdf' ? '.pdf' : '')
-                const safeBase = (name || 'file').replace(/[^a-zA-Z0-9._-]+/g, '_')
+                const derivedExt = type === 'image/png' ? '.png' : type === 'image/jpeg' ? '.jpg' : type === 'application/pdf' ? '.pdf' : ''
+                const ext = extFromName || derivedExt
+                const safeBaseOriginal = (name || 'file').replace(/[^a-zA-Z0-9._-]+/g, '_')
+                const safeBaseHasExt = !!extFromName
+                const safeBase = safeBaseHasExt ? safeBaseOriginal : `${safeBaseOriginal}${ext}`
                 const unique = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
-                const filename = `${unique}_${safeBase}${ext ? '' : ''}` // keep original ext if present
-                const filepath = path.join(uploadRoot, filename)
-                await writeFile(filepath, buffer)
+                const filename = `${unique}_${safeBase}`
 
-                const publicUrl = `/uploads/evidence/${filename}`
+                let publicUrl: string
+                try {
+                    const { url } = await put(`uploads/evidence/${filename}`, buffer, {
+                        access: 'public',
+                        contentType: type || undefined,
+                    })
+                    publicUrl = url
+                } catch (err) {
+                    // Fallback for local dev without Blob token
+                    await mkdir(uploadRoot, { recursive: true })
+                    const filepath = path.join(uploadRoot, filename)
+                    await writeFile(filepath, buffer)
+                    publicUrl = `/uploads/evidence/${filename}`
+                }
                 if (type.startsWith('image/')) {
                     screenshots.push(publicUrl)
                 } else {
