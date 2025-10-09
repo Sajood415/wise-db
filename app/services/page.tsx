@@ -2,16 +2,16 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Services - Wise DB | Comprehensive Fraud Protection Solutions",
+  title: "Services - Fraud Scan | Comprehensive Fraud Protection Solutions",
   description:
-    "Explore Wise DB fraud protection services: real-time verification, secure reporting, expert analysis, global intelligence, and enterprise solutions for businesses of all sizes.",
+    "Explore Fraud Scan fraud protection services: real-time verification, secure reporting, expert analysis, global intelligence, and enterprise solutions for businesses of all sizes.",
   keywords:
     "fraud protection services, fraud verification, secure reporting, expert fraud analysis, enterprise fraud solutions, global fraud intelligence",
   openGraph: {
-    title: "Services - Wise DB | Comprehensive Fraud Protection Solutions",
+    title: "Services - Fraud Scan | Comprehensive Fraud Protection Solutions",
     description:
-      "Explore Wise DB fraud protection services for businesses of all sizes.",
-    url: "https://wisedb.com/services",
+      "Explore Fraud Scan fraud protection services for businesses of all sizes.",
+    url: "https://fraudscans.com/services",
     type: "website",
   },
 };
@@ -331,7 +331,7 @@ export default function Services() {
                 Example API Request
               </div>
               <pre className="text-green-400 text-sm overflow-x-auto">
-                {`curl -X POST https://api.wisedb.com/v1/verify \\
+                {`curl -X POST https://api.fraudscans.com/v1/verify \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{

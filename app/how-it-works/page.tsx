@@ -2,16 +2,16 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "How It Works - Wise DB | Step-by-Step Fraud Protection Process",
+  title: "How It Works - Fraud Scan | Step-by-Step Fraud Protection Process",
   description:
-    "Learn how Wise DB fraud protection works: from reporting and verification to expert analysis and global intelligence sharing. Simple, secure, and effective.",
+    "Learn how Fraud Scan fraud protection works: from reporting and verification to expert analysis and global intelligence sharing. Simple, secure, and effective.",
   keywords:
     "how fraud protection works, fraud reporting process, verification steps, expert fraud analysis process, fraud intelligence sharing",
   openGraph: {
-    title: "How It Works - Wise DB | Step-by-Step Fraud Protection Process",
+    title: "How It Works - Fraud Scan | Step-by-Step Fraud Protection Process",
     description:
-      "Learn how Wise DB fraud protection works from start to finish.",
-    url: "https://wisedb.com/how-it-works",
+      "Learn how Fraud Scan fraud protection works from start to finish.",
+    url: "https://fraudscans.com/how-it-works",
     type: "website",
   },
 };
@@ -202,7 +202,7 @@ export default function HowItWorks() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-4xl mx-auto">
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-              How <span className="gradient-text">Wise DB</span> Works
+              How <span className="gradient-text">Fraud Scan</span> Works
             </h1>
             <p className="text-xl md:text-2xl text-gray-600 mb-8">
               Understanding our comprehensive fraud protection process from
@@ -285,7 +285,7 @@ export default function HowItWorks() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Different Ways to Use Wise DB
+              Different Ways to Use Fraud Scan
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Whether you're an individual reporting fraud or an enterprise
@@ -593,7 +593,7 @@ export default function HowItWorks() {
             Ready to Get Started?
           </h2>
           <p className="text-xl text-[#d7f6ea] mb-8 max-w-2xl mx-auto">
-            Join thousands of businesses and individuals using Wise DB to fight
+            Join thousands of businesses and individuals using Fraud Scan to fight
             fraud and protect their operations.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

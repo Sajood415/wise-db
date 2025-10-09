@@ -2,16 +2,16 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "About Us - Wise DB | Leading Fraud Protection Platform",
+  title: "About Us - Fraud Scan | Leading Fraud Protection Platform",
   description:
-    "Learn about Wise DB, the trusted fraud reporting and verification platform protecting businesses worldwide. Discover our mission, values, and commitment to fighting fraud.",
+    "Learn about Fraud Scan, the trusted fraud reporting and verification platform protecting businesses worldwide. Discover our mission, values, and commitment to fighting fraud.",
   keywords:
-    "about wise db, fraud protection company, anti-fraud platform, business security, fraud prevention team",
+    "about fraud scan, fraud protection company, anti-fraud platform, business security, fraud prevention team",
   openGraph: {
-    title: "About Us - Wise DB",
+    title: "About Us - Fraud Scan",
     description:
-      "Learn about Wise DB, the trusted fraud reporting and verification platform protecting businesses worldwide.",
-    url: "https://wisedb.com/about",
+      "Learn about Fraud Scan, the trusted fraud reporting and verification platform protecting businesses worldwide.",
+    url: "https://fraudscans.com/about",
     type: "website",
   },
 };
@@ -49,7 +49,7 @@ export default function About() {
       year: "2019",
       event: "Company Founded",
       description:
-        "Wise DB was established with a mission to combat fraud globally",
+        "Fraud Scan was established with a mission to combat fraud globally",
     },
     {
       year: "2020",
@@ -86,7 +86,7 @@ export default function About() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-4xl mx-auto">
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-              About <span className="gradient-text">Wise DB</span>
+              About <span className="gradient-text">Fraud Scan</span>
             </h1>
             <p className="text-xl md:text-2xl text-gray-600 mb-8">
               We're on a mission to create a safer digital world by empowering

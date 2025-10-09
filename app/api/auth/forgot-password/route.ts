@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
             <head>
                 <meta charset="utf-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Password Reset - WiseDB</title>
+                <title>Password Reset - Fraud Scan</title>
                 <style>
                     body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
                     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
@@ -70,11 +70,11 @@ export async function POST(request: NextRequest) {
                 <div class="container">
                     <div class="header">
                         <h1>Password Reset Request</h1>
-                        <p>WiseDB Security</p>
+                        <p>Fraud Scan Security</p>
                     </div>
                     <div class="content">
                         <h2>Hello ${user.firstName},</h2>
-                        <p>We received a request to reset your password for your WiseDB account.</p>
+                        <p>We received a request to reset your password for your Fraud Scan account.</p>
                         <p>Click the button below to reset your password:</p>
                         <a href="${resetUrl}" class="button">Reset Password</a>
                         <p>This link will expire in 15 minutes for security reasons.</p>
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
                         <p>For security reasons, this link can only be used once.</p>
                     </div>
                     <div class="footer">
-                        <p>© 2024 WiseDB. All rights reserved.</p>
+                        <p>© 2024 Fraud Scan. All rights reserved.</p>
                         <p>If you're having trouble clicking the button, copy and paste this URL into your browser:</p>
                         <p style="word-break: break-all; color: #006d5b;">${resetUrl}</p>
                     </div>
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
 
         await sendMail({
             to: user.email,
-            subject: 'Password Reset Request - WiseDB',
+            subject: 'Password Reset Request - Fraud Scan',
             html: emailHtml
         });
 

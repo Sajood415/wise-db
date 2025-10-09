@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 export const metadata = {
-  title: 'Report Submitted — Wise DB',
+  title: 'Report Submitted — Fraud Scan',
   description: 'Your fraud report has been submitted and is pending review.'
 }
 

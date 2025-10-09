@@ -17,25 +17,25 @@ const robotoMono = Roboto_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
-  title: "Wise DB - Fraud Reporting & Verification Platform",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://fraudscans.com'),
+  title: "Fraud Scan - Fraud Reporting & Verification Platform",
   description:
     "Protect your business from fraud with comprehensive reporting, verification, and intelligence services. Join thousands of businesses worldwide fighting fraud together.",
   keywords:
     "fraud reporting, fraud verification, business protection, scam detection, fraud intelligence, enterprise security",
-  authors: [{ name: "Wise DB Team" }],
+  authors: [{ name: "Fraud Scan Team" }],
   openGraph: {
-    title: "Wise DB - Fraud Reporting & Verification Platform",
+    title: "Fraud Scan - Fraud Reporting & Verification Platform",
     description:
       "Protect your business from fraud with comprehensive reporting, verification, and intelligence services.",
-    url: "https://wisedb.com",
-    siteName: "Wise DB",
+    url: "https://fraudscans.com",
+    siteName: "Fraud Scan",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Wise DB - Fraud Protection Platform",
+        alt: "Fraud Scan - Fraud Protection Platform",
       },
     ],
     locale: "en_US",
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Wise DB - Fraud Reporting & Verification Platform",
+    title: "Fraud Scan - Fraud Reporting & Verification Platform",
     description:
       "Protect your business from fraud with comprehensive reporting, verification, and intelligence services.",
     images: ["/og-image.png"],

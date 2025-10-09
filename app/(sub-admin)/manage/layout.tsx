@@ -19,9 +19,9 @@ function SubAdminHeader({ user, onLogout }: { user: any, onLogout: () => void })
           )}
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">W</span>
+              <span className="text-white font-bold text-sm">F</span>
             </div>
-            <span className="text-xl font-bold text-gray-900">Wise DB</span>
+            <span className="text-xl font-bold text-gray-900">Fraud Scan</span>
           </div>
         </div>
         <div className="flex items-center gap-4">

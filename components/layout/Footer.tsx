@@ -38,9 +38,9 @@ const Footer = () => {
           <div className="lg:col-span-1">
             <div className="flex items-center space-x-2 mb-4">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[#006d5b]">
-                <span className="text-white font-bold text-sm">WD</span>
+                <span className="text-white font-bold text-sm">FS</span>
               </div>
-              <span className="text-xl font-bold">Wise DB</span>
+              <span className="text-xl font-bold">Fraud Scan</span>
             </div>
             <p className="text-gray-400 text-sm mb-6">
               Protecting businesses and individuals from fraud through
@@ -89,7 +89,7 @@ const Footer = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="text-gray-400 text-sm">
-              © {currentYear} Wise DB. All rights reserved.
+              © {currentYear} Fraud Scan. All rights reserved.
             </div>
             <div className="flex items-center space-x-6 mt-4 md:mt-0">
               <span className="text-gray-400 text-sm">

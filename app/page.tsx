@@ -284,7 +284,7 @@ export default function Home() {
             Ready to Protect Your Business?
           </h2>
           <p className="text-xl text-[#d7f6ea] mb-8 max-w-2xl mx-auto">
-            Join thousands of businesses using Wise DB to prevent fraud and
+            Join thousands of businesses using Fraud Scan to prevent fraud and
             protect their operations.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

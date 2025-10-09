@@ -4,16 +4,16 @@ import VerifyOnSuccess from "./VerifyOnSuccess";
 import PaymentToast from "./payment-toast";
 
 export const metadata: Metadata = {
-  title: "Enterprise Solutions - Wise DB | Custom Fraud Protection",
+  title: "Enterprise Solutions - Fraud Scan | Custom Fraud Protection",
   description:
     "Get enterprise-grade fraud protection with custom API access, dedicated support, and scalable solutions for your business needs.",
   keywords:
     "enterprise fraud protection, API access, bulk fraud verification, business solutions, custom fraud detection",
   openGraph: {
-    title: "Enterprise Solutions - Wise DB | Custom Fraud Protection",
+    title: "Enterprise Solutions - Fraud Scan | Custom Fraud Protection",
     description:
       "Enterprise-grade fraud protection solutions with API access and dedicated support.",
-    url: "https://wisedb.com/enterprise",
+    url: "https://fraudscans.com/enterprise",
     type: "website",
   },
 };

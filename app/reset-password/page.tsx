@@ -74,7 +74,7 @@ function ResetPasswordPageInner() {
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
             <div className="inline-flex items-center justify-center w-12 h-12 bg-[#006d5b] rounded-lg mb-4 shadow-sm">
-              <span className="text-white font-bold text-sm">WD</span>
+              <span className="text-white font-bold text-sm">FS</span>
             </div>
             <h2 className="text-3xl font-bold text-white mb-2">Password Reset</h2>
             <p className="text-gray-200">Your password has been updated</p>
@@ -110,7 +110,7 @@ function ResetPasswordPageInner() {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="inline-flex items-center justify-center w-12 h-12 bg-[#006d5b] rounded-lg mb-4 shadow-sm">
-            <span className="text-white font-bold text-sm">WD</span>
+            <span className="text-white font-bold text-sm">FS</span>
           </div>
           <h2 className="text-3xl font-bold text-white mb-2">Reset Password</h2>
           <p className="text-gray-200">Enter your new password</p>

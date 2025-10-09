@@ -70,10 +70,10 @@ function LoginPageInner() {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="inline-flex items-center justify-center w-12 h-12 bg-[#006d5b] rounded-lg mb-4 shadow-sm">
-            <span className="text-white font-bold text-sm">WD</span>
+            <span className="text-white font-bold text-sm">FS</span>
           </div>
           <h2 className="text-3xl font-bold text-white mb-2">Welcome Back</h2>
-          <p className="text-gray-200">Sign in to your WiseDB account</p>
+          <p className="text-gray-200">Sign in to your Fraud Scan account</p>
         </div>
 
         <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8">

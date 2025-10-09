@@ -2,16 +2,16 @@ import { Metadata } from "next";
 import HelpForm from "./HelpForm";
 
 export const metadata: Metadata = {
-  title: "Help Center - Wise DB | Support & Assistance",
+  title: "Help Center - Fraud Scan | Support & Assistance",
   description:
-    "Get help with Wise DB fraud protection platform. Contact our support team for assistance with reporting fraud, using our services, and technical support.",
+    "Get help with Fraud Scan fraud protection platform. Contact our support team for assistance with reporting fraud, using our services, and technical support.",
   keywords:
-    "help center, customer support, fraud reporting help, technical support, contact support, wise db assistance",
+    "help center, customer support, fraud reporting help, technical support, contact support, fraud scan assistance",
   openGraph: {
-    title: "Help Center - Wise DB | Support & Assistance",
+    title: "Help Center - Fraud Scan | Support & Assistance",
     description:
       "Get expert help with fraud reporting and platform assistance.",
-    url: "https://wisedb.com/help",
+    url: "https://fraudscans.com/help",
     type: "website",
   },
 };

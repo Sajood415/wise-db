@@ -27,7 +27,7 @@ export default function MyReportsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Recent Activity</h1>
-        <p className="text-gray-600 mt-1">All your recent activity in Wise DB</p>
+        <p className="text-gray-600 mt-1">All your recent activity in Fraud Scan</p>
       </div>
 
       <section className="bg-white rounded-lg shadow p-6">

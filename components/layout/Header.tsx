@@ -78,9 +78,9 @@ const Header = () => {
             <div className="flex-shrink-0">
               <Link href="/" className="flex items-center space-x-2">
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[#006d5b]">
-                  <span className="text-white font-bold text-sm">WD</span>
+                  <span className="text-white font-bold text-sm">FS</span>
                 </div>
-                <span className={`text-xl font-bold ${isHovered ? 'text-white' : 'text-[#1c2736]'}`}>Wise DB</span>
+                <span className={`text-xl font-bold ${isHovered ? 'text-white' : 'text-[#1c2736]'}`}>Fraud Scan</span>
               </Link>
             </div>
           </div>
@@ -101,9 +101,9 @@ const Header = () => {
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center space-x-2">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[#006d5b]">
-                <span className="text-white font-bold text-sm">WD</span>
+                <span className="text-white font-bold text-sm">FS</span>
               </div>
-              <span className={`text-xl font-bold ${isHovered ? 'text-white' : 'text-[#1c2736]'}`}>Wise DB</span>
+              <span className={`text-xl font-bold ${isHovered ? 'text-white' : 'text-[#1c2736]'}`}>Fraud Scan</span>
             </Link>
           </div>
 
