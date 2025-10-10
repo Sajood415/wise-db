@@ -249,35 +249,35 @@ export default function About() {
           </div>
 
           <div className="relative">
-            {/* Timeline Line */}
-            <div className="absolute left-1/2 transform -translate-x-px h-full w-0.5 bg-blue-200"></div>
+            {/* Timeline Line - Hidden on mobile, visible on desktop */}
+            <div className="hidden lg:block absolute left-1/2 transform -translate-x-px h-full w-0.5 bg-blue-200"></div>
 
             {/* Timeline Items */}
-            <div className="space-y-12">
+            <div className="space-y-8 lg:space-y-12">
               {milestones.map((milestone, index) => (
                 <div
                   key={milestone.year}
                   className={`relative flex items-center ${
-                    index % 2 === 0 ? "justify-start" : "justify-end"
+                    index % 2 === 0 ? "justify-start lg:justify-start" : "justify-start lg:justify-end"
                   }`}
                 >
                   {/* Timeline Node */}
-                  <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-blue-600 rounded-full border-4 border-white shadow-lg z-10"></div>
+                  <div className="absolute left-4 lg:left-1/2 transform lg:-translate-x-1/2 w-4 h-4 bg-blue-600 rounded-full border-4 border-white shadow-lg z-10"></div>
 
                   {/* Content */}
                   <div
-                    className={`w-5/12 ${
-                      index % 2 === 0 ? "pr-8 text-right" : "pl-8 text-left"
+                    className={`w-full lg:w-5/12 ${
+                      index % 2 === 0 ? "pl-12 lg:pr-8 lg:text-right" : "pl-12 lg:pl-8 lg:text-left"
                     }`}
                   >
-                    <div className="bg-white p-6 rounded-xl shadow-lg">
+                    <div className="bg-white p-4 lg:p-6 rounded-xl shadow-lg">
                       <div className="text-sm font-semibold text-blue-600 mb-1">
                         {milestone.year}
                       </div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-2">
+                      <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-2">
                         {milestone.event}
                       </h3>
-                      <p className="text-gray-600">{milestone.description}</p>
+                      <p className="text-sm lg:text-base text-gray-600">{milestone.description}</p>
                     </div>
                   </div>
                 </div>
