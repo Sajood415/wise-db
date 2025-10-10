@@ -613,9 +613,64 @@ export default function AdminDashboardPage() {
     <div className="space-y-6">
       {/* Load admin overview metrics when entering dashboard tab */}
       {activeTab === 'dashboard' && null}
-      {/* Segmented tabs (match user dashboard style) */}
+      {/* Responsive Segmented tabs */}
       <div className="w-full bg-gray-100 rounded-md p-1">
-        <div className="grid grid-cols-6 gap-2">
+        {/* Mobile: Scrollable horizontal tabs */}
+        <div className="block md:hidden">
+          <div className="flex space-x-2 overflow-x-auto pb-2 scrollbar-hide">
+            <button
+              onClick={() => setActiveTab("dashboard")}
+              className={`flex-shrink-0 text-center py-2 px-3 rounded-md text-xs font-medium transition whitespace-nowrap ${
+                activeTab === "dashboard" ? "bg-white text-blue-700 shadow" : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              Dashboard
+            </button>
+            <button
+              onClick={() => setActiveTab("users")}
+              className={`flex-shrink-0 text-center py-2 px-3 rounded-md text-xs font-medium transition whitespace-nowrap ${
+                activeTab === "users" ? "bg-white text-blue-700 shadow" : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              Users
+            </button>
+            <button
+              onClick={() => setActiveTab("fraud")}
+              className={`flex-shrink-0 text-center py-2 px-3 rounded-md text-xs font-medium transition whitespace-nowrap ${
+                activeTab === "fraud" ? "bg-white text-blue-700 shadow" : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              Reports
+            </button>
+            <button
+              onClick={() => setActiveTab("enterprise")}
+              className={`flex-shrink-0 text-center py-2 px-3 rounded-md text-xs font-medium transition whitespace-nowrap ${
+                activeTab === "enterprise" ? "bg-white text-blue-700 shadow" : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              Enterprise
+            </button>
+            <button
+              onClick={() => setActiveTab("sub_admins")}
+              className={`flex-shrink-0 text-center py-2 px-3 rounded-md text-xs font-medium transition whitespace-nowrap ${
+                activeTab === "sub_admins" ? "bg-white text-blue-700 shadow" : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              Sub Admins
+            </button>
+            <button
+              onClick={() => setActiveTab("help_requests")}
+              className={`flex-shrink-0 text-center py-2 px-3 rounded-md text-xs font-medium transition whitespace-nowrap ${
+                activeTab === "help_requests" ? "bg-white text-blue-700 shadow" : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              Help
+            </button>
+          </div>
+        </div>
+        
+        {/* Desktop: Grid layout */}
+        <div className="hidden md:grid grid-cols-6 gap-2">
           <button
             onClick={() => setActiveTab("dashboard")}
             className={`w-full text-center py-2 rounded-md text-sm font-medium transition ${
