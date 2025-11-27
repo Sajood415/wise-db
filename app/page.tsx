@@ -11,7 +11,7 @@ export default function Home() {
             {/* Left: Text */}
             <div>
               <div className="inline-flex items-center px-6 py-2 rounded-full bg-[#006d5b]/10 text-[#43d49d] text-sm font-medium mb-6 border border-[#006d5b]/20">
-                Trusted by 10,000+ businesses worldwide
+                Trusted by businesses worldwide
               </div>
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4">
                 Protect Your Business from <span className="gradient-text">Fraud</span>
@@ -28,33 +28,7 @@ export default function Home() {
                 </Link>
               </div>
 
-              {/* Trust Indicators */}
-              <div className="mt-10 flex flex-wrap items-center gap-4 text-slate-400">
-                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/10">
-                  <div className="w-6 h-6 bg-[#006d5b] rounded-full flex items-center justify-center">
-                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <span className="font-medium">SOC 2 Compliant</span>
-                </div>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/10">
-                  <div className="w-6 h-6 bg-[#006d5b] rounded-full flex items-center justify-center">
-                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <span className="font-medium">GDPR Ready</span>
-                </div>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/10">
-                  <div className="w-6 h-6 bg-[#006d5b] rounded-full flex items-center justify-center">
-                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <span className="font-medium">99.9% Uptime</span>
-                </div>
-              </div>
+              {/* Trust Indicators - Removed per client request */}
             </div>
 
             {/* Right: Framed Image with offset green backdrop */}

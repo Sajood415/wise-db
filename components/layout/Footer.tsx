@@ -91,11 +91,6 @@ const Footer = () => {
             <div className="text-gray-400 text-sm">
               © {currentYear} Fraud Scan. All rights reserved.
             </div>
-            <div className="flex items-center space-x-6 mt-4 md:mt-0">
-              <span className="text-gray-400 text-sm">
-                Trusted by 10,000+ businesses worldwide
-              </span>
-            </div>
           </div>
         </div>
       </div>

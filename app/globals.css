@@ -79,7 +79,7 @@ body {
 }
 
 .btn-primary {
-  background: var(--primary-blue);
+  background: #006d5b;
   color: white;
   font-weight: 600;
   padding: 12px 24px;
@@ -89,15 +89,15 @@ body {
 }
 
 .btn-primary:hover {
-  background: var(--primary-navy);
+  background: #004d42;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   transform: translateY(-1px);
 }
 
 .btn-secondary {
   background: transparent;
-  border: 2px solid var(--primary-blue);
-  color: var(--primary-blue);
+  border: 2px solid #43d49d;
+  color: #43d49d;
   font-weight: 600;
   padding: 10px 22px;
   border-radius: 8px;
@@ -105,8 +105,8 @@ body {
 }
 
 .btn-secondary:hover {
-  background: var(--primary-blue);
-  color: white;
+  background: #43d49d;
+  color: #1c2736;
 }
 
 /* Animation Classes */

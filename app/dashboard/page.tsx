@@ -549,7 +549,7 @@ export default function DashboardPage() {
                 <input type="range" min={0} max={100} step={5} disabled={searchBlocked} value={searchForm.fuzziness} onChange={(e)=> setSearchForm(s=>({...s, fuzziness: Number(e.target.value)}))} className="w-full" />
                 <span className="text-xs text-gray-700 w-10 text-right">{searchForm.fuzziness}%</span>
               </div>
-              <p className="text-[11px] text-gray-500 mt-1">0% = exact order, 100% = very flexible match</p>
+              <p className="text-[11px] text-gray-500 mt-1">Exact match Broad Match</p>
             </div>
             <div className="lg:col-span-3 flex items-end justify-end gap-3">
               <button type="button" onClick={()=>{setSearchForm({q:"",type:"",severity:"",email:"",phone:"",minAmount:"",maxAmount:"", fuzziness: 0}); setSearchResults(null);}} className="px-4 py-2 rounded-md border text-gray-700">Reset</button>

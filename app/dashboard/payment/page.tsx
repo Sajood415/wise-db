@@ -28,7 +28,6 @@ const packages = [
       'Access to real fraud data',
       'Priority support',
       'Export capabilities',
-      '2 months free'
     ],
     popular: true
   },
@@ -59,7 +58,6 @@ const packages = [
       'Export capabilities',
       'Advanced analytics',
       'API access',
-      '2 months free'
     ],
     popular: false
   }
