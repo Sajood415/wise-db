@@ -79,17 +79,18 @@ body {
 }
 
 .btn-primary {
-  background: #006d5b;
-  color: white;
+  background: #ffc21a;
+  color: #1c2736;
   font-weight: 600;
   padding: 12px 24px;
-  border-radius: 8px;
+  border-radius: 50px;
   transition: all 0.2s ease;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .btn-primary:hover {
-  background: #004d42;
+  background: oklch(55.1% 0.027 264.364);
+  color: white;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   transform: translateY(-1px);
 }
@@ -100,7 +101,7 @@ body {
   color: #43d49d;
   font-weight: 600;
   padding: 10px 22px;
-  border-radius: 8px;
+  border-radius: 50px;
   transition: all 0.2s ease;
 }
 
@@ -190,9 +191,13 @@ body {
 
 /* Scrollbar utilities */
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* Internet Explorer 10+ */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  /* Internet Explorer 10+ */
+  scrollbar-width: none;
+  /* Firefox */
 }
-.scrollbar-hide::-webkit-scrollbar { 
-  display: none;  /* Safari and Chrome */
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+  /* Safari and Chrome */
 }

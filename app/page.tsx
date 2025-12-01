@@ -1,30 +1,51 @@
 import Link from "next/link";
 import AnimatedCounter from "@/components/ui/AnimatedCounter";
+import {
+  ChartSpline,
+  CircleCheck,
+  Lock,
+  LockIcon,
+  ShieldCheck,
+  TriangleAlert,
+  Users,
+} from "lucide-react";
 
 export default function Home() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative bg-[#1c2736] py-24">
+      <section className="relative bg-[#1c2736] py-24 md:py-36">
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-[60%_35%] gap-12 items-center">
             {/* Left: Text */}
-            <div>
+            <div className="">
               <div className="inline-flex items-center px-6 py-2 rounded-full bg-[#006d5b]/10 text-[#43d49d] text-sm font-medium mb-6 border border-[#006d5b]/20">
                 Trusted by businesses worldwide
               </div>
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4">
-                Protect Your Business from <span className="gradient-text">Fraud</span>
+              <h1 className="text-3xl md:text-4xl lg:text-6xl font-semibold text-white mb-4">
+                Protect Your Business from <span className="">Fraud</span>
               </h1>
-              <p className="text-lg md:text-xl text-slate-300 mb-8 leading-relaxed max-w-xl">
-                Comprehensive fraud reporting, verification, and intelligence platform helping businesses identify and prevent fraudulent activities.
+              <p className="text-lg md:text-xl text-slate-300 mb-8 leading-relaxed max-w-2xl">
+                Comprehensive fraud reporting, verification, and intelligence
+                platform helping businesses identify and prevent fraudulent
+                activities.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/report-fraud" className="btn-primary text-base px-6 py-3">
-                  <span className="relative z-10 flex items-center justify-center">Report Fraud Now</span>
+                <Link
+                  href="/report-fraud"
+                  className="btn-primary text-base px-6 py-3"
+                >
+                  <span className="relative z-10 flex items-center justify-center">
+                    Report Fraud Now
+                  </span>
                 </Link>
-                <Link href="/about" className="btn-secondary text-base px-6 py-3">
-                  <span className="flex items-center justify-center">Learn More</span>
+                <Link
+                  href="/about"
+                  className="border border-gray-200 text-gray-200 hover:bg-gray-500 hover:border-gray-500 hover:text-white rounded-full  text-base px-6 py-3"
+                >
+                  <span className="flex items-center justify-center">
+                    Learn More
+                  </span>
                 </Link>
               </div>
 
@@ -34,11 +55,11 @@ export default function Home() {
             {/* Right: Framed Image with offset green backdrop */}
             <div className="relative">
               <div className="absolute -bottom-4 -right-4 w-full h-full bg-[#43d49d] opacity-100"></div>
-              <div className="relative rounded-xl overflow-hidden border border-white/10 bg-white/5 shadow-2xl">
+              <div className="relative  overflow-hidden border border-white/10 bg-white/5 shadow-2xl">
                 <img
                   src="https://onlinedegrees.sandiego.edu/wp-content/uploads/2020/08/USD-Cyber-Entry-Level-Job-Career-Guide-1-1-1.jpeg"
                   alt="Professional working on a laptop"
-                  className="w-full h-[360px] md:h-[460px] object-cover"
+                  className="w-full h-[300px] md:h-[380px] object-cover"
                 />
               </div>
             </div>
@@ -50,27 +71,27 @@ export default function Home() {
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
-            <div className="p-6">
+            <div className="p-6 bg-secondary/10 rounded-xl border border-secondary hover:shadow-sm hover:shadow-secondary">
               <div className="text-4xl font-bold text-[#43d49d] mb-2">
                 <AnimatedCounter end={150000} suffix="+" />
               </div>
               <p className="text-gray-600">Fraud Reports Processed</p>
             </div>
-            <div className="p-6">
+            <div className="p-6 bg-secondary/10 rounded-xl border border-secondary hover:shadow-sm hover:shadow-secondary">
               <div className="text-4xl font-bold text-[#43d49d] mb-2">
-                <AnimatedCounter end={10000} suffix="+" />
+                <AnimatedCounter end={100} suffix="+" />
               </div>
               <p className="text-gray-600">Businesses Protected</p>
             </div>
-            <div className="p-6">
+            <div className="p-6 bg-secondary/10 rounded-xl border border-secondary hover:shadow-sm hover:shadow-secondary">
               <div className="text-4xl font-bold text-[#43d49d] mb-2">
                 <AnimatedCounter end={95} suffix="%" />
               </div>
               <p className="text-gray-600">Detection Accuracy</p>
             </div>
-            <div className="p-6">
+            <div className="p-6 bg-secondary/10 rounded-xl border border-secondary hover:shadow-sm hover:shadow-secondary">
               <div className="text-4xl font-bold text-[#43d49d] mb-2">
-                $<AnimatedCounter end={50} suffix="M+" />
+                $<AnimatedCounter end={10} suffix="M+" />
               </div>
               <p className="text-gray-600">Fraud Prevented</p>
             </div>
@@ -93,158 +114,81 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Feature 1 */}
-            <div className="bg-white p-8 rounded-xl border border-gray-100 shadow-sm">
-              <div className="w-12 h-12 bg-[#006d5b]/10 rounded-lg flex items-center justify-center mb-6">
-                <svg
-                  className="w-6 h-6 text-[#006d5b]"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
+            <div className="bg-transparent p-8 rounded-xl  group">
+              <div className="w-16 h-16 bg-[#FFC21A] rounded-full flex items-center justify-center mb-6 group-hover:bg-secondary transition-all duration-300 ease-in-out">
+                <ShieldCheck
+                  strokeWidth={0.5}
+                  className="text-gray-700 h-12 w-12"
+                />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+              <h3 className="text-2xl font-bold text-gray-900 mb-3 ">
                 Real-time Verification
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 text-lg ">
                 Instantly verify the authenticity of businesses, individuals,
                 and transactions with our comprehensive database.
               </p>
             </div>
 
             {/* Feature 2 */}
-            <div className="bg-white p-8 rounded-xl border border-gray-100 shadow-sm">
-              <div className="w-12 h-12 bg-[#006d5b]/10 rounded-lg flex items-center justify-center mb-6">
-                <svg
-                  className="w-6 h-6 text-[#006d5b]"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                  />
-                </svg>
+            <div className="bg-transparent p-8 rounded-xl  group">
+              <div className="w-16 h-16 bg-[#FFC21A] rounded-full flex items-center justify-center mb-6 group-hover:bg-[#43d49d] transition-all duration-300 ease-in-out">
+                <Lock strokeWidth={0.5} className="text-gray-700 h-12 w-12" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">
                 Secure Reporting
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 text-lg ">
                 Report fraudulent activities securely with our encrypted
                 platform that protects your identity and data.
               </p>
             </div>
 
             {/* Feature 3 */}
-            <div className="bg-white p-8 rounded-xl border border-gray-100 shadow-sm">
-              <div className="w-12 h-12 bg-[#006d5b]/10 rounded-lg flex items-center justify-center mb-6">
-                <svg
-                  className="w-6 h-6 text-[#006d5b]"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
+            <div className="bg-transparent p-8 rounded-xl  group">
+              <div className="w-16 h-16 bg-[#FFC21A] rounded-full flex items-center justify-center mb-6 group-hover:bg-secondary transition-all duration-300 ease-in-out">
+                <CircleCheck
+                  strokeWidth={0.5}
+                  className="text-gray-900 h-12 w-12"
+                />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">
                 Expert Verification
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 text-lg ">
                 Our team of fraud experts thoroughly reviews and verifies all
                 reports to ensure accuracy and reliability of our database.
               </p>
             </div>
 
             {/* Feature 4 */}
-            <div className="bg-white p-8 rounded-xl border border-gray-100 shadow-sm">
-              <div className="w-12 h-12 bg-[#006d5b]/10 rounded-lg flex items-center justify-center mb-6">
-                <svg
-                  className="w-6 h-6 text-[#006d5b]"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                  />
-                </svg>
+            <div className="bg-transparent p-8 rounded-xl  group">
+              <div className="w-16 h-16 bg-[#FFC21A] rounded-full flex items-center justify-center mb-6 group-hover:bg-secondary transition-all duration-300 ease-in-out">
+                <Users strokeWidth={0.5} className="text-gray-700 h-12 w-12" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">
                 Global Network
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 text-lg ">
                 Access a worldwide network of fraud intelligence shared by
                 businesses and organizations globally.
               </p>
             </div>
 
             {/* Feature 5 */}
-            <div className="bg-white p-8 rounded-xl border border-gray-100 shadow-sm">
-              <div className="w-12 h-12 bg-[#006d5b]/10 rounded-lg flex items-center justify-center mb-6">
-                <svg
-                  className="w-6 h-6 text-[#006d5b]"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.118 16.5c-.77.833.192 2.5 1.732 2.5z"
-                  />
-                </svg>
+            <div className="bg-transparent p-8 rounded-xl  group">
+              <div className="w-16 h-16 bg-[#FFC21A] rounded-full flex items-center justify-center mb-6 group-hover:bg-secondary transition-all duration-300 ease-in-out">
+                <TriangleAlert
+                  strokeWidth={0.5}
+                  className="text-gray-700 h-12 w-12"
+                />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">
                 Risk Assessment
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 text-lg ">
                 Get detailed risk assessments and fraud probability scores to
                 make informed business decisions.
-              </p>
-            </div>
-
-            {/* Feature 6 */}
-            <div className="bg-white p-8 rounded-xl border border-gray-100 shadow-sm">
-              <div className="w-12 h-12 bg-[#006d5b]/10 rounded-lg flex items-center justify-center mb-6">
-                <svg
-                  className="w-6 h-6 text-[#006d5b]"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                Analytics Dashboard
-              </h3>
-              <p className="text-gray-600">
-                Monitor fraud trends, generate reports, and track your
-                protection metrics with comprehensive analytics.
               </p>
             </div>
           </div>
@@ -252,30 +196,30 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-[#006d5b]">
+      <section className="py-20 bg-secondary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+          <h2 className="text-3xl md:text-4xl font-medium text-primary mb-4">
             Ready to Protect Your Business?
           </h2>
-          <p className="text-xl text-[#d7f6ea] mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-primary/80 mb-8 max-w-2xl mx-auto">
             Join thousands of businesses using Fraud Scan to prevent fraud and
             protect their operations.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/signup"
-              className="bg-white text-[#006d5b] hover:bg-[#d7f6ea] font-semibold py-3 px-8 rounded-lg transition-colors duration-200 shadow-sm"
+              className="bg-[#FFC21A] text-primary hover:bg-primary hover:text-white font-semibold py-3 px-8 rounded-full transition-colors duration-200 shadow-sm"
             >
               Start Free Trial
             </Link>
             <Link
               href="/enterprise"
-              className="border-2 border-white text-white hover:bg-white hover:text-[#006d5b] font-semibold py-3 px-8 rounded-lg transition-colors duration-200"
+              className="text-white hover:text-white bg-primary hover:bg-primary/20 hover:text-[#006d5b] font-semibold py-3 px-8 rounded-full transition-colors duration-200"
             >
               Enterprise Solutions
             </Link>
           </div>
-    </div>
+        </div>
       </section>
     </>
   );

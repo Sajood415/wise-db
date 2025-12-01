@@ -1,337 +1,307 @@
-import { Metadata } from "next";
+"use client";
+
+import {
+  Building2,
+  Search,
+  Shield,
+  ShoppingCart,
+  Landmark,
+  Hospital,
+  Home,
+  Cpu,
+  GraduationCap,
+  CheckCircle2,
+} from "lucide-react";
+
 import Link from "next/link";
+import { ForwardRefExoticComponent, RefAttributes } from "react";
+import { LucideProps } from "lucide-react";
 
-export const metadata: Metadata = {
-  title: "Services - Fraud Scan | Comprehensive Fraud Protection Solutions",
-  description:
-    "Explore Fraud Scan fraud protection services: real-time verification, secure reporting, expert analysis, global intelligence, and enterprise solutions for businesses of all sizes.",
-  keywords:
-    "fraud protection services, fraud verification, secure reporting, expert fraud analysis, enterprise fraud solutions, global fraud intelligence",
-  openGraph: {
-    title: "Services - Fraud Scan | Comprehensive Fraud Protection Solutions",
+// --- ICON MAPS ---
+const serviceIcons = {
+  search: Search,
+  shield: Shield,
+  building: Building2,
+} as const;
+
+const industryIcons = {
+  cart: ShoppingCart,
+  bank: Landmark,
+  health: Hospital,
+  home: Home,
+  tech: Cpu,
+  education: GraduationCap,
+} as const;
+
+// --- TYPES ---
+type ServiceIconKey = keyof typeof serviceIcons;
+type IndustryIconKey = keyof typeof industryIcons;
+
+interface Service {
+  id: string;
+  title: string;
+  description: string;
+  icon: ServiceIconKey;
+  features: string[];
+}
+
+interface Industry {
+  name: string;
+  description: string;
+  icon: IndustryIconKey;
+  useCases: string[];
+}
+
+// --- DATA ---
+const services: Service[] = [
+  {
+    id: "search",
+    title: "Search Database",
     description:
-      "Explore Fraud Scan fraud protection services for businesses of all sizes.",
-    url: "https://fraudscans.com/services",
-    type: "website",
+      "Individuals can search our fraud database to check businesses, identities, emails, phones and websites.",
+    icon: "search",
+    features: [
+      "Keyword, phone, email and website lookup",
+      "Type and risk-level filters",
+      "View verified report details",
+      "Recent activity and saved submissions",
+    ],
   },
-};
+  {
+    id: "reporting",
+    title: "Secure Fraud Reporting",
+    description:
+      "Report suspected fraud securely. Your identity is protected and evidence can be attached.",
+    icon: "shield",
+    features: [
+      "Anonymous reporting options",
+      "Encrypted submission and storage",
+      "Multi-format evidence upload (PDF/Images)",
+      "Real-time status tracking",
+    ],
+  },
+  {
+    id: "enterprise",
+    title: "Enterprise API & Workspace",
+    description:
+      "Enterprises can integrate via API and manage a team workspace to search and report frauds.",
+    icon: "building",
+    features: [
+      "REST API access to the fraud database",
+      "Team management (admins and members)",
+      "Role-based access and usage controls",
+      "Centralized workspace for searches and reports",
+    ],
+  },
+];
 
+const industries: Industry[] = [
+  {
+    name: "E-commerce",
+    description:
+      "Protect your online business from payment fraud, fake reviews, and account takeovers.",
+    icon: "cart",
+    useCases: [
+      "Payment fraud prevention",
+      "Fake review detection",
+      "Account security",
+    ],
+  },
+  {
+    name: "Financial Services",
+    description:
+      "Comprehensive fraud protection for banks, credit unions, and fintech companies.",
+    icon: "bank",
+    useCases: [
+      "Identity verification",
+      "Transaction monitoring",
+      "Anti-money laundering",
+    ],
+  },
+  {
+    name: "Healthcare",
+    description:
+      "Protect patient data and prevent medical identity theft and insurance fraud.",
+    icon: "health",
+    useCases: [
+      "Medical identity protection",
+      "Insurance fraud detection",
+      "Provider verification",
+    ],
+  },
+  {
+    name: "Real Estate",
+    description:
+      "Verify property transactions and prevent real estate fraud and scams.",
+    icon: "home",
+    useCases: [
+      "Property verification",
+      "Agent authentication",
+      "Transaction security",
+    ],
+  },
+  {
+    name: "Technology",
+    description:
+      "Protect your platform users and prevent account fraud and data breaches.",
+    icon: "tech",
+    useCases: ["User verification", "API security", "Data protection"],
+  },
+  {
+    name: "Education",
+    description:
+      "Verify student identities and prevent academic fraud and credential forgery.",
+    icon: "education",
+    useCases: [
+      "Student verification",
+      "Credential validation",
+      "Academic integrity",
+    ],
+  },
+];
+
+// --- COMPONENT ---
 export default function Services() {
-  const services = [
-    {
-      id: "search",
-      title: "Search Database",
-      description:
-        "Individuals can search our fraud database to check businesses, identities, emails, phones and websites.",
-      icon: "🔎",
-      features: [
-        "Keyword, phone, email and website lookup",
-        "Type and risk-level filters",
-        "View verified report details",
-        "Recent activity and saved submissions",
-      ],
-    },
-    {
-      id: "reporting",
-      title: "Secure Fraud Reporting",
-      description:
-        "Report suspected fraud securely. Your identity is protected and evidence can be attached.",
-      icon: "🛡️",
-      features: [
-        "Anonymous reporting options",
-        "Encrypted submission and storage",
-        "Multi-format evidence upload (PDF/Images)",
-        "Real-time status tracking",
-      ],
-    },
-    {
-      id: "enterprise",
-      title: "Enterprise API & Workspace",
-      description:
-        "Enterprises can integrate via API and manage a team workspace to search and report frauds.",
-      icon: "🏢",
-      features: [
-        "REST API access to the fraud database",
-        "Team management (admins and members)",
-        "Role-based access and usage controls",
-        "Centralized workspace for searches and reports",
-      ],
-    },
-  ];
-
-  const industries = [
-    {
-      name: "E-commerce",
-      description:
-        "Protect your online business from payment fraud, fake reviews, and account takeovers.",
-      icon: "🛒",
-      useCases: [
-        "Payment fraud prevention",
-        "Fake review detection",
-        "Account security",
-      ],
-    },
-    {
-      name: "Financial Services",
-      description:
-        "Comprehensive fraud protection for banks, credit unions, and fintech companies.",
-      icon: "🏦",
-      useCases: [
-        "Identity verification",
-        "Transaction monitoring",
-        "Anti-money laundering",
-      ],
-    },
-    {
-      name: "Healthcare",
-      description:
-        "Protect patient data and prevent medical identity theft and insurance fraud.",
-      icon: "🏥",
-      useCases: [
-        "Medical identity protection",
-        "Insurance fraud detection",
-        "Provider verification",
-      ],
-    },
-    {
-      name: "Real Estate",
-      description:
-        "Verify property transactions and prevent real estate fraud and scams.",
-      icon: "🏠",
-      useCases: [
-        "Property verification",
-        "Agent authentication",
-        "Transaction security",
-      ],
-    },
-    {
-      name: "Technology",
-      description:
-        "Protect your platform users and prevent account fraud and data breaches.",
-      icon: "💻",
-      useCases: ["User verification", "API security", "Data protection"],
-    },
-    {
-      name: "Education",
-      description:
-        "Verify student identities and prevent academic fraud and credential forgery.",
-      icon: "🎓",
-      useCases: [
-        "Student verification",
-        "Credential validation",
-        "Academic integrity",
-      ],
-    },
-  ];
-
-  // Removed pricing plans per request
-
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-blue-50 via-white to-purple-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-              Comprehensive{" "}
-              <span className="gradient-text">Fraud Protection</span> Services
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-600 mb-8">
-              Search verified fraud reports, submit incidents securely, and integrate our database via API for your enterprise.
-            </p>
-          </div>
+      {/* HERO */}
+      <section className="py-24 bg-gradient-to-br from-blue-50 via-white to-green-50">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-6 max-w-3xl mx-auto">
+            Comprehensive{" "}
+            <span className="gradient-text">Fraud Protection</span> Services
+          </h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Search verified fraud reports, submit incidents securely, and
+            integrate our database directly into your business systems.
+          </p>
         </div>
       </section>
 
-      {/* Services Grid */}
+      {/* SERVICES */}
       <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16 bg">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
               Our Services
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Choose from our comprehensive range of fraud protection services,
-              each designed to address specific security challenges.
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto mt-4">
+              Choose from our comprehensive range of fraud prevention and
+              verification services.
             </p>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.map((service) => (
-              <div
-                key={service.id}
-                className={`bg-white border-2 rounded-xl p-8 hover:shadow-xl transition-shadow duration-300 border-gray-200`}
-              >
-                {/* Removed Most Popular badge */}
-                <div className="text-4xl mb-4">{service.icon}</div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                  {service.title}
-                </h3>
-                <p className="text-gray-600 mb-6">{service.description}</p>
-
-                <div className="mb-6">
-                  <h4 className="font-semibold text-gray-900 mb-3">
-                    Key Features:
-                  </h4>
-                  <ul className="space-y-2">
-                    {service.features.map((feature, index) => (
-                      <li key={index} className="flex items-start space-x-2">
-                        <svg
-                          className="w-4 h-4 text-[#006d5b] mt-1 flex-shrink-0"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                        <span className="text-gray-600 text-sm">{feature}</span>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            {services.map((service) => {
+              const Icon = serviceIcons[service.icon];
+              return (
+                <div
+                  key={service.id}
+                  className="p-8 rounded-2xl border border-gray-200 shadow-sm hover:shadow-xl hover:border-[#006d5b] transition-all bg-secondary/5"
+                >
+                  <div className="mb-6 text-[#006d5b]">
+                    <Icon className="w-12 h-12" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                    {service.title}
+                  </h3>
+                  <p className="text-gray-600 mb-6">{service.description}</p>
+                  <ul className="space-y-3">
+                    {service.features.map((feature, i) => (
+                      <li key={i} className="flex items-center gap-2">
+                        <CheckCircle2 className="w-5 h-5 text-[#006d5b]" />
+                        <span className="text-gray-700">{feature}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
-
-                {/* Pricing and Learn More removed per request */}
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* Industries Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* INDUSTRIES */}
+      <section className="py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-black">
               Industries We Serve
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Our fraud protection services are tailored to meet the unique
-              challenges of different industries and business sectors.
+            <p className="text-gray-600 max-w-2xl mx-auto mt-4">
+              We empower businesses across multiple sectors with
+              industry-specific fraud prevention solutions.
             </p>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {industries.map((industry) => (
-              <div
-                key={industry.name}
-                className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
-              >
-                <div className="text-3xl mb-4">{industry.icon}</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
-                  {industry.name}
-                </h3>
-                <p className="text-gray-600 mb-4">{industry.description}</p>
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">
-                    Common Use Cases:
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            {industries.map((industry) => {
+              const Icon = industryIcons[industry.icon];
+              return (
+                <div
+                  key={industry.name}
+                  className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all border border-gray-200"
+                >
+                  <div className="mb-5 text-[#006d5b]">
+                    <Icon className="w-12 h-12" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                    {industry.name}
+                  </h3>
+                  <p className="text-gray-600 mb-4">{industry.description}</p>
+                  <h4 className="text-gray-900 font-semibold mb-3">
+                    Common Use Cases
                   </h4>
-                  <div className="space-y-1">
-                    {industry.useCases.map((useCase, index) => (
+                  <div className="flex flex-wrap gap-2">
+                    {industry.useCases.map((u, i) => (
                       <span
-                        key={index}
-                        className="inline-block bg-[#006d5b]/10 text-[#006d5b] text-xs px-2 py-1 rounded-full mr-2 mb-1"
+                        key={i}
+                        className="px-3 py-1 text-sm rounded-full bg-[#006d5b]/10 text-[#006d5b]"
                       >
-                        {useCase}
+                        {u}
                       </span>
                     ))}
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* Pricing Section removed per request */}
-
-      {/* API Section */}
-      <section className="py-20 bg-gradient-to-r from-[#1c2736] to-[#006d5b] text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                Developer-Friendly API
-              </h2>
-              <p className="text-xl text-[#d7f6ea] mb-8">
-                Integrate our fraud protection services directly into your
-                applications with our comprehensive RESTful API and SDKs.
-              </p>
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-center space-x-3">
-                  <svg
-                    className="w-5 h-5 text-[#43d49d]"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span>RESTful API with comprehensive documentation</span>
+      {/* API SECTION */}
+      <section className="py-24 bg-gradient-to-r from-[#1c2736] to-[#006d5b] text-white">
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
+          <div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+              Developer-Friendly API
+            </h2>
+            <p className="text-lg text-[#d7f6ea] mb-10">
+              Integrate fraud protection into your apps with our secure REST
+              API, complete documentation, and SDKs.
+            </p>
+            <ul className="space-y-4 text-lg">
+              {[
+                "RESTful API with full documentation",
+                "SDKs for all major languages",
+                "Webhook support for real-time events",
+                "99.9% uptime SLA guarantee",
+              ].map((item, i) => (
+                <li key={i} className="flex items-center gap-3">
+                  <CheckCircle2 className="text-[#43d49d] w-6 h-6" />
+                  <span>{item}</span>
                 </li>
-                <li className="flex items-center space-x-3">
-                  <svg
-                    className="w-5 h-5 text-[#43d49d]"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span>SDKs for popular programming languages</span>
-                </li>
-                <li className="flex items-center space-x-3">
-                  <svg
-                    className="w-5 h-5 text-[#43d49d]"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span>Webhook support for real-time notifications</span>
-                </li>
-                <li className="flex items-center space-x-3">
-                  <svg
-                    className="w-5 h-5 text-[#43d49d]"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span>99.9% uptime SLA guarantee</span>
-                </li>
-              </ul>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link
-                  href="/api-docs"
-                  className="bg-white text-gray-900 hover:bg-gray-100 font-semibold py-3 px-6 rounded-lg transition-colors duration-200"
-                >
-                  View API Docs
-                </Link>
-              </div>
-            </div>
-            <div className="bg-gray-800 rounded-lg p-6 overflow-hidden">
-              <div className="text-sm text-gray-400 mb-4">
-                Example API Request
-              </div>
-              <pre className="text-green-400 text-sm overflow-x-auto">
-                {`curl -X POST https://api.fraudscans.com/v1/verify \\
+              ))}
+            </ul>
+            <Link
+              href="/api-docs"
+              className="inline-block mt-10 bg-[#FABE19] hover:text-white hover:bg-gray-500 text-gray-900 font-semibold px-6 py-3 rounded-full  transition"
+            >
+              View API Docs
+            </Link>
+          </div>
+          <div className="bg-[#0f1520] rounded-xl p-6 border border-white/10">
+            <p className="text-sm text-gray-400 mb-2">Example Request</p>
+            <pre className="text-green-400 text-sm overflow-x-auto">
+              {`curl -X POST https://api.fraudscans.com/v1/verify \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -339,10 +309,10 @@ export default function Services() {
     "identifier": "business@example.com",
     "additional_checks": ["phone", "address"]
   }'`}
-              </pre>
-              <div className="text-sm text-gray-400 mt-4 mb-2">Response</div>
-              <pre className="text-[#d7f6ea] text-sm overflow-x-auto">
-                {`{
+            </pre>
+            <p className="text-sm text-gray-400 mt-6 mb-2">Response</p>
+            <pre className="text-[#d7f6ea] text-sm overflow-x-auto">
+              {`{
   "status": "verified",
   "risk_score": 15,
   "verification_id": "ver_123456",
@@ -352,36 +322,33 @@ export default function Services() {
     "address": "verified"
   }
 }`}
-              </pre>
-            </div>
+            </pre>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-[#006d5b]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Ready to Protect Your Business?
-          </h2>
-          <p className="text-xl text-[#d7f6ea] mb-8 max-w-2xl mx-auto">
-            Start with a free trial and see how our fraud protection services
-            can safeguard your business operations.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/signup"
-              className="bg-white text-[#006d5b] hover:bg-[#d7f6ea] font-semibold py-3 px-8 rounded-lg transition-colors duration-200 shadow-sm"
-            >
-              Start Free Trial
-            </Link>
-            <Link
-              href="/help"
-              className="border-2 border-white text-white hover:bg-white hover:text-[#006d5b] font-semibold py-3 px-8 rounded-lg transition-colors duration-200"
-            >
-              Schedule Consultation
-            </Link>
-          </div>
+      {/* CTA */}
+      <section className="py-20 bg-secondary text-center text-white">
+        <h2 className="text-3xl md:text-4xl font-medium text-primary mb-4">
+          Ready to Protect Your Business?
+        </h2>
+        <p className="text-lg text-primary max-w-2xl mx-auto mb-8">
+          Start with a free trial and explore our complete fraud protection
+          platform.
+        </p>
+        <div className="flex justify-center gap-4">
+          <Link
+            href="/signup"
+            className="bg-[#FFC21A] text-primary hover:bg-primary hover:text-white font-semibold py-3 px-8 rounded-full transition-colors duration-200 shadow-sm"
+          >
+            Start Free Trial
+          </Link>
+          <Link
+            href="/help"
+            className="text-white hover:text-white bg-primary hover:bg-primary/20 hover:text-[#006d5b] font-semibold py-3 px-8 rounded-full transition-colors duration-200"
+          >
+            Schedule Consultation
+          </Link>
         </div>
       </section>
     </div>
