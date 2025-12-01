@@ -18,23 +18,24 @@ const Header = () => {
     { name: "Services", href: "/services" },
     { name: "How It Works", href: "/how-it-works" },
     { name: "Report Fraud", href: "/report-fraud" },
+    { name: "Contact", href: "/help" },
   ];
 
   // Get dashboard path based on user role
   const getDashboardPath = (role: string | null) => {
     switch (role) {
-      case 'super_admin':
-        return '/admin/dashboard';
-      case 'sub_admin':
-        return '/manage';
-      case 'enterprise_admin':
-        return '/enterprise/dashboard';
-      case 'enterprise_user':
-        return '/enterprise/dashboard';
-      case 'individual':
-        return '/dashboard';
+      case "super_admin":
+        return "/admin/dashboard";
+      case "sub_admin":
+        return "/manage";
+      case "enterprise_admin":
+        return "/enterprise/dashboard";
+      case "enterprise_user":
+        return "/enterprise/dashboard";
+      case "individual":
+        return "/dashboard";
       default:
-        return '/dashboard';
+        return "/dashboard";
     }
   };
 
@@ -42,10 +43,10 @@ const Header = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch('/api/auth/me', {
-          credentials: 'include'
+        const response = await fetch("/api/auth/me", {
+          credentials: "include",
         });
-        
+
         if (response.ok) {
           const userData = await response.json();
           setIsLoggedIn(true);
@@ -69,7 +70,9 @@ const Header = () => {
   if (isLoading) {
     return (
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ease-in-out ${isHovered ? 'bg-[#1c2736]' : 'bg-white border-b border-gray-100'}`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ease-in-out ${
+          isHovered ? "bg-[#1c2736]" : "bg-white border-b border-gray-100"
+        }`}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -80,7 +83,13 @@ const Header = () => {
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[#006d5b]">
                   <span className="text-white font-bold text-sm">FS</span>
                 </div>
-                <span className={`text-xl font-bold ${isHovered ? 'text-white' : 'text-[#1c2736]'}`}>Fraud Scan</span>
+                <span
+                  className={`text-xl font-bold ${
+                    isHovered ? "text-white" : "text-[#1c2736]"
+                  }`}
+                >
+                  Fraud Scan
+                </span>
               </Link>
             </div>
           </div>
@@ -91,7 +100,11 @@ const Header = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ease-in-out ${isHovered ? 'bg-[#1c2736]' : 'bg-white border-b border-gray-100'}`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ease-in-out md:py-4  ${
+        isHovered
+          ? "bg-[#1c2736] shadow-xs shadow-gray-900"
+          : "bg-white border-b border-gray-100"
+      }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -100,30 +113,46 @@ const Header = () => {
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[#006d5b]">
+              {/* <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[#FFC21A]">
                 <span className="text-white font-bold text-sm">FS</span>
-              </div>
-              <span className={`text-xl font-bold ${isHovered ? 'text-white' : 'text-[#1c2736]'}`}>Fraud Scan</span>
+              </div> */}
+              <span
+                className={`text-2xl font-bold font-mono  ${
+                  isHovered ? "text-white scale-105" : "text-[#1c2736]"
+                }`}
+              >
+                Fraud Scan
+              </span>
             </Link>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-8">
+            <div className="ml-6 flex items-baseline space-x-8">
               {navigation.map((item) => {
                 const isActive = pathname === item.href;
                 return (
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`group inline-flex flex-col items-center px-3 py-2 text-sm font-medium transition-colors duration-200 ${
+                    className={`group inline-flex flex-col items-center px-3 py-2 text-base  transition-colors duration-200 ${
                       isHovered
-                        ? (isActive ? 'text-white' : 'text-white/80 hover:text-white')
-                        : (isActive ? 'text-[#1c2736]' : 'text-[#1c2736]/80 hover:text-[#1c2736]')
+                        ? isActive
+                          ? "text-white"
+                          : "text-white/80 hover:text-white"
+                        : isActive
+                        ? "text-[#1c2736]"
+                        : "text-[#1c2736]/80 hover:text-[#1c2736]"
                     }`}
                   >
                     <span>{item.name}</span>
-                    <span className={`${isActive ? "w-8 opacity-100" : "w-0 opacity-0 group-hover:w-6 group-hover:opacity-100"} h-0.5 rounded bg-[#f6c14b] mt-1 transition-all`}></span>
+                    <span
+                      className={`${
+                        isActive
+                          ? "w-full opacity-100"
+                          : "w-0 opacity-0 group-hover:w-full group-hover:opacity-100"
+                      } h-1 rounded bg-[#f6c14b] mt-1 transition-all`}
+                    ></span>
                   </Link>
                 );
               })}
@@ -134,17 +163,21 @@ const Header = () => {
           <div className="hidden md:flex items-center space-x-4">
             {isLoggedIn ? (
               <>
-                {userRole === 'enterprise_admin' && (
+                {userRole === "enterprise_admin" && (
                   <Link
                     href="/enterprise/dashboard/api"
-                    className="text-sm font-medium px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                    className={`px-6 py-1.5 text-base font-medium transition-colors duration-200 ${
+                      isHovered
+                        ? "text-white/80 border border-white rounded-full hover:text-white"
+                        : "text-[#1c2736]/80 border border-transparent rounded-full  hover:text-[#1c2736]"
+                    }`}
                   >
                     API Access
                   </Link>
                 )}
                 <Link
                   href={getDashboardPath(userRole)}
-                  className="text-sm font-semibold bg-[#43d49d] text-[#1c2736] hover:bg-[#3bc58f] px-4 py-2 rounded-lg transition-colors"
+                  className="text-base font-semibold bg-[#ffc21a] text-[#1c2736] hover:text-white hover:bg-gray-500 px-6 py-2 rounded-full transition-colors"
                 >
                   Dashboard
                 </Link>
@@ -153,11 +186,18 @@ const Header = () => {
               <>
                 <Link
                   href="/login"
-                  className={`px-3 py-2 text-sm font-medium transition-colors duration-200 ${isHovered ? 'text-white/80 hover:text-white' : 'text-[#006d5b] hover:text-[#1c2736]'}`}
+                  className={`px-6 py-1.5 text-base font-medium transition-colors duration-200 ${
+                    isHovered
+                      ? "text-white/80 border border-white rounded-full hover:text-white"
+                      : "text-[#1c2736]/80 border border-transparent rounded-full  hover:text-[#1c2736]"
+                  }`}
                 >
-                  Sign In
+                  Login
                 </Link>
-                <Link href="/signup" className="text-sm font-semibold bg-[#43d49d] text-[#1c2736] hover:bg-[#3bc58f] px-4 py-2 rounded-lg transition-colors">
+                <Link
+                  href="/signup"
+                  className="text-base font-semibold bg-[#ffc21a] text-[#1c2736] hover:bg-gray-500 hover:text-white px-6 py-2 rounded-full transition-colors"
+                >
                   Get Started
                 </Link>
               </>
@@ -168,7 +208,11 @@ const Header = () => {
           <div className="md:hidden">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className={`${isHovered ? 'text-white/80 hover:text-white focus:text-white' : 'text-[#1c2736]/80 hover:text-[#1c2736] focus:text-[#1c2736]'} focus:outline-none transition-colors duration-200`}
+              className={`${
+                isHovered
+                  ? "text-white/80 hover:text-white focus:text-white"
+                  : "text-[#1c2736]/80 hover:text-[#1c2736] focus:text-[#1c2736]"
+              } focus:outline-none transition-colors duration-200`}
             >
               <svg
                 className="h-6 w-6"
@@ -199,7 +243,13 @@ const Header = () => {
         {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
           <div className="md:hidden">
-            <div className={`px-2 pt-2 pb-3 space-y-1 rounded-lg mt-2 shadow-lg ${isHovered ? 'bg-[#1c2736] border border-white/10' : 'bg-white border border-gray-200'}`}>
+            <div
+              className={`px-2 pt-2 pb-3 space-y-1 rounded-lg mt-2 shadow-lg ${
+                isHovered
+                  ? "bg-[#1c2736] border border-white/10"
+                  : "bg-white border border-gray-200"
+              }`}
+            >
               {navigation.map((item) => {
                 const isActive = pathname === item.href;
                 return (
@@ -208,8 +258,12 @@ const Header = () => {
                     href={item.href}
                     className={`block px-3 py-2 text-base font-medium transition-colors duration-200 ${
                       isHovered
-                        ? (isActive ? 'text-white' : 'text-white/80 hover:text-white')
-                        : (isActive ? 'text-[#1c2736]' : 'text-[#1c2736]/80 hover:text-[#1c2736]')
+                        ? isActive
+                          ? "text-white"
+                          : "text-white/80 hover:text-white"
+                        : isActive
+                        ? "text-[#1c2736]"
+                        : "text-[#1c2736]/80 hover:text-[#1c2736]"
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -217,13 +271,23 @@ const Header = () => {
                   </Link>
                 );
               })}
-              <div className={`${isHovered ? 'border-t border-white/10' : 'border-t border-gray-200'} pt-3 mt-3`}>
+              <div
+                className={`${
+                  isHovered
+                    ? "border-t border-white/10"
+                    : "border-t border-gray-200"
+                } pt-3 mt-3`}
+              >
                 {isLoggedIn ? (
                   <>
-                    {userRole === 'enterprise_admin' && (
+                    {userRole === "enterprise_admin" && (
                       <Link
                         href="/enterprise/dashboard/api"
-                        className={`block px-3 py-2 text-base font-medium transition-colors duration-200 ${isHovered ? 'text-white/80 hover:text-white' : 'text-[#1c2736]/80 hover:text-[#1c2736]'}`}
+                        className={`block px-3 py-2 text-base font-medium transition-colors duration-200 ${
+                          isHovered
+                            ? "text-white/80 hover:text-white"
+                            : "text-[#1c2736]/80 hover:text-[#1c2736]"
+                        }`}
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         API Access
@@ -231,7 +295,7 @@ const Header = () => {
                     )}
                     <Link
                       href={getDashboardPath(userRole)}
-                      className="block text-center mt-2 mx-3 text-sm font-semibold bg-[#43d49d] text-[#1c2736] hover:bg-[#3bc58f] px-4 py-2 rounded-lg transition-colors"
+                      className="block text-center mt-2 mx-3 text-sm font-semibold bg-[#ffc21a] text-[#1c2736] hover:bg-gray-500 hover:text-white px-4 py-2 rounded-full transition-colors"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Dashboard
@@ -241,14 +305,18 @@ const Header = () => {
                   <>
                     <Link
                       href="/login"
-                      className={`block px-3 py-2 text-base font-medium transition-colors duration-200 ${isHovered ? 'text-white/80 hover:text-white' : 'text-[#1c2736]/80 hover:text-[#1c2736]'}`}
+                      className={`block px-3 py-2 text-base font-medium transition-colors duration-200 ${
+                        isHovered
+                          ? "text-white/80 hover:text-white"
+                          : "text-[#1c2736]/80 hover:text-[#1c2736]"
+                      }`}
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      Sign In
+                      Login
                     </Link>
                     <Link
                       href="/signup"
-                      className="block text-center mt-2 mx-3 text-sm font-semibold bg-[#43d49d] text-[#1c2736] hover:bg-[#3bc58f] px-4 py-2 rounded-lg transition-colors"
+                      className="block text-center mt-2 mx-3 text-sm font-semibold bg-[#ffc21a] text-[#1c2736] hover:bg-gray-500 hover:text-white px-4 py-2 rounded-full transition-colors"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Get Started
