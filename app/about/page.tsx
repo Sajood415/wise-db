@@ -1,6 +1,18 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { Zap, ShieldCheck, Users, TrendingUp } from "lucide-react";
+import {
+  Zap,
+  ShieldCheck,
+  Database,
+  Radar,
+  Users,
+  Layers,
+  CheckCircle2,
+  TrendingUp,
+} from "lucide-react";
+
+import UniversalHero from "../../components/ui/UniversalHero";
+import UniversalCTA from "@/components/ui/UniversalCTA";
 
 export const metadata: Metadata = {
   title: "About Us - Fraud Scan | Leading Fraud Protection Platform",
@@ -83,24 +95,14 @@ export default function About() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="md:py-28 bg-primary">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
-              About <span className="gradient-text">Fraud Scan</span>
-            </h1>
-            <p className="text-xl md:text-2xl text-white mb-8">
-              We're on a mission to create a safer digital world by empowering
-              businesses and individuals to identify, report, and prevent
-              fraudulent activities.
-            </p>
-            <div className="inline-flex items-center px-6 py-2 rounded-full bg-[#006d5b]/10 text-[#43d49d] text-sm font-medium mb-6 border border-[#006d5b]/20">
-              <span className="w-3 h-3 bg-[#43d49d] rounded-full mr-3 animate-pulse"></span>
-              Trusted by businesses worldwide
-            </div>
-          </div>
-        </div>
-      </section>
+      <UniversalHero
+        title="About"
+        gradientText="Fraud Scan"
+        description={
+          "We're on a mission to create a safer digital world by empowering businesses and individuals to identify, report, and prevent fraudulent activities."
+        }
+        badgeText={"Trusted by businesses worldwide"}
+      />
 
       {/* Mission & Vision Section */}
       <section className="py-20 bg-white">
@@ -241,58 +243,124 @@ export default function About() {
       </section>
 
       {/* Timeline Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Our Journey
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              From a small startup to a global fraud prevention platform, here's
-              how we've grown and evolved over the years.
+      <section className="py-24 bg-white">
+        <div className="max-w-5xl mx-auto px-6">
+          {/* WHO WE ARE */}
+          <div className="text-center mb-20">
+            <div className="flex justify-center items-center gap-3 mb-4">
+              <ShieldCheck className="w-14 h-14 text-[#006d5b] rotate-4" />
+              <h2 className="text-4xl font-bold text-gray-900">Who We Are</h2>
+            </div>
+            <p className="max-w-2xl mx-auto text-gray-600 text-lg leading-relaxed">
+              FraudScans empowers organizations with real-time intelligence and
+              advanced fraud-detection tools — built by global AML/CFT experts.
             </p>
           </div>
 
-          <div className="relative">
-            {/* Timeline Line - Hidden on mobile, visible on desktop */}
-            <div className="hidden lg:block absolute left-1/2 transform -translate-x-px h-full w-0.5 bg-blue-200"></div>
+          {/* VERTICAL CARD 1 */}
+          <div
+            className="mb-12 bg-gray-50 border border-gray-200 rounded-3xl shadow-sm 
+                    hover:shadow-xl hover:border-[#006d5b] transition-all duration-300 p-10"
+          >
+            <div className="flex items-center gap-3 mb-8">
+              <Database className="w-9 h-9 text-[#006d5b]" />
+              <h3 className="text-3xl font-semibold text-gray-900">
+                What We Do
+              </h3>
+            </div>
 
-            {/* Timeline Items */}
-            <div className="space-y-8 lg:space-y-12">
-              {milestones.map((milestone, index) => (
-                <div
-                  key={milestone.year}
-                  className={`relative flex items-center ${
-                    index % 2 === 0
-                      ? "justify-start lg:justify-start"
-                      : "justify-start lg:justify-end"
-                  }`}
-                >
-                  {/* Timeline Node */}
-                  <div className="absolute left-4 lg:left-1/2 transform lg:-translate-x-1/2 w-4 h-4 bg-blue-600 rounded-full border-4 border-white shadow-lg z-10"></div>
-
-                  {/* Content */}
-                  <div
-                    className={`w-full lg:w-5/12 ${
-                      index % 2 === 0
-                        ? "pl-12 lg:pr-8 lg:text-right"
-                        : "pl-12 lg:pl-8 lg:text-left"
-                    }`}
-                  >
-                    <div className="bg-white p-4 lg:p-6 rounded-xl shadow-lg">
-                      <div className="text-sm font-semibold text-blue-600 mb-1">
-                        {milestone.year}
-                      </div>
-                      <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-2">
-                        {milestone.event}
-                      </h3>
-                      <p className="text-sm lg:text-base text-gray-600">
-                        {milestone.description}
-                      </p>
-                    </div>
-                  </div>
+            <div className="space-y-8">
+              <div className="flex gap-4">
+                <div className="p-3 rounded-xl bg-blue-100 text-blue-600">
+                  <Layers className="w-5 h-5" />
                 </div>
-              ))}
+                <div>
+                  <h4 className="font-semibold text-gray-900">
+                    Comprehensive Fraud Database
+                  </h4>
+                  <p className="text-gray-600 text-sm">
+                    Updated intelligence on fraudulent entities, scam patterns,
+                    and high-risk profiles.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                <div className="p-3 rounded-xl bg-purple-100 text-purple-600">
+                  <Radar className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-900">
+                    Advanced Screening Tools
+                  </h4>
+                  <p className="text-gray-600 text-sm">
+                    API-ready screening with automated monitoring and real-time
+                    risk checks.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                <div className="p-3 rounded-xl bg-red-100 text-red-600">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-900">
+                    Fraud Intelligence Hub
+                  </h4>
+                  <p className="text-gray-600 text-sm">
+                    Alerts, trends, and proactive intelligence to stay ahead of
+                    threats.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <p className="text-gray-700 mt-10 text-sm">
+              Designed for fintechs, banks, MSBs, and enterprises that require
+              speed, accuracy & security.
+            </p>
+          </div>
+
+          {/* VERTICAL CARD 2 */}
+          <div
+            className="bg-gray-50 border border-gray-200 rounded-3xl shadow-sm 
+                    hover:shadow-xl hover:border-[#006d5b] transition-all duration-300 p-10"
+          >
+            <div className="flex items-center gap-3 mb-8">
+              <CheckCircle2 className="w-9 h-9 text-[#006d5b]" />
+              <h3 className="text-3xl font-semibold text-gray-900">
+                Why Choose Us?
+              </h3>
+            </div>
+
+            <div className="space-y-8">
+              <div className="flex gap-4">
+                <div className="p-3 rounded-xl bg-blue-100 text-blue-600">
+                  <CheckCircle2 className="w-5 h-5" />
+                </div>
+                <p className="text-gray-700 font-medium">
+                  Trusted by compliance teams across the globe.
+                </p>
+              </div>
+
+              <div className="flex gap-4">
+                <div className="p-3 rounded-xl bg-green-100 text-green-600">
+                  <CheckCircle2 className="w-5 h-5" />
+                </div>
+                <p className="text-gray-700 font-medium">
+                  Built on proven AML/CFT frameworks and global regulations.
+                </p>
+              </div>
+
+              <div className="flex gap-4">
+                <div className="p-3 rounded-xl bg-purple-100 text-purple-600">
+                  <CheckCircle2 className="w-5 h-5" />
+                </div>
+                <p className="text-gray-700 font-medium">
+                  Scalable for startups, SMEs, enterprises & institutions.
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -476,31 +544,16 @@ export default function About() {
       </section> */}
 
       {/* CTA Section */}
-      <section className="py-20 bg-secondary">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-medium text-primary mb-4">
-            Ready to Join Our Mission?
-          </h2>
-          <p className="text-xl text-primary/80 mb-8 max-w-2xl mx-auto">
-            Be part of the global effort to combat fraud and protect businesses
-            worldwide.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/signup"
-              className="bg-[#FFC21A] text-primary hover:bg-primary hover:text-white font-semibold py-3 px-8 rounded-full transition-colors duration-200 shadow-sm"
-            >
-              Get Started Today
-            </Link>
-            <Link
-              href="/help"
-              className="text-white hover:text-white bg-primary hover:bg-primary/20 hover:text-[#006d5b] font-semibold py-3 px-8 rounded-full transition-colors duration-200"
-            >
-              Contact Our Team
-            </Link>
-          </div>
-        </div>
-      </section>
+      <UniversalCTA
+        title={"Ready to Join Our Mission?"}
+        description={
+          "Fraud doesn’t wait—and neither should you. Partner with FraudScans today to strengthen your fraud defenses."
+        }
+        cta1={" Get Started Today"}
+        cta2={"Contact Our Team"}
+        cta1Href={"/signup"}
+        cta2Href={"/help"}
+      />
     </div>
   );
 }

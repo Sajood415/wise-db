@@ -16,6 +16,8 @@ import {
   CheckCircle,
   ShieldCheck,
 } from "lucide-react";
+import UniversalHero from "@/components/ui/UniversalHero";
+import UniversalCTA from "@/components/ui/UniversalCTA";
 
 export const metadata: Metadata = {
   title: "How It Works - Fraud Scan | Step-by-Step Fraud Protection Process",
@@ -38,9 +40,9 @@ export default function HowItWorks() {
       number: "01",
       title: "Report or Query",
       description:
-        "Submit a fraud report or query our database for verification",
+        "Report fraud or perform instant verification through our database.",
       details:
-        "Anyone can report fraud anonymously through our secure platform, or registered users can query our database for real-time verification of businesses, individuals, or transactions.",
+        "Anyone can report fraud anonymously through our secure platform, while registered users can query our database for real-time verification of businesses, individuals, or transactions.",
       icon: FileText,
       actions: [
         "Submit fraud report",
@@ -137,8 +139,8 @@ export default function HowItWorks() {
     },
     {
       type: "Registered User",
-      title: "Database Search & Verification",
-      description: "Search our fraud database and verify entities",
+      title: "Database Search & Information",
+      description: "Search our fraud database",
       steps: [
         "Create account and log in",
         "Enter search query or verification request",
@@ -214,21 +216,15 @@ export default function HowItWorks() {
   return (
     <div className="min-h-screen font-sans">
       {/* Hero Section */}
-      <section className="py-24 bg-gradient-to-br from-blue-50 via-white to-purple-50">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-            How <span className="text-[#006d5b]">Fraud Scan</span> Works
-          </h1>
-          <p className="text-xl md:text-2xl text-gray-600 mb-8">
-            Understanding our comprehensive fraud protection process from
-            initial reporting to global intelligence sharing.
-          </p>
-          <div className="inline-flex items-center px-6 py-3 rounded-full bg-secondary/15 text-[#43d49d] text-lg font-medium border border-secondary">
-            <span className="w-3 h-3 bg-secondary rounded-full mr-3 animate-pulse"></span>
-            95% report verification accuracy
-          </div>
-        </div>
-      </section>
+      <UniversalHero
+        title={"How"}
+        gradientText={"Fraud Scan"}
+        afterText={"Works"}
+        description={
+          " Understanding our comprehensive fraud protection process from initial reporting to global intelligence sharing."
+        }
+        badgeText={"95% report verification accuracy"}
+      />
 
       {/* Process Steps */}
       <section className="py-24 bg-white">
@@ -490,31 +486,16 @@ export default function HowItWorks() {
       </section>
 
       {/* CTA */}
-      <section className="py-24 bg-secondary text-center">
-        <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl md:text-4xl font-medium text-primary mb-4">
-            Ready to Get Started?
-          </h2>
-          <p className="text-xl text-primary mb-8 max-w-2xl mx-auto">
-            Join thousands of businesses and individuals using Fraud Scan to
-            fight fraud and protect their operations.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/report-fraud"
-              className="bg-[#FFC21A] text-primary hover:bg-primary hover:text-white font-semibold py-3 px-8 rounded-full transition-colors duration-200 shadow-sm"
-            >
-              Report Fraud Now
-            </Link>
-            <Link
-              href="/signup"
-              className="text-white hover:text-white bg-primary hover:bg-primary/20 hover:text-[#006d5b] font-semibold py-3 px-8 rounded-full transition-colors duration-200"
-            >
-              Start Free Trial
-            </Link>
-          </div>
-        </div>
-      </section>
+      <UniversalCTA
+        title={"Ready to Get Started?"}
+        description={
+          " Join thousands of businesses and individuals using Fraud Scan to fight fraud and protect their operations."
+        }
+        cta1={"Report Fraud Now"}
+        cta2={"Start Free Trial"}
+        cta1Href={"/report-fraud"}
+        cta2Href={"/signup"}
+      />
     </div>
   );
 }

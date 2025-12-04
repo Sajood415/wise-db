@@ -16,6 +16,8 @@ import {
 import Link from "next/link";
 import { ForwardRefExoticComponent, RefAttributes } from "react";
 import { LucideProps } from "lucide-react";
+import UniversalHero from "@/components/ui/UniversalHero";
+import UniversalCTA from "@/components/ui/UniversalCTA";
 
 // --- ICON MAPS ---
 const serviceIcons = {
@@ -165,18 +167,15 @@ export default function Services() {
   return (
     <div className="min-h-screen">
       {/* HERO */}
-      <section className="py-24 bg-gradient-to-br from-blue-50 via-white to-green-50">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-6 max-w-3xl mx-auto">
-            Comprehensive{" "}
-            <span className="gradient-text">Fraud Protection</span> Services
-          </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Search verified fraud reports, submit incidents securely, and
-            integrate our database directly into your business systems.
-          </p>
-        </div>
-      </section>
+      <UniversalHero
+        title={"Comprehensive"}
+        gradientText={"Fraud Protection"}
+        afterText={"Services"}
+        description={
+          " Search verified fraud reports, submit incidents securely, and integrate our database directly into your business systems."
+        }
+        badgeText={"Trusted by businesses worldwide"}
+      />
 
       {/* SERVICES */}
       <section className="py-20 bg-white">
@@ -281,8 +280,6 @@ export default function Services() {
             <ul className="space-y-4 text-lg">
               {[
                 "RESTful API with full documentation",
-                "SDKs for all major languages",
-                "Webhook support for real-time events",
                 "99.9% uptime SLA guarantee",
               ].map((item, i) => (
                 <li key={i} className="flex items-center gap-3">
@@ -328,29 +325,16 @@ export default function Services() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-secondary text-center text-white">
-        <h2 className="text-3xl md:text-4xl font-medium text-primary mb-4">
-          Ready to Protect Your Business?
-        </h2>
-        <p className="text-lg text-primary max-w-2xl mx-auto mb-8">
-          Start with a free trial and explore our complete fraud protection
-          platform.
-        </p>
-        <div className="flex justify-center gap-4">
-          <Link
-            href="/signup"
-            className="bg-[#FFC21A] text-primary hover:bg-primary hover:text-white font-semibold py-3 px-8 rounded-full transition-colors duration-200 shadow-sm"
-          >
-            Start Free Trial
-          </Link>
-          <Link
-            href="/help"
-            className="text-white hover:text-white bg-primary hover:bg-primary/20 hover:text-[#006d5b] font-semibold py-3 px-8 rounded-full transition-colors duration-200"
-          >
-            Schedule Consultation
-          </Link>
-        </div>
-      </section>
+      <UniversalCTA
+        title={" Ready to Protect Your Business?"}
+        description={
+          "Start with a free trial and explore our complete fraud protection platform."
+        }
+        cta1={"Start Free Trial"}
+        cta2={" Schedule Consultation"}
+        cta1Href={"/signup"}
+        cta2Href={"/help"}
+      />
     </div>
   );
 }
