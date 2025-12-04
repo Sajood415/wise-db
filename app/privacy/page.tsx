@@ -1,85 +1,130 @@
 export default function PrivacyPolicyPage() {
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white shadow-sm rounded-lg p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Privacy Policy</h1>
-          
-          <div className="prose prose-gray max-w-none">
-            <section className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">1. Information We Collect</h2>
-              <p className="text-gray-700 mb-4">
-                We collect information you provide directly to us, such as when you create an account, submit fraud reports, or contact us for support.
+    <div className="min-h-screen bg-gray-50 py-16">
+      {/* Header Section */}
+      <div className="bg-primary py-20 shadow-lg">
+        <h1 className="text-center text-4xl font-bold text-white tracking-wide">
+          Privacy Policy
+        </h1>
+        <p className="text-center text-blue-100 mt-3 text-lg">
+          Last Updated: January 2025
+        </p>
+      </div>
+
+      {/* Content Container */}
+      <div className="max-w-4xl mx-auto px-6 -mt-12">
+        <div className="bg-white rounded-2xl shadow-xl p-10 border border-gray-100">
+          <div className="space-y-10">
+            {/* Section 1 */}
+            <section>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-3">
+                1. Information We Collect
+              </h2>
+              <p className="text-gray-700 mb-4 leading-relaxed">
+                We collect information you provide directly to us, such as when
+                you create an account, submit fraud reports, or contact support.
               </p>
-              <ul className="list-disc pl-6 text-gray-700 space-y-2">
+              <ul className="space-y-2 text-gray-700 pl-5 list-disc">
                 <li>Account information (name, email, phone number)</li>
-                <li>Fraud report details and evidence</li>
-                <li>Search queries and usage data</li>
-                <li>Communication records</li>
+                <li>Fraud report details and uploaded evidence</li>
+                <li>Search queries and platform activity logs</li>
+                <li>Communication and support history</li>
               </ul>
             </section>
 
-            <section className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">2. How We Use Your Information</h2>
-              <p className="text-gray-700 mb-4">
-                We use the information we collect to:
+            {/* Section 2 */}
+            <section>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-3">
+                2. How We Use Your Information
+              </h2>
+              <p className="text-gray-700 mb-4 leading-relaxed">
+                Your information is used to operate and improve our platform.
               </p>
-              <ul className="list-disc pl-6 text-gray-700 space-y-2">
-                <li>Provide and maintain our fraud reporting services</li>
-                <li>Process and investigate fraud reports</li>
-                <li>Maintain our fraud database for public safety</li>
-                <li>Send important service updates and notifications</li>
-                <li>Improve our platform and user experience</li>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                {[
+                  "Provide and maintain our fraud reporting services",
+                  "Investigate and process fraud reports",
+                  "Maintain our fraud database for public safety",
+                  "Send important updates and alerts",
+                  "Enhance platform features and user experience",
+                ].map((item, index) => (
+                  <div
+                    key={index}
+                    className="p-4 bg-secondary/10 border border-secondary/40 rounded-xl text-gray-700"
+                  >
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Section 3 */}
+            <section>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-3">
+                3. Information Sharing
+              </h2>
+              <p className="text-gray-700 mb-4">
+                We do not sell or trade your personal data. We may share
+                information only:
+              </p>
+
+              <ul className="list-disc pl-5 text-gray-700 space-y-2">
+                <li>With law enforcement when required by law</li>
+                <li>To prevent fraudulent or harmful activities</li>
+                <li>With your explicit consent</li>
+                <li>To protect our rights, safety, and system integrity</li>
               </ul>
             </section>
 
-            <section className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">3. Information Sharing</h2>
-              <p className="text-gray-700 mb-4">
-                We do not sell, trade, or otherwise transfer your personal information to third parties without your consent, except:
-              </p>
-              <ul className="list-disc pl-6 text-gray-700 space-y-2">
-                <li>To law enforcement when required by law</li>
-                <li>To prevent fraud or illegal activities</li>
-                <li>With your explicit permission</li>
-                <li>To protect our rights and safety</li>
-              </ul>
-            </section>
-
-            <section className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">4. Data Security</h2>
-              <p className="text-gray-700 mb-4">
-                We implement appropriate security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.
+            {/* Section 4 */}
+            <section>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-3">
+                4. Data Security
+              </h2>
+              <p className="text-gray-700 leading-relaxed">
+                We implement strong security measures—including encryption,
+                access controls, and monitoring—to safeguard your information
+                against unauthorized access or misuse.
               </p>
             </section>
 
-            <section className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">5. Your Rights</h2>
-              <p className="text-gray-700 mb-4">
-                You have the right to:
-              </p>
-              <ul className="list-disc pl-6 text-gray-700 space-y-2">
+            {/* Section 5 */}
+            <section>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-3">
+                5. Your Rights
+              </h2>
+              <p className="text-gray-700 mb-4">You have the right to:</p>
+              <ul className="list-disc pl-5 text-gray-700 space-y-2">
                 <li>Access your personal information</li>
-                <li>Correct inaccurate information</li>
+                <li>Correct inaccurate or outdated information</li>
                 <li>Request deletion of your data</li>
-                <li>Opt-out of certain communications</li>
-                <li>Export your data</li>
+                <li>Opt out of non-essential communications</li>
+                <li>Export your personal data</li>
               </ul>
             </section>
 
-            <section className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">6. Contact Us</h2>
+            {/* Section 6 */}
+            <section>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-3">
+                6. Contact Us
+              </h2>
               <p className="text-gray-700 mb-4">
-                If you have any questions about this Privacy Policy, please contact us at:
+                For questions regarding this Privacy Policy, please contact:
               </p>
-              <p className="text-gray-700">
-                Email: privacy@fraudscans.com<br />
-                Address: [Your Company Address]
-              </p>
+
+              <div className="bg-secondary/10 p-5 rounded-xl border border-secondary/40 text-gray-700">
+                <p>
+                  <strong>Email:</strong> privacy@fraudscans.com
+                </p>
+                <p>
+                  <strong>Address:</strong> [Your Company Address]
+                </p>
+              </div>
             </section>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
