@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 export default function Help() {
   return (
     <div className="min-h-screen bg-gray-50 py-16">
-      <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
+      <div className="max-w-5xl  mx-auto px-6 sm:px-8 lg:px-12">
         {/* Header */}
         <div className="text-center mb-16">
           <h1 className="text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">

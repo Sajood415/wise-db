@@ -1,5 +1,6 @@
 import Link from "next/link";
 import AnimatedCounter from "@/components/ui/AnimatedCounter";
+import UniversalCTA from "@/components/ui/UniversalCTA";
 import {
   ChartSpline,
   CircleCheck,
@@ -196,31 +197,16 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-secondary">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-medium text-primary mb-4">
-            Ready to Protect Your Business?
-          </h2>
-          <p className="text-xl text-primary/80 mb-8 max-w-2xl mx-auto">
-            Join thousands of businesses using Fraud Scan to prevent fraud and
-            protect their operations.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/signup"
-              className="bg-[#FFC21A] text-primary hover:bg-primary hover:text-white font-semibold py-3 px-8 rounded-full transition-colors duration-200 shadow-sm"
-            >
-              Start Free Trial
-            </Link>
-            <Link
-              href="/enterprise"
-              className="text-white hover:text-white bg-primary hover:bg-primary/20 hover:text-[#006d5b] font-semibold py-3 px-8 rounded-full transition-colors duration-200"
-            >
-              Enterprise Solutions
-            </Link>
-          </div>
-        </div>
-      </section>
+      <UniversalCTA
+        title={" Ready to Protect Your Business?"}
+        description={
+          "Join thousands of businesses using Fraud Scan to prevent fraud and protect their operations."
+        }
+        cta1={"Start Free Trial"}
+        cta2={"Enterprise Solutions"}
+        cta1Href={"/signup"}
+        cta2Href={"/enterprise"}
+      />
     </>
   );
 }
