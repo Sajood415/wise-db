@@ -153,7 +153,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
             // Payment email per method
             if (paymentMethod === 'stripe') {
                 if (!stripeSecret) return NextResponse.json({ error: 'Stripe not configured' }, { status: 500 })
-                const stripe = new Stripe(stripeSecret, { apiVersion: '2025-07-30.basil' })
+                const stripe = new Stripe(stripeSecret, { apiVersion: '2025-08-27.basil' })
                 if (!(pricingAmount > 0) || !(allowanceSearches >= 1) || !(allowanceUsers >= 1)) {
                     return NextResponse.json({ error: 'Provide valid amount, searches and users' }, { status: 400 })
                 }
