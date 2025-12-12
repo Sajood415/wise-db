@@ -86,8 +86,9 @@ export async function POST(request: NextRequest) {
         }
 
         const isFreeTrial = user.subscription?.type === 'free_trial'
+        const isPayAsYouGo = user.subscription?.type === "pay_as_you_go";
 
-        // Determine effective quota (enterprise_user uses creator's quota)
+        // Determine effective quota (enterprise_user uses creator's quota, pay-as-you-go uses own limit)
         let effectiveUsed = user.subscription.searchesUsed || 0
         let effectiveLimit = typeof user.subscription.searchLimit === 'number' ? user.subscription.searchLimit : 0
         if (user.role === 'enterprise_user' && user.createdBy) {
@@ -102,10 +103,19 @@ export async function POST(request: NextRequest) {
 
         const isUnlimited = effectiveLimit === -1
         if (isPackageExpired) {
-            return NextResponse.json({ error: 'Your plan has expired. Renew to continue searching.' }, { status: 403 })
+            // Mark expired and block searches for all plans, including pay-as-you-go credits
+            if (user.subscription.status !== 'expired') {
+                user.subscription.status = 'expired'
+                try { await user.save() } catch { }
+            }
+            const msg = isPayAsYouGo
+                ? 'Your pay-as-you-go credits have expired. Purchase more credits to continue searching.'
+                : 'Your plan has expired. Renew to continue searching.'
+            return NextResponse.json({ error: msg }, { status: 403 })
         }
+        // Check limits (works same for all plans including pay-as-you-go)
         if ((user.role === 'individual' && isFreeTrial && trialExpired) || (!isUnlimited && effectiveUsed >= effectiveLimit)) {
-            const msg = (user.role === 'individual' && isFreeTrial && trialExpired)
+            const msg = isPayAsYouGo ? "You have no credits remaining. Purchase more credits to continue searching." : (user.role === 'individual' && isFreeTrial && trialExpired)
                 ? 'Your free trial has expired. Upgrade to continue searching.'
                 : 'You have reached your search limit. Upgrade to continue searching.'
             return NextResponse.json({ error: msg }, { status: 403 })
@@ -139,7 +149,7 @@ export async function POST(request: NextRequest) {
             }).slice(0, 50)
         }
 
-        // Increment search usage (enterprise_user deducts from creator/admin)
+        // Increment search usage (enterprise_user deducts from creator/admin, pay-as-you-go uses same pattern)
         if (!isUnlimited) {
             if (user.role === 'enterprise_user' && user.createdBy) {
                 // Deduct from enterprise admin (creator)
@@ -207,7 +217,7 @@ export async function POST(request: NextRequest) {
             source: canUseReal ? 'real' : 'dummy',
         })
 
-        // Respond with effective quota values for UI
+        // Respond with effective quota values for UI (same pattern for all plans)
         const responseSearchesUsed = (user.role === 'enterprise_user' && user.createdBy)
             ? (isUnlimited ? effectiveUsed : effectiveUsed + 1)
             : user.subscription.searchesUsed

@@ -229,7 +229,9 @@ export default function ReportFraudForm() {
     { code: "AUD", name: "AUD - Australian Dollar" },
     { code: "JPY", name: "JPY - Japanese Yen" },
     { code: "CNY", name: "CNY - Chinese Yuan" },
-    { code: "Other", name: "Other Currency" },
+    {code:"NZD",name:"NZD - New Zealand Dollar"},
+    {code:"AUD",name:"AUD - Australian Dollar"},
+    { code: "Other", name: "Other Currency" }
   ];
 
   const handleInputChange = (field: string, value: any) => {

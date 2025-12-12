@@ -7,7 +7,7 @@ export interface IUser extends Document {
     password: string;
     role: 'individual' | 'sub_admin' | 'super_admin' | 'enterprise_admin' | 'enterprise_user';
     subscription: {
-        type: 'free_trial' | 'paid_package' | 'enterprise_package';
+        type: 'free_trial' | 'paid_package' | 'enterprise_package' | 'pay_as_you_go';
         status: 'active' | 'expired' | 'cancelled';
         trialEndsAt?: Date;
         packageEndsAt?: Date;
@@ -80,7 +80,7 @@ const UserSchema = new Schema<IUser>({
     subscription: {
         type: {
             type: String,
-            enum: ['free_trial', 'paid_package', 'enterprise_package'],
+            enum: ['free_trial', 'paid_package', 'enterprise_package',"pay_as_you_go"],
             default: 'free_trial'
         },
         status: {
@@ -265,6 +265,7 @@ UserSchema.methods.isTrialExpired = function (this: IUser) {
 UserSchema.methods.canPerformSearch = function (this: IUser) {
     if (this.subscription.searchLimit === -1) return true; // Unlimited
     if (this.isTrialExpired() && this.subscription.type === 'free_trial') return false;
+    // Same logic for all plans including pay-as-you-go: check searchLimit vs searchesUsed
     return this.subscription.searchesUsed < this.subscription.searchLimit;
 };
 

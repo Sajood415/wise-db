@@ -61,23 +61,48 @@ const packages = [
     ],
     popular: false,
   },
+  {
+    id: "pay-as-you-go",
+    name: "Pay As You Go",
+    price: 2,
+    searches: 1,
+    features: [
+      "$2 per search",
+      "Buy credits and use anytime",
+    ],
+    popular: false,
+    payg: true,
+  },
 ];
+
+const PRICE_PER_SEARCH = 2.0; // $2 per search
 
 export default function PaymentPage() {
   const [selectedPackage, setSelectedPackage] =
     useState<string>("basic-yearly");
+  const [payAsYouGoSearches, setPayAsYouGoSearches] = useState<number>(10);
   const [loading, setLoading] = useState(false);
+  const [showPayAsYouGoModal, setShowPayAsYouGoModal] = useState(false);
   const router = useRouter();
   const { showToast } = useToast();
 
+  const payAsYouGoTotal = payAsYouGoSearches * PRICE_PER_SEARCH;
+
   const handlePayment = async () => {
-    if (!selectedPackage) {
-      showToast("Please select a package", "error");
+    if (selectedPackage === "pay-as-you-go") {
+      // Pay-as-you-go is handled in the modal
+      setShowPayAsYouGoModal(true);
       return;
+    } else {
+      if (!selectedPackage) {
+        showToast("Please select a package", "error");
+        return;
+      }
     }
 
     setLoading(true);
     try {
+      // Handle regular packages
       const packageData = packages.find((p) => p.id === selectedPackage);
       if (!packageData) {
         showToast("Invalid package selected", "error");
@@ -100,15 +125,23 @@ export default function PaymentPage() {
         }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error("Failed to create checkout session");
+        const errorMessage = data.error || "Failed to create checkout session";
+        throw new Error(errorMessage);
       }
 
-      const { sessionUrl } = await response.json();
-      window.location.href = sessionUrl;
-    } catch (error) {
+      if (!data.sessionUrl) {
+        throw new Error("No session URL received from server");
+      }
+
+      window.location.href = data.sessionUrl;
+    } catch (error: any) {
       console.error("Payment error:", error);
-      showToast("Failed to initiate payment. Please try again.", "error");
+      const errorMessage =
+        error?.message || "Failed to initiate payment. Please try again.";
+      showToast(errorMessage, "error");
     } finally {
       setLoading(false);
     }
@@ -144,9 +177,176 @@ export default function PaymentPage() {
           </div>
         </div>
 
+        {/* Pay As You Go Modal */}
+        {showPayAsYouGoModal && (
+          <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-2xl font-semibold text-gray-900">
+                  Pay As You Go
+                </h3>
+                <button
+                  onClick={() => {
+                    setShowPayAsYouGoModal(false);
+                    setSelectedPackage("basic-yearly");
+                  }}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Number of Searches (Credits)
+                </label>
+                <div className="flex items-center gap-4">
+                  <input
+                    type="number"
+                    min="1"
+                    max="10000"
+                    value={payAsYouGoSearches}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value) || 1;
+                      setPayAsYouGoSearches(Math.max(1, Math.min(10000, val)));
+                    }}
+                    className="w-32 px-3 py-2 border text-primary border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                  <div className="flex-1">
+                    <div className="text-sm text-gray-600">
+                      <span className="font-semibold text-gray-900">
+                        ${PRICE_PER_SEARCH.toFixed(2)}
+                      </span>{" "}
+                      per search
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-blue-50 rounded-lg p-4 mb-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-700">
+                    Total Amount:
+                  </span>
+                  <span className="text-2xl font-bold text-blue-600">
+                    ${payAsYouGoTotal.toFixed(2)}
+                  </span>
+                </div>
+                <div className="mt-2 text-xs text-gray-600">
+                  You will receive {payAsYouGoSearches} search credit
+                  {payAsYouGoSearches !== 1 ? "s" : ""} after payment
+                </div>
+              </div>
+
+              <ul className="mb-6 space-y-2">
+                <li className="flex items-center text-sm text-gray-600">
+                  <svg
+                    className="w-4 h-4 text-green-500 mr-2"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  $2 per search - pay only for what you use
+                </li>
+              </ul>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setShowPayAsYouGoModal(false);
+                    setSelectedPackage("basic-yearly");
+                  }}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={async () => {
+                    if (payAsYouGoSearches < 1) {
+                      showToast("Please select at least 1 search", "error");
+                      return;
+                    }
+                    setShowPayAsYouGoModal(false);
+                    setLoading(true);
+                    try {
+                      const response = await fetch(
+                        "/api/payment/create-checkout-session",
+                        {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify({
+                            packageId: "pay-as-you-go",
+                            packageName: "Pay As You Go",
+                            packageType: "pay_as_you_go",
+                            amount: payAsYouGoTotal,
+                            searchesIncluded: payAsYouGoSearches,
+                            creditsPurchased: payAsYouGoSearches,
+                          }),
+                        }
+                      );
+
+                      const data = await response.json();
+
+                      if (!response.ok) {
+                        const errorMessage =
+                          data.error || "Failed to create checkout session";
+                        throw new Error(errorMessage);
+                      }
+
+                      if (!data.sessionUrl) {
+                        throw new Error("No session URL received from server");
+                      }
+
+                      window.location.href = data.sessionUrl;
+                    } catch (error: any) {
+                      console.error("Payment error:", error);
+                      const errorMessage =
+                        error?.message ||
+                        "Failed to initiate payment. Please try again.";
+                      showToast(errorMessage, "error");
+                    } finally {
+                      setLoading(false);
+                    }
+                  }}
+                  disabled={loading}
+                  className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-lg transition-colors"
+                >
+                  {loading ? "Processing..." : "Proceed to Payment"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Package Selection */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {packages.map((pkg) => (
+          {packages.map((pkg) => {
+            const isPayg = pkg.id === "pay-as-you-go" || (pkg as any).payg;
+            const periodLabel = pkg.name.includes("Yearly")
+              ? "year"
+              : pkg.name.includes("Monthly")
+              ? "month"
+              : "credit";
+            return (
             <div
               key={pkg.id}
               className={`relative bg-white rounded-lg shadow-lg border-2 transition-all duration-200 cursor-pointer ${
@@ -172,16 +372,22 @@ export default function PaymentPage() {
                   <span className="text-3xl font-bold text-gray-900">
                     ${pkg.price}
                   </span>
-                  <span className="text-gray-600">
-                    /{pkg.name.includes("Yearly") ? "year" : "month"}
-                  </span>
+                  <span className="text-gray-600">/{periodLabel}</span>
                 </div>
 
                 <div className="mb-4">
-                  <span className="text-lg font-semibold text-blue-600">
-                    {pkg.searches}
-                  </span>
-                  <span className="text-gray-600"> searches</span>
+                  {isPayg ? (
+                    <span className="text-lg font-semibold text-blue-600">
+                      Flexible credits
+                    </span>
+                  ) : (
+                    <>
+                      <span className="text-lg font-semibold text-blue-600">
+                        {pkg.searches}
+                      </span>
+                      <span className="text-gray-600"> searches</span>
+                    </>
+                  )}
                 </div>
 
                 <ul className="space-y-2 mb-6">
@@ -219,7 +425,8 @@ export default function PaymentPage() {
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Payment Button */}

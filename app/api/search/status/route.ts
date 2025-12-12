@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
             }
         }
 
-        // Defaults to the user's own subscription
+        // Defaults to the user's own subscription (same pattern for all plans including pay-as-you-go)
         let effectiveUsed = sub.searchesUsed || 0
         let effectiveLimit = typeof sub.searchLimit === 'number' ? sub.searchLimit : -1
 
@@ -63,6 +63,10 @@ export async function GET(request: NextRequest) {
             ? Math.max(0, (effectiveLimit || 0) - (effectiveUsed || 0))
             : -1
 
+        // For pay-as-you-go, check expiration normally (credits expire after 30 days)
+        const isPayAsYouGo = sub.type === 'pay_as_you_go'
+        const finalIsPackageExpired = isPackageExpired
+
         return NextResponse.json({
             type: sub.type,
             status: sub.status,
@@ -72,7 +76,8 @@ export async function GET(request: NextRequest) {
             remainingSearches: remaining,
             isTrialExpired: user.subscription?.type === 'free_trial' && user.subscription?.trialEndsAt ? (new Date() > new Date(user.subscription.trialEndsAt)) : false,
             packageName: (user as any).packageName || null,
-            isPackageExpired,
+            isPackageExpired: finalIsPackageExpired,
+            // Surface expiry date for pay-as-you-go credits as well
             packageEndsAt: pkgEnds || null,
         })
     } catch (error) {
