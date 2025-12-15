@@ -93,12 +93,11 @@ const DashboardHeader = ({
               </span>
             </Link>
           )}
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">F</span>
+          <Link href={"/"}>
+            <div className="md:h-16 md:w-16 h-12 w-12">
+              <img src="/logo.png" alt="logo" />
             </div>
-            <span className="text-xl font-bold text-gray-900">Fraud Scan</span>
-          </div>
+          </Link>
 
           {shouldShowPackageCapsule && (
             <div className="hidden md:flex items-center ml-4">

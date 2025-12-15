@@ -79,18 +79,17 @@ const Header = () => {
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-[68px]">
             <div className="flex-shrink-0">
-              <Link href="/" className="flex items-center space-x-2">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[#006d5b]">
-                  <span className="text-white font-bold text-sm">FS</span>
-                </div>
-                <span
-                  className={`text-xl font-bold ${
-                    isHovered ? "text-white" : "text-[#1c2736]"
-                  }`}
-                >
-                  Fraud Scan
-                </span>
-              </Link>
+              {/* Logo */}
+              <div className="">
+                <Link href="/" className="">
+                  <div className="logo md:w-12 md:h-12 h-10 w-10 flex items-center justify-center">
+                    <img
+                      src={isHovered ? "/logo2.png" : "/logo.png"}
+                      alt="logo"
+                    />
+                  </div>
+                </Link>
+              </div>
             </div>
           </div>
         </nav>
@@ -111,18 +110,13 @@ const Header = () => {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-[68px]">
           {/* Logo */}
-          <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center space-x-2">
-              {/* <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[#FFC21A]">
-                <span className="text-white font-bold text-sm">FS</span>
-              </div> */}
-              <span
-                className={`text-2xl font-bold font-mono  ${
-                  isHovered ? "text-white scale-105" : "text-[#1c2736]"
-                }`}
+          <div className="">
+            <Link href="/" className="">
+              <div
+                className={`logo md:w-16 md:h-16 h-12 w-12 flex items-center justify-center`}
               >
-                Fraud Scan
-              </span>
+                <img src={isHovered ? "/logo2.png" : "/logo.png"} alt="logo" />
+              </div>
             </Link>
           </div>
 

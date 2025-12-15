@@ -4,6 +4,13 @@ import { jwtVerify } from 'jose';
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
+    // Allow static assets (images, fonts, etc.) to bypass auth
+    // This is important so things like /logo.png work even when user is logged out
+    const staticAssetExtensions = /\.(png|jpe?g|gif|svg|ico|webp|avif|css|js|map|txt|woff2?|ttf|eot)$/i;
+    if (staticAssetExtensions.test(pathname)) {
+        return NextResponse.next();
+    }
+
     // Public routes that don't require authentication
     const publicPaths = [
         '/',
