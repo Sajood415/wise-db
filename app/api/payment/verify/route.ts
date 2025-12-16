@@ -5,9 +5,7 @@ import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 import Payment from "@/models/Payment";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-08-27.basil",
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export async function POST(request: NextRequest) {
   try {

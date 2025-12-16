@@ -10,7 +10,7 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
         if (!stripeSecret) return NextResponse.json({ error: 'Stripe not configured' }, { status: 500 })
-        const stripe = new Stripe(stripeSecret, { apiVersion: '2025-08-27.basil' })
+        const stripe = new Stripe(stripeSecret)
 
         const role = request.headers.get('x-user-role') || ''
         if (role !== 'super_admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })

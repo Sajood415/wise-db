@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
         { error: "Stripe not configured" },
         { status: 500 }
       );
-    const stripe = new Stripe(stripeSecret, { apiVersion: "2025-08-27.basil" });
+    const stripe = new Stripe(stripeSecret);
 
     const url = new URL(request.url);
     const searchParams = url.searchParams;
