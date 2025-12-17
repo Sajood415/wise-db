@@ -73,7 +73,12 @@ export async function POST(request: NextRequest) {
         if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
         const body = await request.json()
-        const { q, type, severity, email, phone, minAmount, maxAmount, fuzziness } = (body || {}) as SearchQuery
+        const { q, type, severity, email, phone, minAmount, maxAmount, fuzziness, page, limit } = (body || {}) as SearchQuery & { page?: number; limit?: number }
+        
+        // Pagination defaults
+        const pageNum = typeof page === 'number' && page > 0 ? page : 1
+        const pageLimit = typeof limit === 'number' && limit > 0 ? Math.min(limit, 100) : 20 // Max 100 per page
+        const skip = (pageNum - 1) * pageLimit
 
         const trialExpired = user.isTrialExpired()
         // Package expiry enforcement for paid and enterprise
@@ -125,10 +130,18 @@ export async function POST(request: NextRequest) {
         const canUseReal = user.subscription.canAccessRealData && !trialExpired
 
         let results: any[] = []
+        let total = 0
 
         if (canUseReal) {
             const filter = buildFilter({ q, type, severity, email, phone, minAmount, maxAmount, fuzziness })
-            results = await Fraud.find(filter).sort({ _id: -1 }).limit(50).lean()
+            // Get total count
+            total = await Fraud.countDocuments(filter)
+            // Get paginated results
+            results = await Fraud.find(filter)
+                .sort({ _id: -1 })
+                .skip(skip)
+                .limit(pageLimit)
+                .lean()
         } else {
             // Dummy data
             const filePath = path.join(process.cwd(), 'data', 'dummy-frauds.json')
@@ -137,7 +150,7 @@ export async function POST(request: NextRequest) {
             const rx = q ? (buildFuzzyRegex(q, typeof fuzziness === 'number' ? fuzziness : 0) || new RegExp(escapeRegexLiteral(q), 'i')) : null
             const emailRx = email ? new RegExp(escapeRegexLiteral(email), 'i') : null
             const phoneRx = phone ? new RegExp(escapeRegexLiteral(phone), 'i') : null
-            results = all.filter((r) => {
+            const filtered = all.filter((r) => {
                 if (type && r.type !== type) return false
                 if (severity && r.severity !== severity) return false
                 if (typeof minAmount === 'number' && (r.fraudsterDetails?.amount ?? 0) < minAmount) return false
@@ -146,7 +159,9 @@ export async function POST(request: NextRequest) {
                 if (emailRx && !(emailRx.test(r.fraudsterDetails?.suspiciousEmail || '') || emailRx.test((r as any).contact?.email || ''))) return false
                 if (phoneRx && !(phoneRx.test(r.fraudsterDetails?.suspiciousPhone || '') || phoneRx.test((r as any).contact?.phone || ''))) return false
                 return true
-            }).slice(0, 50)
+            })
+            total = filtered.length
+            results = filtered.slice(skip, skip + pageLimit)
         }
 
         // Increment search usage (enterprise_user deducts from creator/admin, pay-as-you-go uses same pattern)
@@ -230,6 +245,12 @@ export async function POST(request: NextRequest) {
             items: results,
             searchesUsed: responseSearchesUsed,
             searchLimit: responseSearchLimit,
+            pagination: {
+                page: pageNum,
+                limit: pageLimit,
+                total,
+                totalPages: Math.ceil(total / pageLimit)
+            }
         })
     } catch (error) {
         console.error('Search error:', error)

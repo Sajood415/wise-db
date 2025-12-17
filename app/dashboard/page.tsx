@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useToast } from "@/contexts/ToastContext";
+import Pagination from "@/components/ui/Pagination";
 
 type OverviewResponse = {
   totals: {
@@ -60,9 +61,18 @@ export default function DashboardPage() {
   const [overview, setOverview] = useState<OverviewResponse | null>(null);
   const [recent, setRecent] = useState<any[]>([]);
   const [myReports, setMyReports] = useState<MyReportsResponse | null>(null);
-  const [activeTab, setActiveTab] = useState<
-    "overview" | "my_reports" | "search" | "users"
-  >("overview");
+  // Check URL params for tab, default to overview
+  type TabType = "overview" | "my_reports" | "search" | "users"
+  const [activeTab, setActiveTab] = useState<TabType>(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const tab = params.get('tab')
+      if (tab === 'search' || tab === 'my_reports' || tab === 'users' || tab === 'overview') {
+        return tab as TabType
+      }
+    }
+    return "overview" as TabType
+  });
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchForm, setSearchForm] = useState({
     q: "",
@@ -80,6 +90,13 @@ export default function DashboardPage() {
     searchesUsed: number;
     searchLimit: number;
   } | null>(null);
+  const [searchPagination, setSearchPagination] = useState<{
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  } | null>(null);
+  const [searchCurrentPage, setSearchCurrentPage] = useState(1);
   const [searchStatus, setSearchStatus] = useState<SearchStatus | null>(null);
   const [auth, setAuth] = useState<{ role?: string } | null>(null);
   const [usersLoading, setUsersLoading] = useState(false);
@@ -134,6 +151,37 @@ export default function DashboardPage() {
         return "bg-blue-100 text-blue-700";
     }
   }
+
+  // Restore search state from sessionStorage when returning from detail page
+  useEffect(() => {
+    if (activeTab === 'search' && typeof window !== 'undefined') {
+      try {
+        const savedResults = sessionStorage.getItem('searchResults')
+        const savedForm = sessionStorage.getItem('searchForm')
+        const savedMeta = sessionStorage.getItem('searchMeta')
+        const savedPagination = sessionStorage.getItem('searchPagination')
+        const savedCurrentPage = sessionStorage.getItem('searchCurrentPage')
+        
+        if (savedResults) {
+          setSearchResults(JSON.parse(savedResults))
+        }
+        if (savedForm) {
+          setSearchForm(JSON.parse(savedForm))
+        }
+        if (savedMeta) {
+          setSearchMeta(JSON.parse(savedMeta))
+        }
+        if (savedPagination) {
+          setSearchPagination(JSON.parse(savedPagination))
+        }
+        if (savedCurrentPage) {
+          setSearchCurrentPage(parseInt(savedCurrentPage, 10))
+        }
+      } catch (err) {
+        console.error('Failed to restore search state', err)
+      }
+    }
+  }, [activeTab])
 
   useEffect(() => {
     let isMounted = true;
@@ -268,6 +316,17 @@ export default function DashboardPage() {
 
   async function handleSearchSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setSearchCurrentPage(1);
+    await performSearch(1);
+  }
+
+  async function handleSearchPageChange(page: number) {
+    setSearchCurrentPage(page);
+    await performSearch(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async function performSearch(page: number = 1) {
     if (searchBlocked) {
       showToast(
         "Your free trial has expired. Upgrade to continue searching.",
@@ -276,7 +335,6 @@ export default function DashboardPage() {
       return;
     }
     setSearchLoading(true);
-    setSearchResults(null);
     try {
       const payload: any = {
         q: searchForm.q || undefined,
@@ -284,6 +342,8 @@ export default function DashboardPage() {
         severity: searchForm.severity || undefined,
         email: searchForm.email || undefined,
         phone: searchForm.phone || undefined,
+        page,
+        limit: 10,
       };
       if (
         typeof searchForm.fuzziness === "number" &&
@@ -311,6 +371,10 @@ export default function DashboardPage() {
         searchesUsed: data.searchesUsed,
         searchLimit: data.searchLimit,
       });
+      if (data.pagination) {
+        setSearchPagination(data.pagination);
+        setSearchCurrentPage(data.pagination.page);
+      }
       // Live update search status so credits/usage update without refresh
       setSearchStatus((prev) => {
         const limit =
@@ -926,6 +990,16 @@ export default function DashboardPage() {
                     fuzziness: 0,
                   });
                   setSearchResults(null);
+                  setSearchPagination(null);
+                  setSearchCurrentPage(1);
+                  // Clear sessionStorage
+                  if (typeof window !== 'undefined') {
+                    sessionStorage.removeItem('searchResults');
+                    sessionStorage.removeItem('searchForm');
+                    sessionStorage.removeItem('searchMeta');
+                    sessionStorage.removeItem('searchPagination');
+                    sessionStorage.removeItem('searchCurrentPage');
+                  }
                 }}
                 className="px-4 py-2 rounded-md border text-gray-700"
               >
@@ -942,29 +1016,57 @@ export default function DashboardPage() {
           </form>
 
           <div className="mt-6">
-            {!searchResults && (
+            {!searchResults && !searchLoading && (
               <p className="text-sm text-gray-500">
                 Enter filters and click Search to see results.
               </p>
             )}
+            {searchLoading && !searchResults && (
+              <div className="flex flex-col items-center justify-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mb-3"></div>
+                <p className="text-sm text-gray-600">Searching...</p>
+              </div>
+            )}
             {searchResults && (
-              <div>
+              <div className="relative">
+                {searchLoading && (
+                  <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10 rounded-lg">
+                    <div className="flex flex-col items-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mb-2"></div>
+                      <p className="text-sm text-gray-600">Loading results...</p>
+                    </div>
+                  </div>
+                )}
                 <div className="flex items-center justify-between mb-3">
                   <h4 className="text-base font-semibold text-gray-900">
                     Search Results
                   </h4>
                   <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700">
-                    {searchResults.length} results
+                    {searchPagination?.total ?? searchResults.length} {searchPagination?.total === 1 ? 'result' : 'results'}
                   </span>
                 </div>
-                {searchResults.length === 0 ? (
+                {searchResults.length === 0 && !searchLoading ? (
                   <p className="text-sm text-gray-500">No results found.</p>
                 ) : (
                   <div className="space-y-4">
                     {searchResults.map((r) => {
                       const locationLabel = (r as any).location || "N/A";
+                      // Store search state in sessionStorage before navigating
+                      const handleClick = () => {
+                        sessionStorage.setItem('searchResults', JSON.stringify(searchResults))
+                        sessionStorage.setItem('searchForm', JSON.stringify(searchForm))
+                        sessionStorage.setItem('searchMeta', JSON.stringify(searchMeta))
+                        if (searchPagination) {
+                          sessionStorage.setItem('searchPagination', JSON.stringify(searchPagination))
+                        }
+                        sessionStorage.setItem('searchCurrentPage', searchCurrentPage.toString())
+                      }
                       return (
-                       <Link href={`/reports/${r._id}`}  key={r._id}>
+                       <Link 
+                         href={`/reports/${r._id}?return=${encodeURIComponent('/dashboard?tab=search')}`}
+                         onClick={handleClick}
+                         key={r._id}
+                       >
                          <div
                           className="rounded-xl border border-gray-200 bg-white shadow-sm p-5"
                         >
@@ -1135,6 +1237,28 @@ export default function DashboardPage() {
                        </Link>
                       );
                     })}
+                  </div>
+                )}
+                {/* Pagination */}
+                {searchPagination && searchPagination.totalPages > 1 && (
+                  <div className="mt-6 pt-4 border-t border-gray-200 relative">
+                    {searchLoading && (
+                      <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10 rounded-lg">
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+                          <span>Loading...</span>
+                        </div>
+                      </div>
+                    )}
+                    <div className={searchLoading ? 'opacity-50 pointer-events-none' : ''}>
+                      <Pagination
+                        currentPage={searchCurrentPage}
+                        totalPages={searchPagination.totalPages}
+                        totalItems={searchPagination.total}
+                        itemsPerPage={searchPagination.limit}
+                        onPageChange={handleSearchPageChange}
+                      />
+                    </div>
                   </div>
                 )}
               </div>

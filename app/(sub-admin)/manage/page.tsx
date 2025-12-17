@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useToast } from '@/contexts/ToastContext'
+import Pagination from '@/components/ui/Pagination'
 
 type FraudReport = {
   _id: string
@@ -33,6 +34,13 @@ type DashboardStats = {
   totalReviewed: number
 }
 
+type PaginationData = {
+  page: number
+  limit: number
+  total: number
+  totalPages: number
+}
+
 export default function SubAdminHome() {
   const [reports, setReports] = useState<FraudReport[]>([])
   const [stats, setStats] = useState<DashboardStats>({ pendingReviews: 0, verifiedToday: 0, totalReviewed: 0 })
@@ -45,21 +53,39 @@ export default function SubAdminHome() {
   const [pendingAction, setPendingAction] = useState<'approve' | 'reject' | null>(null)
   const { showToast } = useToast()
   const [refreshing, setRefreshing] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageLimit] = useState(10)
+  const [pagination, setPagination] = useState<PaginationData>({
+    page: 1,
+    limit: pageLimit,
+    total: 0,
+    totalPages: 0
+  })
 
   useEffect(() => {
     loadData()
-  }, [])
+  }, [currentPage])
 
   async function loadData() {
     try {
+      setLoading(true)
       const [reportsRes, statsRes] = await Promise.all([
-        fetch('/api/manage/reports'),
+        fetch(`/api/manage/reports?page=${currentPage}&limit=${pageLimit}`),
         fetch('/api/manage/stats')
       ])
       
       if (reportsRes.ok) {
         const reportsData = await reportsRes.json()
         setReports(reportsData.reports || [])
+        if (reportsData.pagination) {
+          const newPagination = reportsData.pagination
+          // If current page exceeds total pages, reset to page 1
+          if (newPagination.totalPages > 0 && currentPage > newPagination.totalPages) {
+            setCurrentPage(1)
+            return // Will reload with page 1
+          }
+          setPagination(newPagination)
+        }
       }
       
       if (statsRes.ok) {
@@ -77,7 +103,32 @@ export default function SubAdminHome() {
   async function refreshData() {
     try {
       setRefreshing(true)
-      await loadData()
+      // Reload data without changing page
+      const [reportsRes, statsRes] = await Promise.all([
+        fetch(`/api/manage/reports?page=${currentPage}&limit=${pageLimit}`),
+        fetch('/api/manage/stats')
+      ])
+      
+      if (reportsRes.ok) {
+        const reportsData = await reportsRes.json()
+        setReports(reportsData.reports || [])
+        if (reportsData.pagination) {
+          const newPagination = reportsData.pagination
+          // If current page exceeds total pages, reset to page 1
+          if (newPagination.totalPages > 0 && currentPage > newPagination.totalPages) {
+            setCurrentPage(1)
+            return // Will reload with page 1
+          }
+          setPagination(newPagination)
+        }
+      }
+      
+      if (statsRes.ok) {
+        const statsData = await statsRes.json()
+        setStats(statsData)
+      }
+    } catch (error) {
+      console.error('Failed to refresh data:', error)
     } finally {
       setRefreshing(false)
     }
@@ -342,7 +393,7 @@ export default function SubAdminHome() {
           </table>
         </div>
         
-        {reports.length === 0 && (
+        {reports.length === 0 && !loading && (
           <div className="px-6 py-12 text-center">
             <p className="text-gray-500">No fraud reports found.</p>
           </div>
@@ -354,6 +405,32 @@ export default function SubAdminHome() {
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
             </svg>
             <span className="ml-2 text-sm text-gray-700">Updating...</span>
+          </div>
+        )}
+
+        {/* Pagination */}
+        {pagination.totalPages > 0 && (
+          <div className="px-6 py-4 border-t border-gray-200 relative">
+            {loading && (
+              <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10 rounded-lg">
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+                  <span>Loading...</span>
+                </div>
+              </div>
+            )}
+            <div className={loading ? 'opacity-50 pointer-events-none' : ''}>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={pagination.totalPages}
+                totalItems={pagination.total}
+                itemsPerPage={pageLimit}
+                onPageChange={(page) => {
+                  setCurrentPage(page)
+                  window.scrollTo({ top: 0, behavior: 'smooth' })
+                }}
+              />
+            </div>
           </div>
         )}
       </div>

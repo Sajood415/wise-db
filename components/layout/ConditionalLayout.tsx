@@ -18,6 +18,7 @@ function LayoutInner({ children }: { children: React.ReactNode }) {
     '/my-reports',
     '/subscription',
     '/enterprise/dashboard',
+    '/reports', // Reports detail pages for logged-in users
   ]
 
   const isDashboardRoute = dashboardRoutes.some((route) => pathname.startsWith(route))

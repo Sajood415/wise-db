@@ -41,8 +41,7 @@ const packages = [
       "Access to real fraud data",
       "Priority support",
       "Export capabilities",
-      "Advanced analytics",
-      "API access",
+      "Advanced analytics"
     ],
     popular: false,
   },
@@ -56,8 +55,7 @@ const packages = [
       "Access to real fraud data",
       "Priority support",
       "Export capabilities",
-      "Advanced analytics",
-      "API access",
+      "Advanced analytics"
     ],
     popular: false,
   },
@@ -75,7 +73,19 @@ const packages = [
   },
 ];
 
-const PRICE_PER_SEARCH = 2.0; // $2 per search
+const PRICE_PER_SEARCH = 2.0; 
+
+type SubscriptionStatus = {
+  type: 'free_trial' | 'paid_package' | 'enterprise_package' | 'pay_as_you_go' | null;
+  status: 'active' | 'expired' | 'cancelled' | null;
+  searchesUsed: number;
+  searchLimit: number;
+  remainingSearches: number;
+  packageName: string | null;
+  isTrialExpired: boolean;
+  isPackageExpired: boolean;
+  packageEndsAt: string | null;
+};
 
 export default function PaymentPage() {
   const [selectedPackage, setSelectedPackage] =
@@ -83,14 +93,68 @@ export default function PaymentPage() {
   const [payAsYouGoSearches, setPayAsYouGoSearches] = useState<number>(10);
   const [loading, setLoading] = useState(false);
   const [showPayAsYouGoModal, setShowPayAsYouGoModal] = useState(false);
+  const [subscriptionStatus, setSubscriptionStatus] = useState<SubscriptionStatus | null>(null);
+  const [loadingStatus, setLoadingStatus] = useState(true);
   const router = useRouter();
   const { showToast } = useToast();
 
   const payAsYouGoTotal = payAsYouGoSearches * PRICE_PER_SEARCH;
 
+  useEffect(() => {
+    async function fetchSubscriptionStatus() {
+      try {
+        const res = await fetch('/api/search/status', {
+          cache: 'no-store',
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setSubscriptionStatus(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch subscription status', error);
+      } finally {
+        setLoadingStatus(false);
+      }
+    }
+    fetchSubscriptionStatus();
+  }, []);
+
+  function getCurrentPlanName(): string {
+    if (!subscriptionStatus) return 'Loading...';
+    
+    if (subscriptionStatus.type === 'free_trial') {
+      return 'Free Trial';
+    } else if (subscriptionStatus.type === 'paid_package') {
+      return subscriptionStatus.packageName || 'Paid Package';
+    } else if (subscriptionStatus.type === 'enterprise_package') {
+      return subscriptionStatus.packageName || 'Enterprise Package';
+    } else if (subscriptionStatus.type === 'pay_as_you_go') {
+      return 'Pay As You Go';
+    }
+    return 'No Plan';
+  }
+
+  function getSearchLimitDisplay(): string {
+    if (!subscriptionStatus) return 'Loading...';
+    
+    if (subscriptionStatus.searchLimit === -1) {
+      return 'Unlimited searches';
+    } else if (subscriptionStatus.type === 'pay_as_you_go') {
+      return `${subscriptionStatus.remainingSearches} credit${subscriptionStatus.remainingSearches !== 1 ? 's' : ''} remaining`;
+    } else {
+      return `${subscriptionStatus.searchLimit} searches ${subscriptionStatus.type === 'free_trial' ? 'total' : 'per period'}`;
+    }
+  }
+
+  function canUpgrade(): boolean {
+    if (!subscriptionStatus) return true;
+    return subscriptionStatus.type === 'free_trial' || 
+           subscriptionStatus.status === 'expired' ||
+           (subscriptionStatus.searchLimit !== -1 && subscriptionStatus.type !== 'pay_as_you_go');
+  }
+
   const handlePayment = async () => {
     if (selectedPackage === "pay-as-you-go") {
-      // Pay-as-you-go is handled in the modal
       setShowPayAsYouGoModal(true);
       return;
     } else {
@@ -102,7 +166,6 @@ export default function PaymentPage() {
 
     setLoading(true);
     try {
-      // Handle regular packages
       const packageData = packages.find((p) => p.id === selectedPackage);
       if (!packageData) {
         showToast("Invalid package selected", "error");
@@ -158,24 +221,78 @@ export default function PaymentPage() {
           </p>
         </div>
 
-        {/* Current Plan Info */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold text-blue-900">
-                Current Plan: Free Trial
-              </h3>
-              <p className="text-blue-700">Limited to 10 searches</p>
-            </div>
-            <div className="text-right">
-              <p className="text-sm text-blue-600">Upgrade to unlock:</p>
-              <ul className="text-sm text-blue-700 mt-1">
-                <li>• Unlimited searches</li>
-                <li>• Advanced features</li>
-              </ul>
+        {loadingStatus ? (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+            <div className="animate-pulse">
+              <div className="h-6 bg-blue-200 rounded w-48 mb-2"></div>
+              <div className="h-4 bg-blue-200 rounded w-32"></div>
             </div>
           </div>
-        </div>
+        ) : subscriptionStatus && (
+          <div className={`border rounded-lg p-6 mb-8 ${
+            subscriptionStatus.status === 'expired' 
+              ? 'bg-rose-50 border-rose-200' 
+              : subscriptionStatus.type === 'free_trial'
+              ? 'bg-blue-50 border-blue-200'
+              : 'bg-green-50 border-green-200'
+          }`}>
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div>
+                <h3 className={`text-lg font-semibold ${
+                  subscriptionStatus.status === 'expired'
+                    ? 'text-rose-900'
+                    : subscriptionStatus.type === 'free_trial'
+                    ? 'text-blue-900'
+                    : 'text-green-900'
+                }`}>
+                  Current Plan: {getCurrentPlanName()}
+                  {subscriptionStatus.status === 'expired' && ' (Expired)'}
+                </h3>
+                <p className={`mt-1 ${
+                  subscriptionStatus.status === 'expired'
+                    ? 'text-rose-700'
+                    : subscriptionStatus.type === 'free_trial'
+                    ? 'text-blue-700'
+                    : 'text-green-700'
+                }`}>
+                  {subscriptionStatus.type === 'pay_as_you_go' 
+                    ? getSearchLimitDisplay()
+                    : subscriptionStatus.searchLimit === -1
+                    ? 'Unlimited searches'
+                    : `${subscriptionStatus.searchesUsed} / ${subscriptionStatus.searchLimit} searches used`
+                  }
+                </p>
+              </div>
+              {canUpgrade() && (
+                <div className="text-right">
+                  <p className={`text-sm ${
+                    subscriptionStatus.status === 'expired'
+                      ? 'text-rose-600'
+                      : 'text-blue-600'
+                  }`}>
+                    {subscriptionStatus.status === 'expired' 
+                      ? 'Renew to continue:'
+                      : 'Upgrade to unlock:'
+                    }
+                  </p>
+                  <ul className={`text-sm mt-1 ${
+                    subscriptionStatus.status === 'expired'
+                      ? 'text-rose-700'
+                      : 'text-blue-700'
+                  }`}>
+                    {subscriptionStatus.searchLimit !== -1 && (
+                      <li>• More searches</li>
+                    )}
+                    {subscriptionStatus.type === 'free_trial' && (
+                      <li>• Access to real fraud data</li>
+                    )}
+                    <li>• Advanced features</li>
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Pay As You Go Modal */}
         {showPayAsYouGoModal && (
@@ -480,8 +597,12 @@ export default function PaymentPage() {
                 Is there a free trial?
               </h4>
               <p className="text-gray-600">
-                You're currently on a free trial with 10 searches. Upgrade to
-                unlock unlimited access.
+                {subscriptionStatus?.type === 'free_trial' 
+                  ? `You're currently on a free trial with ${subscriptionStatus.searchLimit} searches. Upgrade to unlock unlimited access.`
+                  : subscriptionStatus?.type === 'paid_package' || subscriptionStatus?.type === 'enterprise_package'
+                  ? 'Free trials are available for new users. You can upgrade or change your plan at any time.'
+                  : 'Free trials are available for new users with limited searches. Upgrade to unlock unlimited access and advanced features.'
+                }
               </p>
             </div>
           </div>
