@@ -200,6 +200,23 @@ export async function POST(request: NextRequest) {
                 user.subscription.searchesUsed = (user.subscription.searchesUsed || 0) + 1
                 await user.save()
 
+                try {
+                    if (user.role === 'enterprise_admin' && user.subscription && user.subscription.type === 'enterprise_package' && user.subscription.searchLimit && user.subscription.searchLimit > 0) {
+                        const used = user.subscription.searchesUsed || 0
+                        const limit = user.subscription.searchLimit || 0
+                        const pct = limit > 0 ? (used / limit) : 0
+                        if (pct >= 0.9 && !user.subscription.lowQuotaNotified) {
+                            const remaining = Math.max(0, limit - used)
+                            if (user.email) {
+                                const t = emailTemplates.lowQuotaEnterpriseAdmin
+                                await sendMail({ to: user.email, subject: t.subject({}), text: t.text({ firstName: user.firstName, used, limit, remaining }), html: t.html({ firstName: user.firstName, used, limit, remaining }) })
+                                user.subscription.lowQuotaNotified = true
+                                await user.save()
+                            }
+                        }
+                    }
+                } catch { }
+
                 // Notify paid individual at 90% usage if not already notified
                 try {
                     if (user.subscription && user.subscription.type === 'paid_package' && user.subscription.searchLimit && user.subscription.searchLimit > 0) {

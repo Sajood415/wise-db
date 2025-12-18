@@ -8,6 +8,7 @@ const interSans = Inter({
   variable: "--font-inter-sans",
   subsets: ["latin"],
   display: "swap",
+  fallback: ["sans-serif"],
 });
 
 const robotoMono = Roboto_Mono({
@@ -68,7 +69,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${interSans.variable} ${robotoMono.variable} antialiased`}>
+      <body className={`${interSans.className} ${robotoMono.variable} antialiased`}>
         <ToastProvider>
           <ConditionalLayout>{children}</ConditionalLayout>
         </ToastProvider>
