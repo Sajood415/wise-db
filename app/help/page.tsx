@@ -22,24 +22,24 @@ export default function Help() {
       <div className="max-w-5xl  mx-auto px-6 sm:px-8 lg:px-12">
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
-            Help <span className="gradient-text">Center</span>
+          <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 mb-6 tracking-tight">
+            Help <span className="text-gray-900">Center</span>
           </h1>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
             Need assistance? Our support team is here to help you with fraud
-            reporting, platform features, and any questions you may have.
+            reporting, database searches, platform features, and any questions you may have.
           </p>
         </div>
 
         {/* Quick Help Options */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
+        <div className="grid md:grid-cols-3 gap-6 mb-16">
           {[
             {
               title: "FAQ",
-              description: "Find answers to commonly asked questions",
+              description: "Find answers to commonly asked questions about fraud reporting and database searches",
               icon: (
                 <svg
-                  className="w-6 h-6 text-blue-600"
+                  className="w-7 h-7 text-blue-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -52,14 +52,16 @@ export default function Help() {
                   />
                 </svg>
               ),
-              bgColor: "bg-blue-50",
+              bgColor: "bg-gradient-to-br from-blue-50 to-blue-100",
+              borderColor: "border-blue-200",
+              hoverBorder: "hover:border-blue-400",
             },
             {
-              title: "Documentation",
-              description: "Detailed guides and tutorials",
+              title: "Support Guides",
+              description: "Learn how to report fraud, search the database, and use platform features",
               icon: (
                 <svg
-                  className="w-6 h-6 text-green-600"
+                  className="w-7 h-7 text-green-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -72,14 +74,16 @@ export default function Help() {
                   />
                 </svg>
               ),
-              bgColor: "bg-green-50",
+              bgColor: "bg-gradient-to-br from-green-50 to-green-100",
+              borderColor: "border-green-200",
+              hoverBorder: "hover:border-green-400",
             },
             {
               title: "Direct Contact",
-              description: "Reach out to our support team",
+              description: "Reach out to our support team for personalized assistance",
               icon: (
                 <svg
-                  className="w-6 h-6 text-purple-600"
+                  className="w-7 h-7 text-purple-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -92,22 +96,24 @@ export default function Help() {
                   />
                 </svg>
               ),
-              bgColor: "bg-purple-50",
+              bgColor: "bg-gradient-to-br from-purple-50 to-purple-100",
+              borderColor: "border-purple-200",
+              hoverBorder: "hover:border-purple-400",
             },
           ].map((item) => (
             <div
               key={item.title}
-              className="bg-white p-8 rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 text-center"
+              className={`bg-white p-8 rounded-2xl border-2 ${item.borderColor} ${item.hoverBorder} shadow-md hover:shadow-xl transition-all duration-300 text-center group hover:-translate-y-1`}
             >
               <div
-                className={`w-14 h-14 ${item.bgColor} rounded-lg flex items-center justify-center mx-auto mb-4`}
+                className={`w-16 h-16 ${item.bgColor} rounded-xl flex items-center justify-center mx-auto mb-5 group-hover:scale-110 transition-transform duration-300`}
               >
                 {item.icon}
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-gray-800 transition-colors">
                 {item.title}
               </h3>
-              <p className="text-gray-600 text-sm">{item.description}</p>
+              <p className="text-gray-600 text-sm leading-relaxed">{item.description}</p>
             </div>
           ))}
         </div>
@@ -118,50 +124,58 @@ export default function Help() {
         </div>
 
         {/* Additional Help Info */}
-        <div className="mt-12 bg-white rounded-2xl shadow-lg p-10">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8">
+        <div className="mt-12 bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-xl border border-gray-200 p-10">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-10 text-center">
             Other Ways to Get Help
           </h2>
-          <div className="grid md:grid-cols-2 gap-10">
-            <div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+              <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+                <div className="w-1 h-8 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full"></div>
                 Response Times
               </h3>
-              <ul className="space-y-3 text-gray-600">
-                <li className="flex items-center gap-3">
-                  <span className="w-3 h-3 bg-green-500 rounded-full"></span>
-                  General inquiries: 24-48 hours
+              <ul className="space-y-4">
+                <li className="flex items-center gap-4 p-3 bg-green-50 rounded-lg border border-green-100">
+                  <span className="w-3 h-3 bg-green-500 rounded-full animate-pulse shrink-0"></span>
+                  <span className="text-gray-700">
+                    <span className="font-semibold text-gray-900">General inquiries:</span> 24-48 hours
+                  </span>
                 </li>
-                <li className="flex items-center gap-3">
-                  <span className="w-3 h-3 bg-blue-500 rounded-full"></span>
-                  Technical issues: 12-24 hours
+                <li className="flex items-center gap-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                  <span className="w-3 h-3 bg-blue-500 rounded-full animate-pulse shrink-0"></span>
+                  <span className="text-gray-700">
+                    <span className="font-semibold text-gray-900">Technical issues:</span> 12-24 hours
+                  </span>
                 </li>
-                <li className="flex items-center gap-3">
-                  <span className="w-3 h-3 bg-red-500 rounded-full"></span>
-                  Urgent matters: 2-4 hours
+                <li className="flex items-center gap-4 p-3 bg-red-50 rounded-lg border border-red-100">
+                  <span className="w-3 h-3 bg-red-500 rounded-full animate-pulse shrink-0"></span>
+                  <span className="text-gray-700">
+                    <span className="font-semibold text-gray-900">Urgent matters:</span> 2-4 hours
+                  </span>
                 </li>
               </ul>
             </div>
-            <div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+            <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+              <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+                <div className="w-1 h-8 bg-gradient-to-b from-green-500 to-blue-500 rounded-full"></div>
                 What to Include
               </h3>
-              <ul className="space-y-3 text-gray-600">
-                <li className="flex items-start gap-3">
-                  <span className="w-3 h-3 bg-gray-400 rounded-full mt-1"></span>
-                  Detailed description of the issue
+              <ul className="space-y-4">
+                <li className="flex items-start gap-4 p-3 bg-gray-50 rounded-lg border border-gray-100">
+                  <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 shrink-0"></span>
+                  <span className="text-gray-700 leading-relaxed">Detailed description of your issue or question</span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-3 h-3 bg-gray-400 rounded-full mt-1"></span>
-                  Steps to reproduce the problem
+                <li className="flex items-start gap-4 p-3 bg-gray-50 rounded-lg border border-gray-100">
+                  <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 shrink-0"></span>
+                  <span className="text-gray-700 leading-relaxed">Steps to reproduce (if applicable)</span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-3 h-3 bg-gray-400 rounded-full mt-1"></span>
-                  Screenshots or error messages
+                <li className="flex items-start gap-4 p-3 bg-gray-50 rounded-lg border border-gray-100">
+                  <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 shrink-0"></span>
+                  <span className="text-gray-700 leading-relaxed">Screenshots or error messages</span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-3 h-3 bg-gray-400 rounded-full mt-1"></span>
-                  Your account information (if applicable)
+                <li className="flex items-start gap-4 p-3 bg-gray-50 rounded-lg border border-gray-100">
+                  <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 shrink-0"></span>
+                  <span className="text-gray-700 leading-relaxed">Your account email (if applicable)</span>
                 </li>
               </ul>
             </div>

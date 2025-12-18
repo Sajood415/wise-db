@@ -157,18 +157,6 @@ const Header = () => {
           <div className="hidden md:flex items-center space-x-4">
             {isLoggedIn ? (
               <>
-                {userRole === "enterprise_admin" && (
-                  <Link
-                    href="/enterprise/dashboard/api"
-                    className={`px-6 py-1.5 text-base font-medium transition-colors duration-200 ${
-                      isHovered
-                        ? "text-white/80 border border-white rounded-full hover:text-white"
-                        : "text-[#1c2736]/80 border border-transparent rounded-full  hover:text-[#1c2736]"
-                    }`}
-                  >
-                    API Access
-                  </Link>
-                )}
                 <Link
                   href={getDashboardPath(userRole)}
                   className="text-base font-semibold bg-[#ffc21a] text-[#1c2736] hover:text-white hover:bg-gray-500 px-6 py-2 rounded-full transition-colors"
@@ -274,19 +262,6 @@ const Header = () => {
               >
                 {isLoggedIn ? (
                   <>
-                    {userRole === "enterprise_admin" && (
-                      <Link
-                        href="/enterprise/dashboard/api"
-                        className={`block px-3 py-2 text-base font-medium transition-colors duration-200 ${
-                          isHovered
-                            ? "text-white/80 hover:text-white"
-                            : "text-[#1c2736]/80 hover:text-[#1c2736]"
-                        }`}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        API Access
-                      </Link>
-                    )}
                     <Link
                       href={getDashboardPath(userRole)}
                       className="block text-center mt-2 mx-3 text-sm font-semibold bg-[#ffc21a] text-[#1c2736] hover:bg-gray-500 hover:text-white px-4 py-2 rounded-full transition-colors"

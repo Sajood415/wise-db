@@ -155,12 +155,12 @@ export default function HelpForm() {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-8">
+    <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 md:p-10">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+        <h2 className="text-3xl font-bold text-gray-900 mb-3">
           Contact Support
         </h2>
-        <p className="text-gray-600">
+        <p className="text-gray-600 text-lg leading-relaxed">
           Describe your issue or question in detail. The more information you
           provide, the better we can assist you.
         </p>
@@ -177,8 +177,8 @@ export default function HelpForm() {
               value={formData.name}
               onChange={(e) => handleInputChange("name", e.target.value)}
               placeholder="John Doe"
-              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500 ${
-                errors.name ? "border-red-500" : "border-gray-300"
+              className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-400 transition-all ${
+                errors.name ? "border-red-500" : "border-gray-300 hover:border-gray-400"
               }`}
               required
             />
@@ -194,8 +194,8 @@ export default function HelpForm() {
               value={formData.email}
               onChange={(e) => handleInputChange("email", e.target.value)}
               placeholder="john@example.com"
-              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500 ${
-                errors.email ? "border-red-500" : "border-gray-300"
+              className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-400 transition-all ${
+                errors.email ? "border-red-500" : "border-gray-300 hover:border-gray-400"
               }`}
               required
             />
@@ -212,8 +212,8 @@ export default function HelpForm() {
             value={formData.subject}
             onChange={(e) => handleInputChange("subject", e.target.value)}
             placeholder="Brief description of your issue"
-            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500 ${
-              errors.subject ? "border-red-500" : "border-gray-300"
+            className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-400 transition-all ${
+              errors.subject ? "border-red-500" : "border-gray-300 hover:border-gray-400"
             }`}
             required
           />
@@ -227,8 +227,8 @@ export default function HelpForm() {
           <select
             value={formData.issueType}
             onChange={(e) => handleInputChange("issueType", e.target.value)}
-            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white ${
-              errors.issueType ? "border-red-500" : "border-gray-300"
+            className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white transition-all ${
+              errors.issueType ? "border-red-500" : "border-gray-300 hover:border-gray-400"
             }`}
             required
           >
@@ -253,8 +253,8 @@ export default function HelpForm() {
             value={formData.message}
             onChange={(e) => handleInputChange("message", e.target.value)}
             placeholder="Please describe your issue in detail. Include any error messages, steps to reproduce the problem, or specific questions you have..."
-            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500 ${
-              errors.message ? "border-red-500" : "border-gray-300"
+            className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-400 transition-all resize-none ${
+              errors.message ? "border-red-500" : "border-gray-300 hover:border-gray-400"
             }`}
             required
           />
@@ -264,24 +264,26 @@ export default function HelpForm() {
           {renderFieldError("message")}
         </div>
 
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-5">
           <div className="flex items-start">
-            <svg
-              className="w-5 h-5 text-green-600 mr-3 mt-0.5"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fillRule="evenodd"
-                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                clipRule="evenodd"
-              />
-            </svg>
+            <div className="bg-green-100 rounded-lg p-2 mr-4 shrink-0">
+              <svg
+                className="w-5 h-5 text-green-600"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
             <div>
-              <p className="text-green-800 text-sm font-medium">
+              <p className="text-green-800 text-sm font-bold mb-1">
                 Response Time
               </p>
-              <p className="text-green-700 text-sm">
+              <p className="text-green-700 text-sm leading-relaxed">
                 We typically respond to support requests within 24 hours. Urgent
                 issues are prioritized and handled within 2-4 hours.
               </p>

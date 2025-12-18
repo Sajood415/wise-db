@@ -37,88 +37,82 @@ export const metadata: Metadata = {
 export default function HowItWorks() {
   const processSteps = [
     {
-      number: "01",
-      title: "Report or Query",
+      title: "Report or Search",
       description:
-        "Report fraud or perform instant verification through our database.",
+        "Submit fraud reports or search our database to verify contacts and businesses.",
       details:
-        "Anyone can report fraud anonymously through our secure platform, while registered users can query our database for real-time verification of businesses, individuals, or transactions.",
+        "Anyone can report fraud anonymously through our secure platform. Registered users can search our database to check if emails, phones, websites, or businesses have been reported for fraud.",
       icon: FileText,
       actions: [
         "Submit fraud report",
         "Search database",
-        "Verify identity",
-        "Check business legitimacy",
+        "Check email addresses",
+        "Verify business contacts",
       ],
     },
     {
-      number: "02",
-      title: "Data Processing",
-      description: "Our system processes and categorizes the information",
+      title: "Data Collection",
+      description: "Fraud reports are collected and stored securely",
       details:
-        "The submitted information is processed and categorized based on fraud type, severity, and other relevant factors to ensure proper routing to our review team.",
+        "Submitted fraud reports are securely stored with all evidence, including screenshots, documents, and detailed information about the fraudster and incident.",
       icon: Settings,
       actions: [
-        "Data categorization",
-        "Risk assessment",
-        "Case routing",
-        "Priority assignment",
+        "Secure storage",
+        "Evidence preservation",
+        "Data organization",
+        "Status tracking",
       ],
     },
     {
-      number: "03",
       title: "Expert Review",
-      description: "Human experts review flagged cases for accuracy",
+      description: "Sub-admins review and verify fraud reports",
       details:
-        "Our team of fraud experts and sub-admins manually review high-risk cases, verify evidence, and ensure the accuracy of automated decisions before adding to the database.",
+        "Our team of sub-admins manually reviews each fraud report, verifies the evidence, and decides whether to approve or reject the case before it becomes searchable in our database.",
       icon: Users,
       actions: [
-        "Manual verification",
-        "Evidence review",
-        "Quality assurance",
-        "Case validation",
+        "Manual review",
+        "Evidence verification",
+        "Approval or rejection",
+        "Quality control",
       ],
     },
     {
-      number: "04",
       title: "Database Update",
-      description: "Verified information is added to our global database",
+      description: "Approved reports are added to the searchable database",
       details:
-        "Confirmed fraud cases are securely added to our global database, making the information available to the community while protecting sensitive details and maintaining privacy.",
+        "Once approved by reviewers, fraud reports are added to our database and become searchable by registered users, helping others verify if they're dealing with known fraudsters.",
       icon: Database,
       actions: [
-        "Data categorization",
+        "Report approval",
+        "Database indexing",
+        "Search availability",
         "Privacy protection",
-        "Global distribution",
-        "Real-time updates",
       ],
     },
     {
-      number: "05",
-      title: "Intelligence Sharing",
-      description: "Information is shared with the global community",
+      title: "Community Access",
+      description: "Verified fraud data is accessible to the community",
       details:
-        "Verified fraud intelligence is shared with businesses and organizations worldwide, helping prevent similar fraudulent activities and protecting the entire community.",
+        "Approved fraud reports are available for search by registered users and enterprise clients through our platform and API, helping businesses verify contacts before engaging.",
       icon: Globe,
       actions: [
-        "Community alerts",
-        "Threat sharing",
-        "Preventive measures",
-        "Collective protection",
+        "Search access",
+        "API integration",
+        "Enterprise access",
+        "Community protection",
       ],
     },
     {
-      number: "06",
-      title: "Continuous Monitoring",
-      description: "Ongoing monitoring and updates for emerging threats",
+      title: "Ongoing Updates",
+      description: "New reports are continuously added to the database",
       details:
-        "Our systems continuously monitor for new fraud patterns, update risk models, and provide real-time alerts to keep our community protected against evolving threats.",
+        "As new fraud reports are submitted and approved, our database grows, providing an up-to-date resource for businesses and individuals to verify contacts and avoid fraud.",
       icon: RefreshCcw,
       actions: [
-        "Real-time monitoring",
-        "Pattern updates",
-        "Threat alerts",
-        "Model improvement",
+        "New report additions",
+        "Database growth",
+        "Updated information",
+        "Continuous protection",
       ],
     },
   ];
@@ -139,26 +133,25 @@ export default function HowItWorks() {
     },
     {
       type: "Registered User",
-      title: "Database Search & Information",
-      description: "Search our fraud database",
+      title: "Database Search & Verification",
+      description: "Search our fraud database to verify contacts",
       steps: [
         "Create account and log in",
-        "Enter search query or verification request",
-        "View instant results and risk scores",
+        "Enter search query (keyword, email, phone, type)",
+        "View search results from database",
         "Access detailed fraud reports",
       ],
       icon: User,
     },
     {
       type: "Enterprise Client",
-      title: "Automated Integration",
-      description: "Integrate fraud protection into business processes",
+      title: "API Integration & Team Management",
+      description: "Integrate our fraud database into your systems",
       steps: [
         "Set up API integration",
-        "Configure automated checks",
-        "Implement real-time verification",
-        "Monitor dashboard analytics",
-        "Access dashboard and add users",
+        "Use API to check contacts",
+        "Manage team members",
+        "Monitor usage and dashboard",
       ],
       icon: Building2,
     },
@@ -166,36 +159,36 @@ export default function HowItWorks() {
 
   const technologies = [
     {
-      name: "Data Analytics",
+      name: "Search Functionality",
       description:
-        "Advanced data processing and analysis for comprehensive fraud intelligence",
+        "Powerful search capabilities to find fraud reports by keyword, email, phone, type, and severity",
       features: [
-        "Statistical analysis",
-        "Trend identification",
-        "Report generation",
-        "Data visualization",
+        "Keyword search",
+        "Email and phone lookup",
+        "Type and severity filters",
+        "Fuzzy matching options",
       ],
       icon: Cpu,
     },
     {
       name: "Secure Database",
-      description: "Reliable data storage and protection for fraud reports",
+      description: "Reliable MongoDB storage for fraud reports and user data",
       features: [
-        "Encrypted data storage",
-        "Regular backups",
-        "Access controls",
-        "Data integrity checks",
+        "MongoDB database",
+        "Indexed searches",
+        "Role-based access",
+        "Data persistence",
       ],
       icon: Database,
     },
     {
-      name: "Report Processing",
-      description: "Efficient handling and categorization of fraud reports",
+      name: "Report Management",
+      description: "Efficient handling and status tracking of fraud reports",
       features: [
-        "Automated categorization",
         "Status tracking",
-        "Progress updates",
-        "Quick processing",
+        "Evidence storage",
+        "Review workflow",
+        "Report submission",
       ],
       icon: Settings,
     },
@@ -206,8 +199,8 @@ export default function HowItWorks() {
       features: [
         "Manual case review",
         "Evidence verification",
-        "Quality control",
-        "Expert validation",
+        "Approve or reject",
+        "Review notes",
       ],
       icon: Users,
     },
@@ -217,61 +210,68 @@ export default function HowItWorks() {
     <div className="min-h-screen font-sans">
       {/* Hero Section */}
       <UniversalHero
-        title={"How"}
-        gradientText={"Fraud Scan"}
-        afterText={"Works"}
+        title={"How Fraud Scan Works"}
+        gradientText={""}
+        afterText={""}
         description={
           " Understanding our comprehensive fraud protection process from initial reporting to global intelligence sharing."
         }
-        badgeText={"95% report verification accuracy"}
+        badgeText={""}
       />
 
       {/* Process Steps */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Our 6-Step Protection Process
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
               Every fraud report and verification request goes through our
               comprehensive 6-step process to ensure accuracy and provide
               maximum protection.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-            {processSteps.map((step) => {
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {processSteps.map((step, index) => {
               const Icon = step.icon;
               return (
                 <div
-                  key={step.number}
-                  className="bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-xl transition duration-300 group"
+                  key={index}
+                  className="bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 group relative overflow-hidden"
                 >
-                  <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#006d5b] to-[#43d49d] text-white rounded-full mb-4 text-2xl font-bold mx-auto group-hover:scale-105 transform transition duration-300">
-                    {step.number}
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#006d5b] to-[#43d49d] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  
+                  <div className="flex items-start gap-4 mb-4">
+                    <div className="flex items-center justify-center w-14 h-14 bg-[#006d5b]/10 rounded-lg group-hover:bg-[#006d5b] transition-colors duration-300 flex-shrink-0">
+                      <Icon className="w-7 h-7 text-[#006d5b] group-hover:text-white transition-colors duration-300" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">
+                        {step.title}
+                      </h3>
+                      <p className="text-gray-600 text-sm leading-relaxed mb-3">
+                        {step.description}
+                      </p>
+                    </div>
                   </div>
-                  <div className="text-[#006d5b] mb-4 flex justify-center text-4xl">
-                    <Icon className="w-12 h-12" />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2 text-center">
-                    {step.title}
-                  </h3>
-                  <p className="text-gray-600 mb-2 text-center">
-                    {step.description}
+
+                  <p className="text-sm text-gray-500 mb-5 leading-relaxed">
+                    {step.details}
                   </p>
-                  <p className="text-sm text-gray-500 mb-4">{step.details}</p>
-                  <ul className="space-y-2">
+
+                  <div className="space-y-2 pt-4 border-t border-gray-100">
                     {step.actions.map((action, i) => (
-                      <li
+                      <div
                         key={i}
-                        className="flex items-center gap-2 text-gray-700"
+                        className="flex items-center gap-2 text-gray-600"
                       >
-                        <CheckCircle className="w-5 h-5 text-[#006d5b]" />
-                        {action}
-                      </li>
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#006d5b] flex-shrink-0"></div>
+                        <span className="text-sm">{action}</span>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </div>
               );
             })}
@@ -280,13 +280,13 @@ export default function HowItWorks() {
       </section>
 
       {/* User Journeys */}
-      <section className="py-24 bg-gray-50">
+      <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Different Ways to Use Fraud Scan
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
               Whether you're an individual reporting fraud or an enterprise
               integrating our services, we have solutions tailored to your
               needs.
@@ -299,28 +299,35 @@ export default function HowItWorks() {
               return (
                 <div
                   key={journey.type}
-                  className="bg-white p-8 rounded-2xl shadow-lg flex flex-col h-full hover:scale-105 transform transition duration-300"
+                  className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm hover:shadow-lg hover:border-[#006d5b] transition-all duration-300 flex flex-col h-full group relative overflow-hidden"
                 >
-                  <div className="text-4xl text-[#006d5b] mb-4 flex justify-center">
-                    <Icon className="w-12 h-12" />
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#006d5b] to-[#43d49d] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="flex items-center justify-center w-14 h-14 bg-[#006d5b]/10 rounded-lg group-hover:bg-[#006d5b] transition-colors duration-300 flex-shrink-0">
+                      <Icon className="w-7 h-7 text-[#006d5b] group-hover:text-white transition-colors duration-300" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold text-gray-900 mb-1">
+                        {journey.type}
+                      </h3>
+                      <h4 className="text-base font-semibold text-[#006d5b]">
+                        {journey.title}
+                      </h4>
+                    </div>
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2 text-center">
-                    {journey.type}
-                  </h3>
-                  <h4 className="text-lg font-semibold text-[#006d5b] mb-3 text-center">
-                    {journey.title}
-                  </h4>
-                  <p className="text-gray-600 mb-6 text-center">
+
+                  <p className="text-gray-600 mb-6 text-sm leading-relaxed">
                     {journey.description}
                   </p>
 
-                  <div className="space-y-3 mb-6">
+                  <div className="space-y-3 mb-8 flex-1">
                     {journey.steps.map((step, index) => (
                       <div key={index} className="flex items-start gap-3">
-                        <div className="w-6 h-6 bg-[#006d5b]/10 text-[#006d5b] font-semibold rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <div className="w-6 h-6 bg-[#006d5b]/10 text-[#006d5b] font-semibold rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-xs">
                           {index + 1}
                         </div>
-                        <span className="text-gray-700">{step}</span>
+                        <span className="text-gray-700 text-sm leading-relaxed">{step}</span>
                       </div>
                     ))}
                   </div>
@@ -333,7 +340,7 @@ export default function HowItWorks() {
                         ? "/enterprise"
                         : "/signup"
                     }
-                    className="mt-auto inline-block bg-[#006d5b] text-white py-3 px-6 rounded-lg text-center font-semibold hover:bg-[#43d49d] transition duration-300"
+                    className="mt-auto inline-block bg-[#006d5b] text-white py-3 px-6 rounded-lg text-center font-semibold hover:bg-[#43d49d] transition duration-300 w-full"
                   >
                     Get Started
                   </Link>
@@ -349,11 +356,11 @@ export default function HowItWorks() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Powered by Advanced Technology
+              Core Platform Features
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Our fraud protection platform is built on cutting-edge
-              technologies that ensure accuracy, speed, and reliability.
+              Our platform provides essential tools for fraud reporting, search, and verification
+              to help protect businesses and individuals.
             </p>
           </div>
 
@@ -390,52 +397,100 @@ export default function HowItWorks() {
       </section>
 
       {/* Security & Privacy */}
-      {/* Security & Privacy */}
       <section className="py-24 bg-gradient-to-r from-[#1c2736] to-[#006d5b] text-white">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
               Security & Privacy First
             </h2>
-            <p className="text-xl text-[#d7f6ea] mb-8">
-              Your data security and privacy are our top priorities. We
-              implement industry-leading security measures to protect all
-              information.
+            <p className="text-lg md:text-xl text-[#d7f6ea] max-w-3xl mx-auto">
+              Your data security and privacy are our top priorities. We implement
+              security measures to protect all information and ensure safe fraud reporting.
             </p>
+          </div>
 
-            <div className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            {/* Left: Security Features */}
+            <div className="space-y-6">
               {[
                 {
-                  title: "End-to-End Encryption",
-                  desc: "All data is encrypted in transit and at rest using AES-256 encryption.",
+                  title: "Secure Authentication",
+                  desc: "JWT-based authentication with HTTP-only cookies and password hashing using bcrypt.",
                   icon: Lock,
                 },
                 {
                   title: "Anonymous Reporting",
-                  desc: "Report fraud without revealing your identity or personal information.",
+                  desc: "Report fraud without creating an account or revealing your identity. Guest submissions are fully supported.",
                   icon: UserCheck,
                 },
                 {
-                  title: "Continuous Monitoring",
-                  desc: "We continuously monitor systems for suspicious activity to ensure your data remains protected in real time.",
-                  icon: RefreshCcw,
-                },
-                {
-                  title: "Access Controls",
-                  desc: "Role-based access controls and multi-factor authentication.",
+                  title: "Role-Based Access",
+                  desc: "Granular permissions system ensures users only access features appropriate for their role.",
                   icon: Settings,
                 },
+                {
+                  title: "API Security",
+                  desc: "Enterprise API access uses Bearer token authentication with quota management and access controls.",
+                  icon: ShieldCheck,
+                },
               ].map((item, idx) => (
-                <div key={idx} className="flex items-start space-x-4">
-                  <div className="w-10 h-10 bg-[#006d5b] rounded-full flex items-center justify-center flex-shrink-0">
-                    <item.icon className="w-5 h-5 text-white" />
+                <div key={idx} className="flex items-start gap-4 p-4 rounded-lg bg-white/5 hover:bg-white/10 transition-colors duration-300">
+                  <div className="w-12 h-12 bg-[#006d5b] rounded-lg flex items-center justify-center flex-shrink-0">
+                    <item.icon className="w-6 h-6 text-white" />
                   </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">{item.title}</h3>
-                    <p className="text-[#d7f6ea] text-sm">{item.desc}</p>
+                  <div className="flex-1">
+                    <h3 className="font-semibold mb-2 text-lg">{item.title}</h3>
+                    <p className="text-[#d7f6ea] text-sm leading-relaxed">{item.desc}</p>
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Right: Trust Indicators */}
+            <div className="space-y-6">
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-8 border border-white/20">
+                <h3 className="text-2xl font-bold mb-6">Why Trust Us</h3>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-6 h-6 text-[#43d49d] flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h4 className="font-semibold mb-1">Secure Data Storage</h4>
+                      <p className="text-[#d7f6ea] text-sm">All fraud reports and user data stored securely in MongoDB with proper indexing and access controls.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-6 h-6 text-[#43d49d] flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h4 className="font-semibold mb-1">Privacy Protection</h4>
+                      <p className="text-[#d7f6ea] text-sm">Guest submissions protect reporter identity. Only approved reports become searchable.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-6 h-6 text-[#43d49d] flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h4 className="font-semibold mb-1">Evidence Security</h4>
+                      <p className="text-[#d7f6ea] text-sm">Uploaded evidence files are securely stored and only accessible to authorized reviewers.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-6 h-6 text-[#43d49d] flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h4 className="font-semibold mb-1">Access Control</h4>
+                      <p className="text-[#d7f6ea] text-sm">Middleware protection ensures only authenticated users with proper roles can access sensitive features.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white/5 rounded-xl p-6 border border-white/10">
+                <div className="flex items-center gap-4 mb-4">
+                  <Shield className="w-10 h-10 text-[#43d49d]" />
+                  <div>
+                    <h4 className="font-bold text-lg">Verified Platform</h4>
+                    <p className="text-[#d7f6ea] text-sm">All reports undergo manual review before being added to the database</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

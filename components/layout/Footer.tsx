@@ -28,27 +28,31 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-[#1c2736] text-white">
+    <footer className="bg-gradient-to-b from-[#1c2736] to-[#0f1720] text-white relative overflow-hidden">
+      {/* Decorative gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-purple-600/5 to-pink-600/5 pointer-events-none"></div>
+      
       {/* Main Footer Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand Section */}
-          <div className="lg:col-span-1 ">
-            <div className="logo md:w-16 md:h-16 h-12 w-12 my-4 flex items-center justify-center">
-              <img src="/logo2.png" alt="logo" />
+          <div className="lg:col-span-1">
+            <div className="logo md:w-20 md:h-20 h-14 w-14 mb-6 flex items-center justify-center bg-white/5 rounded-xl p-2 border border-white/10">
+              <img src="/logo2.png" alt="Fraud Scan Logo" className="w-full h-full object-contain" />
             </div>
-            <p className="text-gray-400 text-sm mb-6">
+            <p className="text-gray-300 text-sm leading-relaxed mb-6">
               Protecting businesses and individuals from fraud through
-              comprehensive reporting and verification services.
+              comprehensive reporting and database search services.
             </p>
-            <div className="flex space-x-4">
-              {/* Social Media Icons - Keep only LinkedIn */}
+            <div className="flex space-x-3">
+              {/* Social Media Icons */}
               <a
                 href="#"
-                className="text-gray-400 hover:text-white transition-colors duration-200"
+                className="group relative w-10 h-10 bg-white/5 hover:bg-blue-600 border border-white/10 hover:border-blue-500 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-blue-500/20"
+                aria-label="LinkedIn"
               >
                 <svg
-                  className="w-5 h-5"
+                  className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
@@ -60,16 +64,20 @@ const Footer = () => {
 
           {/* Footer Links */}
           {Object.entries(footerSections).map(([key, section]) => (
-            <div key={key}>
-              <h3 className="text-white font-semibold mb-4">{section.title}</h3>
-              <ul className="space-y-2">
+            <div key={key} className="space-y-4">
+              <h3 className="text-white font-bold text-lg mb-6 relative inline-block">
+                {section.title}
+                <span className="absolute -bottom-2 left-0 w-8 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></span>
+              </h3>
+              <ul className="space-y-3">
                 {section.links.map((link) => (
                   <li key={link.name}>
                     <Link
                       href={link.href}
-                      className="text-gray-400 hover:text-white text-sm transition-colors duration-200"
+                      className="group text-gray-400 hover:text-white text-sm transition-all duration-300 flex items-center gap-2"
                     >
-                      {link.name}
+                      <span className="w-1.5 h-1.5 bg-gray-600 rounded-full group-hover:bg-blue-500 group-hover:scale-150 transition-all duration-300"></span>
+                      <span className="group-hover:translate-x-1 transition-transform duration-300">{link.name}</span>
                     </Link>
                   </li>
                 ))}
@@ -80,11 +88,11 @@ const Footer = () => {
       </div>
 
       {/* Bottom Section */}
-      <div className="border-t border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col md:flex-row justify-between items-center">
+      <div className="border-t border-white/10 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col md:flex-row justify-center items-center gap-4">
             <div className="text-gray-400 text-sm">
-              © {currentYear} Fraud Scan. All rights reserved.
+              © {currentYear} <span className="text-white font-semibold">Fraud Scan</span>. All rights reserved.
             </div>
           </div>
         </div>
