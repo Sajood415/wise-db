@@ -173,12 +173,9 @@ export default function Services() {
       {/* HERO */}
       <UniversalHero
         title={"Comprehensive Fraud Protection Services"}
-        gradientText={""}
-        afterText={""}
         description={
           " Search verified fraud reports, submit incidents securely, and integrate our database directly into your business systems."
         }
-        badgeText={""}
       />
 
       {/* SERVICES */}

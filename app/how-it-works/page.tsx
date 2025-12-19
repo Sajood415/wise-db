@@ -211,12 +211,9 @@ export default function HowItWorks() {
       {/* Hero Section */}
       <UniversalHero
         title={"How Fraud Scan Works"}
-        gradientText={""}
-        afterText={""}
         description={
           " Understanding our comprehensive fraud protection process from initial reporting to global intelligence sharing."
         }
-        badgeText={""}
       />
 
       {/* Process Steps */}
@@ -242,7 +239,7 @@ export default function HowItWorks() {
                   className="bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 group relative overflow-hidden"
                 >
                   <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#006d5b] to-[#43d49d] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  
+
                   <div className="flex items-start gap-4 mb-4">
                     <div className="flex items-center justify-center w-14 h-14 bg-[#006d5b]/10 rounded-lg group-hover:bg-[#006d5b] transition-colors duration-300 flex-shrink-0">
                       <Icon className="w-7 h-7 text-[#006d5b] group-hover:text-white transition-colors duration-300" />
@@ -302,7 +299,7 @@ export default function HowItWorks() {
                   className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm hover:shadow-lg hover:border-[#006d5b] transition-all duration-300 flex flex-col h-full group relative overflow-hidden"
                 >
                   <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#006d5b] to-[#43d49d] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  
+
                   <div className="flex items-center gap-4 mb-6">
                     <div className="flex items-center justify-center w-14 h-14 bg-[#006d5b]/10 rounded-lg group-hover:bg-[#006d5b] transition-colors duration-300 flex-shrink-0">
                       <Icon className="w-7 h-7 text-[#006d5b] group-hover:text-white transition-colors duration-300" />
@@ -327,7 +324,9 @@ export default function HowItWorks() {
                         <div className="w-6 h-6 bg-[#006d5b]/10 text-[#006d5b] font-semibold rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-xs">
                           {index + 1}
                         </div>
-                        <span className="text-gray-700 text-sm leading-relaxed">{step}</span>
+                        <span className="text-gray-700 text-sm leading-relaxed">
+                          {step}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -359,8 +358,8 @@ export default function HowItWorks() {
               Core Platform Features
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Our platform provides essential tools for fraud reporting, search, and verification
-              to help protect businesses and individuals.
+              Our platform provides essential tools for fraud reporting, search,
+              and verification to help protect businesses and individuals.
             </p>
           </div>
 
@@ -404,8 +403,9 @@ export default function HowItWorks() {
               Security & Privacy First
             </h2>
             <p className="text-lg md:text-xl text-[#d7f6ea] max-w-3xl mx-auto">
-              Your data security and privacy are our top priorities. We implement
-              security measures to protect all information and ensure safe fraud reporting.
+              Your data security and privacy are our top priorities. We
+              implement security measures to protect all information and ensure
+              safe fraud reporting.
             </p>
           </div>
 
@@ -434,13 +434,18 @@ export default function HowItWorks() {
                   icon: ShieldCheck,
                 },
               ].map((item, idx) => (
-                <div key={idx} className="flex items-start gap-4 p-4 rounded-lg bg-white/5 hover:bg-white/10 transition-colors duration-300">
+                <div
+                  key={idx}
+                  className="flex items-start gap-4 p-4 rounded-lg bg-white/5 hover:bg-white/10 transition-colors duration-300"
+                >
                   <div className="w-12 h-12 bg-[#006d5b] rounded-lg flex items-center justify-center flex-shrink-0">
                     <item.icon className="w-6 h-6 text-white" />
                   </div>
                   <div className="flex-1">
                     <h3 className="font-semibold mb-2 text-lg">{item.title}</h3>
-                    <p className="text-[#d7f6ea] text-sm leading-relaxed">{item.desc}</p>
+                    <p className="text-[#d7f6ea] text-sm leading-relaxed">
+                      {item.desc}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -454,29 +459,43 @@ export default function HowItWorks() {
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-6 h-6 text-[#43d49d] flex-shrink-0 mt-0.5" />
                     <div>
-                      <h4 className="font-semibold mb-1">Secure Data Storage</h4>
-                      <p className="text-[#d7f6ea] text-sm">All fraud reports and user data stored securely in MongoDB with proper indexing and access controls.</p>
+                      <h4 className="font-semibold mb-1">
+                        Secure Data Storage
+                      </h4>
+                      <p className="text-[#d7f6ea] text-sm">
+                        All fraud reports and user data stored securely in
+                        MongoDB with proper indexing and access controls.
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-6 h-6 text-[#43d49d] flex-shrink-0 mt-0.5" />
                     <div>
                       <h4 className="font-semibold mb-1">Privacy Protection</h4>
-                      <p className="text-[#d7f6ea] text-sm">Guest submissions protect reporter identity. Only approved reports become searchable.</p>
+                      <p className="text-[#d7f6ea] text-sm">
+                        Guest submissions protect reporter identity. Only
+                        approved reports become searchable.
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-6 h-6 text-[#43d49d] flex-shrink-0 mt-0.5" />
                     <div>
                       <h4 className="font-semibold mb-1">Evidence Security</h4>
-                      <p className="text-[#d7f6ea] text-sm">Uploaded evidence files are securely stored and only accessible to authorized reviewers.</p>
+                      <p className="text-[#d7f6ea] text-sm">
+                        Uploaded evidence files are securely stored and only
+                        accessible to authorized reviewers.
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-6 h-6 text-[#43d49d] flex-shrink-0 mt-0.5" />
                     <div>
                       <h4 className="font-semibold mb-1">Access Control</h4>
-                      <p className="text-[#d7f6ea] text-sm">Middleware protection ensures only authenticated users with proper roles can access sensitive features.</p>
+                      <p className="text-[#d7f6ea] text-sm">
+                        Middleware protection ensures only authenticated users
+                        with proper roles can access sensitive features.
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -487,7 +506,10 @@ export default function HowItWorks() {
                   <Shield className="w-10 h-10 text-[#43d49d]" />
                   <div>
                     <h4 className="font-bold text-lg">Verified Platform</h4>
-                    <p className="text-[#d7f6ea] text-sm">All reports undergo manual review before being added to the database</p>
+                    <p className="text-[#d7f6ea] text-sm">
+                      All reports undergo manual review before being added to
+                      the database
+                    </p>
                   </div>
                 </div>
               </div>

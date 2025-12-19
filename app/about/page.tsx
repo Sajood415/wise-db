@@ -96,18 +96,16 @@ export default function About() {
     <div className="min-h-screen">
       {/* Hero Section */}
       <UniversalHero
-        title="About"
-        gradientText="Fraud Scan"
+        title="About Fraud Scan"
         description={
           "We're on a mission to create a safer digital world by empowering businesses and individuals to identify, report, and prevent fraudulent activities."
         }
-        badgeText={"Trusted by businesses worldwide"}
       />
 
       {/* Mission & Vision Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             {/* LEFT COLUMN: Mission and Value Propositions (Maintained Professional Look) */}
             <div>
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 border-l-4 border-[#006d5b] pl-4 leading-tight">
@@ -189,7 +187,7 @@ export default function About() {
             </div>
 
             {/* RIGHT COLUMN: Vision and Metrics (PROFESSIONAL CARD STYLE) */}
-            <div className="relative pt-8">
+            <div className="relative pt-8 mt-8">
               {/* The main card container - using slate/gray gradient for premium look */}
               <div
                 className="relative aspect-[3/2] w-full max-w-lg mx-auto rounded-3xl p-8 shadow-2xl transition-transform duration-500 hover:scale-[1.03] cursor-pointer
@@ -218,7 +216,7 @@ export default function About() {
                     </span>
                     <div className="flex items-end justify-between">
                       <span className="text-4xl font-black text-white">
-                        $50M+
+                        $1M+
                       </span>
                       {/* Visual: Progress Bar */}
                       <div className="w-1/3">
@@ -242,124 +240,117 @@ export default function About() {
         </div>
       </section>
 
-      {/* Timeline Section */}
-      <section className="py-24 bg-white">
-        <div className="max-w-5xl mx-auto px-6">
-          {/* WHO WE ARE */}
-          <div className="text-center mb-20">
-            <div className="flex justify-center items-center gap-3 mb-4">
-              <ShieldCheck className="w-14 h-14 text-[#006d5b] rotate-4" />
-              <h2 className="text-4xl font-bold text-gray-900">Who We Are</h2>
-            </div>
+      {/* Timeline section */}
+      <section className="relative py-24 bg-slate-50 overflow-hidden">
+        {/* Subtle Background Glows */}
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#006d5b]/5 rounded-full blur-[120px] -z-10" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-[120px] -z-10" />
+
+        <div className="max-w-7xl mx-auto px-6">
+          {/* Header Section */}
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 tracking-tight">
+              Who We Are
+            </h2>
             <p className="max-w-2xl mx-auto text-gray-600 text-lg leading-relaxed">
               FraudScans empowers organizations with real-time intelligence and
               advanced fraud-detection tools — built by global AML/CFT experts.
             </p>
           </div>
 
-          {/* VERTICAL CARD 1 */}
-          <div
-            className="mb-12 bg-gray-50 border border-gray-200 rounded-3xl shadow-sm 
-                    hover:shadow-xl hover:border-[#006d5b] transition-all duration-300 p-10"
-          >
-            <div className="flex items-center gap-3 mb-8">
-              <Database className="w-9 h-9 text-[#006d5b]" />
-              <h3 className="text-3xl font-semibold text-gray-900">
-                What We Do
-              </h3>
+          {/* Pro Grid Layout */}
+          <div className="grid lg:grid-cols-5 gap-8">
+            {/* Card 1: What We Do (Takes up 3/5 of grid) */}
+            <div className="lg:col-span-3 group relative bg-white border border-gray-100 rounded-[2.5rem] p-8 md:p-12 hover:shadow-sm  transition-all duration-500 overflow-hidden">
+              {/* Hover Decor */}
+              <div className="absolute -top-24 -right-24 w-48 h-48 bg-[#FFC21A]  border rounded-full group-hover:scale-150 transition-transform duration-700" />
+
+              <div className="relative z-10">
+                <div className="flex items-center gap-4 mb-10">
+                  <div className="p-3 bg-[#FFC21A] rounded-2xl shadow-lg shadow-[#006d5b]/20">
+                    <Database className="w-8 h-8 text-black" />
+                  </div>
+                  <h3 className="text-3xl font-bold text-gray-900">
+                    What We Do
+                  </h3>
+                </div>
+
+                <div className="grid md:grid-cols-1 gap-8">
+                  {[
+                    {
+                      icon: <Layers />,
+                      color: "blue",
+                      title: "Comprehensive Fraud Database",
+                      desc: "Updated intelligence on fraudulent entities and scam patterns.",
+                    },
+                    {
+                      icon: <Radar />,
+                      color: "purple",
+                      title: "Advanced Screening Tools",
+                      desc: "API-ready screening with automated monitoring and risk checks.",
+                    },
+                    {
+                      icon: <ShieldCheck />,
+                      color: "emerald",
+                      title: "Fraud Intelligence Hub",
+                      desc: "Alerts, trends, and proactive intelligence to stay ahead.",
+                    },
+                  ].map((item, i) => (
+                    <div key={i} className="flex gap-6 group/item">
+                      <div
+                        className={`flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center transition-colors duration-300 bg-${item.color}-50 text-${item.color}-600 group-hover/item:bg-${item.color}-600 group-hover/item:text-white`}
+                      >
+                        {item.icon}
+                      </div>
+                      <div>
+                        <h4 className="text-xl font-bold text-gray-900 mb-1">
+                          {item.title}
+                        </h4>
+                        <p className="text-gray-500 leading-relaxed">
+                          {item.desc}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
 
-            <div className="space-y-8">
-              <div className="flex gap-4">
-                <div className="p-3 rounded-xl bg-blue-100 text-blue-600">
-                  <Layers className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-900">
-                    Comprehensive Fraud Database
-                  </h4>
-                  <p className="text-gray-600 text-sm">
-                    Updated intelligence on fraudulent entities, scam patterns,
-                    and high-risk profiles.
-                  </p>
-                </div>
+            {/* Card 2: Why Choose Us (Takes up 2/5 of grid) */}
+            <div className="lg:col-span-2 bg-gradient-to-br from-slate-800 to-gray-900 border border-slate-700/50 rounded-[2.5rem] p-8 md:p-12 text-white shadow-xl flex flex-col justify-between relative overflow-hidden">
+              {/* Abstract pattern overlay */}
+              <div className="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-white via-transparent to-transparent" />
+
+              <div className="relative z-10">
+                <h3 className="text-3xl font-bold mb-8 flex items-center justify-between">
+                  Why Choose Us?{" "}
+                  <ShieldCheck className="h-8 w-8 text-[#FFC21A]" />
+                </h3>
+                <ul className="space-y-6">
+                  {[
+                    "Trusted by global compliance teams.",
+                    "Built on proven AML/CFT frameworks.",
+                    "Scalable for startups & enterprises.",
+                  ].map((text, i) => (
+                    <li key={i} className="flex items-start gap-3 group/li">
+                      <div className="mt-1 bg-[#FFC21A]  rounded-full group-hover/li:bg-white transition-colors">
+                        <CheckCircle2 className="w-6 h-6 text-primary" />
+                      </div>
+                      <span className="text-lg font-medium text-emerald-50">
+                        {text}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
               </div>
 
-              <div className="flex gap-4">
-                <div className="p-3 rounded-xl bg-purple-100 text-purple-600">
-                  <Radar className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-900">
-                    Advanced Screening Tools
-                  </h4>
-                  <p className="text-gray-600 text-sm">
-                    API-ready screening with automated monitoring and real-time
-                    risk checks.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex gap-4">
-                <div className="p-3 rounded-xl bg-red-100 text-red-600">
-                  <ShieldCheck className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-900">
-                    Fraud Intelligence Hub
-                  </h4>
-                  <p className="text-gray-600 text-sm">
-                    Alerts, trends, and proactive intelligence to stay ahead of
-                    threats.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <p className="text-gray-700 mt-10 text-sm">
-              Designed for fintechs, banks, MSBs, and enterprises that require
-              speed, accuracy & security.
-            </p>
-          </div>
-
-          {/* VERTICAL CARD 2 */}
-          <div
-            className="bg-gray-50 border border-gray-200 rounded-3xl shadow-sm 
-                    hover:shadow-xl hover:border-[#006d5b] transition-all duration-300 p-10"
-          >
-            <div className="flex items-center gap-3 mb-8">
-              <CheckCircle2 className="w-9 h-9 text-[#006d5b]" />
-              <h3 className="text-3xl font-semibold text-gray-900">
-                Why Choose Us?
-              </h3>
-            </div>
-
-            <div className="space-y-8">
-              <div className="flex gap-4">
-                <div className="p-3 rounded-xl bg-blue-100 text-blue-600">
-                  <CheckCircle2 className="w-5 h-5" />
-                </div>
-                <p className="text-gray-700 font-medium">
-                  Trusted by compliance teams across the globe.
+              <div className="mt-12 pt-8 border-t border-white/10 relative z-10">
+                <p className="text-[#FFC21A] text-sm italic mb-6">
+                  "Speed, accuracy, and security for modern fintechs."
                 </p>
-              </div>
-
-              <div className="flex gap-4">
-                <div className="p-3 rounded-xl bg-green-100 text-green-600">
-                  <CheckCircle2 className="w-5 h-5" />
-                </div>
-                <p className="text-gray-700 font-medium">
-                  Built on proven AML/CFT frameworks and global regulations.
-                </p>
-              </div>
-
-              <div className="flex gap-4">
-                <div className="p-3 rounded-xl bg-purple-100 text-purple-600">
-                  <CheckCircle2 className="w-5 h-5" />
-                </div>
-                <p className="text-gray-700 font-medium">
-                  Scalable for startups, SMEs, enterprises & institutions.
-                </p>
+                <Link href={"/signup"} className="btn-primary">
+                  Get Started
+                </Link>
               </div>
             </div>
           </div>
@@ -460,88 +451,6 @@ export default function About() {
           </div>
         </div>
       </section>
-      {/* <section className="py-20 bg-gradient-to-br from-[#1c2736] to-[#006d5b] text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Values</h2>
-            <p className="text-xl text-blue-100 max-w-3xl mx-auto">
-              These core values guide everything we do and shape the way we
-              serve our community.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                <svg
-                  className="w-8 h-8"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold mb-3">Security First</h3>
-              <p className="text-blue-100">
-                We prioritize the security and privacy of our users' data above
-                all else, implementing industry-leading security measures.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                <svg
-                  className="w-8 h-8"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold mb-3">Community Driven</h3>
-              <p className="text-blue-100">
-                We believe in the power of community collaboration to create
-                stronger defenses against fraud for everyone.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                <svg
-                  className="w-8 h-8"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 10V3L4 14h7v7l9-11h-7z"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold mb-3">Innovation</h3>
-              <p className="text-blue-100">
-                We continuously innovate and evolve our platform to stay ahead
-                of emerging fraud threats and techniques.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section> */}
 
       {/* CTA Section */}
       <UniversalCTA

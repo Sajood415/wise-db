@@ -1,55 +1,60 @@
-import { NextRequest, NextResponse } from 'next/server';
-import crypto from 'crypto';
-import dbConnect from '@/lib/mongodb';
-import User from '@/models/User';
-import { sendMail } from '@/lib/mailer';
+import { NextRequest, NextResponse } from "next/server";
+import crypto from "crypto";
+import dbConnect from "@/lib/mongodb";
+import User from "@/models/User";
+import { sendMail } from "@/lib/mailer";
 
 export async function POST(request: NextRequest) {
-    try {
-        await dbConnect();
+  try {
+    await dbConnect();
 
-        const { email } = await request.json();
+    const { email } = await request.json();
 
-        // Validate required fields
-        if (!email) {
-            return NextResponse.json(
-                { error: 'Please provide an email address' },
-                { status: 400 }
-            );
-        }
+    // Validate required fields
+    if (!email) {
+      return NextResponse.json(
+        { error: "Please provide an email address" },
+        { status: 400 }
+      );
+    }
 
-        // Find user by email
-        const user = await User.findOne({ email: email.toLowerCase() });
-        if (!user) {
-            // Don't reveal if email exists or not for security
-            return NextResponse.json(
-                { message: 'If an account with that email exists, we have sent a password reset link.' },
-                { status: 200 }
-            );
-        }
+    // Find user by email
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      // Don't reveal if email exists or not for security
+      return NextResponse.json(
+        {
+          message:
+            "If an account with that email exists, we have sent a password reset link.",
+        },
+        { status: 200 }
+      );
+    }
 
-        // Check if user is active
-        if (!user.isActive) {
-            return NextResponse.json(
-                { error: 'Account is deactivated. Please contact support.' },
-                { status: 400 }
-            );
-        }
+    // Check if user is active
+    if (!user.isActive) {
+      return NextResponse.json(
+        { error: "Account is deactivated. Please contact support." },
+        { status: 400 }
+      );
+    }
 
-        // Generate reset token
-        const resetToken = crypto.randomBytes(32).toString('hex');
-        const resetExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+    // Generate reset token
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const resetExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
 
-        // Save reset token to user
-        user.passwordResetToken = resetToken;
-        user.passwordResetExpires = resetExpires;
-        await user.save();
+    // Save reset token to user
+    user.passwordResetToken = resetToken;
+    user.passwordResetExpires = resetExpires;
+    await user.save();
 
-        // Create reset URL
-        const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
+    // Create reset URL
+    const resetUrl = `${
+      process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+    }/reset-password?token=${resetToken}`;
 
-        // Send email
-        const emailHtml = `
+    // Send email
+    const emailHtml = `
             <!DOCTYPE html>
             <html>
             <head>
@@ -76,7 +81,7 @@ export async function POST(request: NextRequest) {
                         <h2>Hello ${user.firstName},</h2>
                         <p>We received a request to reset your password for your Fraud Scan account.</p>
                         <p>Click the button below to reset your password:</p>
-                        <a href="${resetUrl}" class="button">Reset Password</a>
+                        <a href="${resetUrl}" class="button" style="color:#fff;">Reset Password</a>
                         <p>This link will expire in 15 minutes for security reasons.</p>
                         <p>If you didn't request this password reset, please ignore this email. Your password will remain unchanged.</p>
                         <p>For security reasons, this link can only be used once.</p>
@@ -91,22 +96,24 @@ export async function POST(request: NextRequest) {
             </html>
         `;
 
-        await sendMail({
-            to: user.email,
-            subject: 'Password Reset Request - Fraud Scan',
-            html: emailHtml
-        });
+    await sendMail({
+      to: user.email,
+      subject: "Password Reset Request - Fraud Scan",
+      html: emailHtml,
+    });
 
-        return NextResponse.json(
-            { message: 'If an account with that email exists, we have sent a password reset link.' },
-            { status: 200 }
-        );
-
-    } catch (error) {
-        console.error('Forgot password error:', error);
-        return NextResponse.json(
-            { error: 'Internal server error' },
-            { status: 500 }
-        );
-    }
+    return NextResponse.json(
+      {
+        message:
+          "If an account with that email exists, we have sent a password reset link.",
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Forgot password error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
 }
