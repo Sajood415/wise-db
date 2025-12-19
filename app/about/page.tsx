@@ -240,118 +240,99 @@ export default function About() {
         </div>
       </section>
 
-      {/* Timeline section */}
-      <section className="relative py-24 bg-slate-50 overflow-hidden">
-        {/* Subtle Background Glows */}
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#006d5b]/5 rounded-full blur-[120px] -z-10" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-[120px] -z-10" />
-
-        <div className="max-w-7xl mx-auto px-6">
-          {/* Header Section */}
+      {/* Who We Are Section */}
+      <section className="py-20 bg-[#DDE6F3]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header */}
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 tracking-tight">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Who We Are
             </h2>
-            <p className="max-w-2xl mx-auto text-gray-600 text-lg leading-relaxed">
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               FraudScans empowers organizations with real-time intelligence and
               advanced fraud-detection tools — built by global AML/CFT experts.
             </p>
           </div>
 
-          {/* Pro Grid Layout */}
-          <div className="grid lg:grid-cols-5 gap-8">
-            {/* Card 1: What We Do (Takes up 3/5 of grid) */}
-            <div className="lg:col-span-3 group relative bg-white border border-gray-100 rounded-[2.5rem] p-8 md:p-12 hover:shadow-sm  transition-all duration-500 overflow-hidden">
-              {/* Hover Decor */}
-              <div className="absolute -top-24 -right-24 w-48 h-48 bg-[#FFC21A]  border rounded-full group-hover:scale-150 transition-transform duration-700" />
-
-              <div className="relative z-10">
-                <div className="flex items-center gap-4 mb-10">
-                  <div className="p-3 bg-[#FFC21A] rounded-2xl shadow-lg shadow-[#006d5b]/20">
-                    <Database className="w-8 h-8 text-black" />
+          {/* What We Do - Cards */}
+          <div className="mb-16">
+            <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 border-l-4 border-[#006d5b] pl-4 leading-tight">What We Do</h3>
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm hover:shadow-lg hover:border-[#006d5b] transition-all duration-300 group relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#006d5b] to-[#43d49d] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="flex items-start gap-4">
+                  <div className="flex items-center justify-center w-14 h-14 bg-[#006d5b]/10 rounded-lg group-hover:bg-[#006d5b] transition-colors duration-300 shrink-0">
+                    <Layers className="w-7 h-7 text-[#006d5b] group-hover:text-white transition-colors duration-300" />
                   </div>
-                  <h3 className="text-3xl font-bold text-gray-900">
-                    What We Do
-                  </h3>
+                  <div>
+                    <h4 className="text-xl font-bold text-gray-900 mb-2">
+                      Comprehensive Fraud Database
+                    </h4>
+                    <p className="text-gray-600">
+                      Updated intelligence on fraudulent entities and scam patterns.
+                    </p>
+                  </div>
                 </div>
-
-                <div className="grid md:grid-cols-1 gap-8">
-                  {[
-                    {
-                      icon: <Layers />,
-                      color: "blue",
-                      title: "Comprehensive Fraud Database",
-                      desc: "Updated intelligence on fraudulent entities and scam patterns.",
-                    },
-                    {
-                      icon: <Radar />,
-                      color: "purple",
-                      title: "Advanced Screening Tools",
-                      desc: "API-ready screening with automated monitoring and risk checks.",
-                    },
-                    {
-                      icon: <ShieldCheck />,
-                      color: "emerald",
-                      title: "Fraud Intelligence Hub",
-                      desc: "Alerts, trends, and proactive intelligence to stay ahead.",
-                    },
-                  ].map((item, i) => (
-                    <div key={i} className="flex gap-6 group/item">
-                      <div
-                        className={`flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center transition-colors duration-300 bg-${item.color}-50 text-${item.color}-600 group-hover/item:bg-${item.color}-600 group-hover/item:text-white`}
-                      >
-                        {item.icon}
-                      </div>
-                      <div>
-                        <h4 className="text-xl font-bold text-gray-900 mb-1">
-                          {item.title}
-                        </h4>
-                        <p className="text-gray-500 leading-relaxed">
-                          {item.desc}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+              </div>
+              <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm hover:shadow-lg hover:border-[#006d5b] transition-all duration-300 group relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#006d5b] to-[#43d49d] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="flex items-start gap-4">
+                  <div className="flex items-center justify-center w-14 h-14 bg-[#006d5b]/10 rounded-lg group-hover:bg-[#006d5b] transition-colors duration-300 shrink-0">
+                    <Radar className="w-7 h-7 text-[#006d5b] group-hover:text-white transition-colors duration-300" />
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-bold text-gray-900 mb-2">
+                      Advanced Screening Tools
+                    </h4>
+                    <p className="text-gray-600">
+                      API-ready screening with automated monitoring and risk checks.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm hover:shadow-lg hover:border-[#006d5b] transition-all duration-300 group relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#006d5b] to-[#43d49d] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="flex items-start gap-4">
+                  <div className="flex items-center justify-center w-14 h-14 bg-[#006d5b]/10 rounded-lg group-hover:bg-[#006d5b] transition-colors duration-300 shrink-0">
+                    <ShieldCheck className="w-7 h-7 text-[#006d5b] group-hover:text-white transition-colors duration-300" />
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-bold text-gray-900 mb-2">
+                      Fraud Intelligence Hub
+                    </h4>
+                    <p className="text-gray-600">
+                      Alerts, trends, and proactive intelligence to stay ahead.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Card 2: Why Choose Us (Takes up 2/5 of grid) */}
-            <div className="lg:col-span-2 bg-gradient-to-br from-slate-800 to-gray-900 border border-slate-700/50 rounded-[2.5rem] p-8 md:p-12 text-white shadow-xl flex flex-col justify-between relative overflow-hidden">
-              {/* Abstract pattern overlay */}
-              <div className="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-white via-transparent to-transparent" />
-
-              <div className="relative z-10">
-                <h3 className="text-3xl font-bold mb-8 flex items-center justify-between">
-                  Why Choose Us?{" "}
-                  <ShieldCheck className="h-8 w-8 text-[#FFC21A]" />
-                </h3>
-                <ul className="space-y-6">
-                  {[
-                    "Trusted by global compliance teams.",
-                    "Built on proven AML/CFT frameworks.",
-                    "Scalable for startups & enterprises.",
-                  ].map((text, i) => (
-                    <li key={i} className="flex items-start gap-3 group/li">
-                      <div className="mt-1 bg-[#FFC21A]  rounded-full group-hover/li:bg-white transition-colors">
-                        <CheckCircle2 className="w-6 h-6 text-primary" />
-                      </div>
-                      <span className="text-lg font-medium text-emerald-50">
-                        {text}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
+          {/* Why Choose Us - Card */}
+          <div className="bg-[#006d5b] p-10 md:p-12 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group">
+            <h3 className="text-2xl md:text-3xl font-bold mb-10">Why Choose Us?</h3>
+            <div className="grid md:grid-cols-3 gap-6 mb-10">
+              <div className="p-4 rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-300 hover:translate-x-1 cursor-default">
+                <p className="text-white/95 font-medium">Trusted by global compliance teams.</p>
               </div>
-
-              <div className="mt-12 pt-8 border-t border-white/10 relative z-10">
-                <p className="text-[#FFC21A] text-sm italic mb-6">
-                  "Speed, accuracy, and security for modern fintechs."
-                </p>
-                <Link href={"/signup"} className="btn-primary">
-                  Get Started
-                </Link>
+              <div className="p-4 rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-300 hover:translate-x-1 cursor-default">
+                <p className="text-white/95 font-medium">Built on proven AML/CFT frameworks.</p>
               </div>
+              <div className="p-4 rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-300 hover:translate-x-1 cursor-default">
+                <p className="text-white/95 font-medium">Scalable for startups & enterprises.</p>
+              </div>
+            </div>
+            <div className="pt-8 border-t border-white/20">
+              <p className="text-[#FFC21A] text-lg md:text-xl italic mb-8 font-medium">
+                "Speed, accuracy, and security for modern fintechs."
+              </p>
+              <Link
+                href={"/signup"}
+                className="inline-block px-8 py-3 bg-white text-[#006d5b] font-semibold rounded-lg hover:bg-[#FFC21A] hover:text-white transform hover:scale-105 transition-all duration-300 shadow-md"
+              >
+                Get Started
+              </Link>
             </div>
           </div>
         </div>
