@@ -122,10 +122,8 @@ export async function POST(request: NextRequest) {
     const creditsPurchased = payment.creditsPurchased;
 
     if (packageType === "pay_as_you_go") {
-      // Pay-as-you-go: Add credits to searchLimit (accumulate like other plans)
-      // Use creditsPurchased specifically for pay-as-you-go (not searchesIncluded)
       const currentLimit = user.subscription.searchLimit || 0;
-      const creditsToAdd = creditsPurchased || 0; // Only use creditsPurchased for pay-as-you-go
+      const creditsToAdd = creditsPurchased || 0;
       if (creditsToAdd <= 0) {
         return NextResponse.json(
           { error: "Invalid credits purchased" },
@@ -134,10 +132,9 @@ export async function POST(request: NextRequest) {
       }
       const newLimit = currentLimit + creditsToAdd;
 
-      // Set packageEndsAt to 30 days from now (credits expire after 30 days)
       const currentDate = new Date();
       const packageEndDate = new Date(currentDate);
-      packageEndDate.setDate(packageEndDate.getDate() + 30); // 30 days from now
+      packageEndDate.setDate(packageEndDate.getDate() + 30);
 
       user.subscription = {
         ...user.subscription,
@@ -145,27 +142,27 @@ export async function POST(request: NextRequest) {
         status: "active",
         searchLimit: newLimit,
         canAccessRealData: true,
-        packageEndsAt: packageEndDate, // Credits expire after 30 days
+        packageEndsAt: packageEndDate,
+        lowQuotaNotified: false,
       };
       (user as any).packageName = "Pay As You Go";
     } else {
-      // Regular package: Set subscription with limits
-      // Calculate new package end date
       const currentDate = new Date();
       const newPackageEnd = new Date(currentDate);
       newPackageEnd.setDate(newPackageEnd.getDate() + trialExtensionDays);
 
-      // Update user subscription
       user.subscription = {
         ...user.subscription,
         type: "paid_package",
         status: "active",
         packageEndsAt: newPackageEnd,
         searchLimit: searchesIncluded,
+        searchesUsed: 0,
         canAccessRealData: true,
+        lowQuotaNotified: false,
+        expiryReminderSent: false,
       };
 
-      // Add package name to user
       (user as any).packageName = payment.packageName;
     }
 

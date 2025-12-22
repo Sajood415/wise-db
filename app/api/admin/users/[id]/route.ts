@@ -47,6 +47,20 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
         const role = request.headers.get('x-user-role') || ''
         if (role !== 'super_admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
         const { id } = await params
+
+        const userToDelete = await User.findById(id)
+        if (!userToDelete) return NextResponse.json({ error: 'User not found' }, { status: 404 })
+
+        if (userToDelete.role === 'enterprise_admin') {
+            const enterpriseUserCount = await User.countDocuments({ createdBy: id, role: 'enterprise_user' })
+            if (enterpriseUserCount > 0) {
+                return NextResponse.json(
+                    { error: `Cannot delete enterprise admin: They have ${enterpriseUserCount} active user(s). Delete the users first.` },
+                    { status: 400 }
+                )
+            }
+        }
+
         await User.findByIdAndDelete(id)
         return NextResponse.json({ ok: true })
     } catch (e) {

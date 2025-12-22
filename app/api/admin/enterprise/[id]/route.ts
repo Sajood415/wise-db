@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import dbConnect from '@/lib/mongodb'
 import EnterpriseRequest from '@/models/EnterpriseRequest'
 import EnterprisePayment from '@/models/EnterprisePayment'
+import User from '@/models/User'
 import Stripe from 'stripe'
 import { sendMail } from '@/lib/mailer'
 import { emailTemplates } from '@/lib/emailTemplates'
@@ -293,6 +294,36 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
                 })
             } catch (e) {
                 console.error('Failed to record enterprise payment:', e)
+            }
+
+            if (status === 'completed' && enterpriseAdminEmail) {
+                try {
+                    const adminUser = await User.findOne({ 
+                        email: String(enterpriseAdminEmail).toLowerCase(),
+                        role: 'enterprise_admin'
+                    })
+                    
+                    if (adminUser) {
+                        const currentDate = new Date()
+                        const newPackageEnd = new Date(currentDate)
+                        newPackageEnd.setDate(newPackageEnd.getDate() + 30)
+                        
+                        adminUser.subscription = {
+                            ...adminUser.subscription.toObject(),
+                            type: 'enterprise_package',
+                            status: 'active',
+                            searchLimit: allowanceSearches,
+                            searchesUsed: 0,
+                            canAccessRealData: true,
+                            packageEndsAt: newPackageEnd,
+                            lowQuotaNotified: false,
+                            expiryReminderSent: false,
+                        }
+                        await adminUser.save()
+                    }
+                } catch (e) {
+                    console.error('Failed to update enterprise admin subscription on manual payment:', e)
+                }
             }
 
             // If payment is completed and we have an admin email with a signup token set previously, email instructions

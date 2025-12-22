@@ -41,6 +41,7 @@ export async function middleware(request: NextRequest) {
         '/dashboard/payment/success',
         '/dashboard/payment/cancel',
         '/api/payment/enterprise/verify',
+        '/api/webhooks/stripe',
         // public uploads
         '/uploads'
     ];

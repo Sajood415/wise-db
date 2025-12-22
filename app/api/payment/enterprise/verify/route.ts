@@ -3,6 +3,7 @@ import Stripe from "stripe";
 import dbConnect from "@/lib/mongodb";
 import EnterpriseRequest from "@/models/EnterpriseRequest";
 import EnterprisePayment from "@/models/EnterprisePayment";
+import User from "@/models/User";
 import { sendMail } from "@/lib/mailer";
 import { emailTemplates } from "@/lib/emailTemplates";
 
@@ -98,6 +99,36 @@ export async function POST(request: NextRequest) {
         );
       } catch (e) {
         console.error("Failed to upsert enterprise payment (verify):", e);
+      }
+
+      if (enterpriseAdminEmail) {
+        try {
+          const adminUser = await User.findOne({ 
+            email: enterpriseAdminEmail.toLowerCase(),
+            role: 'enterprise_admin'
+          });
+          
+          if (adminUser) {
+            const currentDate = new Date();
+            const newPackageEnd = new Date(currentDate);
+            newPackageEnd.setDate(newPackageEnd.getDate() + 30);
+            
+            adminUser.subscription = {
+              ...adminUser.subscription.toObject(),
+              type: 'enterprise_package',
+              status: 'active',
+              searchLimit: allowanceSearches,
+              searchesUsed: 0,
+              canAccessRealData: true,
+              packageEndsAt: newPackageEnd,
+              lowQuotaNotified: false,
+              expiryReminderSent: false,
+            };
+            await adminUser.save();
+          }
+        } catch (e) {
+          console.error("Failed to update enterprise admin subscription on renewal:", e);
+        }
       }
 
       // If signup token exists, email the link to the enterprise admin automatically

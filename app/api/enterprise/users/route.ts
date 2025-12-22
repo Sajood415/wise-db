@@ -61,6 +61,24 @@ export async function POST(request: NextRequest) {
         const admin = await User.findById(adminId)
         if (!admin) return NextResponse.json({ error: 'Admin not found' }, { status: 404 })
 
+        const adminSub = admin.subscription || {}
+        const now = new Date()
+        const pkgEnds = adminSub.packageEndsAt ? new Date(adminSub.packageEndsAt) : undefined
+        const isPackageExpired = !!(pkgEnds && now > pkgEnds && adminSub.type !== 'free_trial')
+        
+        if (isPackageExpired) {
+            return NextResponse.json({ error: 'Your enterprise plan has expired. Renew to create users.' }, { status: 403 })
+        }
+
+        const adminLimit = typeof adminSub.searchLimit === 'number' ? adminSub.searchLimit : 0
+        const adminUsed = adminSub.searchesUsed || 0
+        const isUnlimited = adminLimit === -1
+        const remaining = isUnlimited ? -1 : Math.max(0, adminLimit - adminUsed)
+
+        if (!isUnlimited && remaining === 0) {
+            return NextResponse.json({ error: 'Your search quota is exhausted. Purchase more searches to create users.' }, { status: 403 })
+        }
+
         // Enforce allowanceUsers limit based on EnterpriseRequest
         try {
             // Find the latest paid enterprise request for this admin email
