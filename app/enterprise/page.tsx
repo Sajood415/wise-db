@@ -34,7 +34,7 @@ export default async function Enterprise({ searchParams }: { searchParams: Promi
             <p className="mt-2 text-gray-600">Thank you. Our team will reach out shortly with next steps.</p>
             {sessionId ? <VerifyOnSuccess sessionId={sessionId} /> : null}
             <div className="mt-6 flex items-center justify-center gap-3">
-              <a href="/" className="px-4 py-2 rounded-md bg-gray-900 text-white">Go to Home</a>
+              <a href="/enterprise/dashboard" className="px-4 py-2 rounded-md bg-gray-900 text-white">Go to Dashboard</a>
             </div>
           </div>
         </div>

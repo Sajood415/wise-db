@@ -82,6 +82,7 @@ export async function POST(request: NextRequest) {
           { stripeSessionId: session.id },
           {
             $set: {
+              enterpriseRequestId,
               status: "completed",
               stripePaymentIntentId: session.payment_intent
                 ? String(session.payment_intent)
@@ -93,6 +94,7 @@ export async function POST(request: NextRequest) {
               allowanceSearches,
               allowanceUsers,
               enterpriseAdminEmail,
+              metadata: metadata.source ? { source: String(metadata.source) } : undefined,
             },
           },
           { upsert: true }

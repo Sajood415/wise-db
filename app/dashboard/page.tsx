@@ -99,6 +99,7 @@ export default function DashboardPage() {
   const [searchCurrentPage, setSearchCurrentPage] = useState(1);
   const [searchStatus, setSearchStatus] = useState<SearchStatus | null>(null);
   const [auth, setAuth] = useState<{ role?: string } | null>(null);
+  const [renewingEnterprise, setRenewingEnterprise] = useState(false);
   const [usersLoading, setUsersLoading] = useState(false);
   const [enterpriseUsers, setEnterpriseUsers] = useState<any[]>([]);
   const [createUserForm, setCreateUserForm] = useState({
@@ -657,6 +658,46 @@ export default function DashboardPage() {
                 </svg>
                 <span className="font-medium">Search Database</span>
               </button>
+              {auth?.role === "enterprise_admin" && searchStatus?.type === "enterprise_package" && (
+                <button
+                  onClick={async () => {
+                    if (renewingEnterprise) return;
+                    setRenewingEnterprise(true);
+                    try {
+                      const res = await fetch("/api/payment/enterprise/create-checkout", {
+                        method: "POST",
+                        credentials: "include",
+                      });
+                      const data = await res.json().catch(() => ({}));
+                      if (!res.ok || !data?.sessionUrl) {
+                        throw new Error(data?.error || "Failed to start renewal");
+                      }
+                      window.location.href = data.sessionUrl;
+                    } catch (e: any) {
+                      showToast(e?.message || "Failed to start renewal", "error");
+                    } finally {
+                      setRenewingEnterprise(false);
+                    }
+                  }}
+                  className="w-full flex items-center gap-3 rounded-lg border border-blue-200 px-4 py-3 bg-blue-600 text-white hover:bg-blue-700 transition"
+                >
+                  <svg
+                    className="w-4 h-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M21 12a9 9 0 1 1-3-6.708" />
+                    <polyline points="21 3 21 9 15 9" />
+                  </svg>
+                  <span className="font-medium">
+                    {renewingEnterprise ? "Redirecting to payment…" : "Renew Enterprise Plan"}
+                  </span>
+                </button>
+              )}
               <button
                 onClick={() =>
                   showToast("Export will be available soon", "info")
