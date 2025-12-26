@@ -144,9 +144,6 @@ export default function TermsOfServicePage() {
                 <p>
                   <strong>Email:</strong> legal@fraudscans.com
                 </p>
-                <p>
-                  <strong>Address:</strong> [Your Company Address]
-                </p>
               </div>
             </section>
           </div>
