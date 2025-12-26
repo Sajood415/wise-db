@@ -77,10 +77,14 @@ export async function POST(req: NextRequest) {
             // Parse multipart form-data and upload files to storage
             const form = await req.formData()
 
-            // Helper to get string values
+            // Helper to get string values (trimmed, empty strings become undefined)
             const s = (key: string) => {
                 const v = form.get(key)
-                return typeof v === 'string' ? v : undefined
+                if (typeof v === 'string') {
+                    const trimmed = v.trim()
+                    return trimmed === '' ? undefined : trimmed
+                }
+                return undefined
             }
 
             // Extract fields
@@ -296,7 +300,9 @@ export async function POST(req: NextRequest) {
                     email: reporterEmail || '',
                     phone: reporterPhone || undefined,
                 }
-                : undefined,
+                : (reporterPhone ? {
+                    phone: reporterPhone,
+                } : undefined),
             evidence: {
                 screenshots: screenshots,
                 documents: documents,

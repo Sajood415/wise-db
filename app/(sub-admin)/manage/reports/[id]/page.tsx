@@ -877,13 +877,15 @@ export default function ReportDetailPage() {
               />
             ) : (
                           <p className="mt-1 text-sm text-gray-900">
-              {report.submittedBy ? 
-                (() => {
-                  const user = report.submittedBy as any
-                  if (typeof user === 'string') return user
-                  return user.phone || 'N/A'
-                })()
-                : (report.guestSubmission?.phone || 'N/A')
+              {report.guestSubmission?.phone || 
+                (report.submittedBy ? 
+                  (() => {
+                    const user = report.submittedBy as any
+                    if (typeof user === 'string') return 'N/A'
+                    return user.phone || 'N/A'
+                  })()
+                  : 'N/A'
+                )
               }
             </p>
             )}

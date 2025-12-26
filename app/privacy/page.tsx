@@ -117,9 +117,6 @@ export default function PrivacyPolicyPage() {
                 <p>
                   <strong>Email:</strong> privacy@fraudscans.com
                 </p>
-                <p>
-                  <strong>Address:</strong> [Your Company Address]
-                </p>
               </div>
             </section>
           </div>
