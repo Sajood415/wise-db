@@ -8,7 +8,6 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
   const pathname = usePathname();
 
@@ -39,7 +38,7 @@ const Header = () => {
     }
   };
 
-  // Check authentication status on component mount
+  // Check authentication status on component mount (non-blocking)
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -58,44 +57,11 @@ const Header = () => {
       } catch (error) {
         setIsLoggedIn(false);
         setUserRole(null);
-      } finally {
-        setIsLoading(false);
       }
     };
 
     checkAuth();
   }, []);
-
-  // Don't render until we know auth status
-  if (isLoading) {
-    return (
-      <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ease-in-out ${
-          isHovered ? "bg-[#1c2736]" : "bg-white border-b border-gray-100"
-        }`}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-[68px]">
-            <div className="flex-shrink-0">
-              {/* Logo */}
-              <div className="">
-                <Link href="/" className="">
-                  <div className="logo md:w-12 md:h-12 h-10 w-10 flex items-center justify-center">
-                    <img
-                      src={isHovered ? "/logo2.png" : "/logo.png"}
-                      alt="logo"
-                    />
-                  </div>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </nav>
-      </header>
-    );
-  }
 
   return (
     <header
@@ -113,9 +79,9 @@ const Header = () => {
           <div className="">
             <Link href="/" className="">
               <div
-                className={`logo md:w-16 md:h-16 h-12 w-12 flex items-center justify-center`}
+                className={`logo md:w-24 md:h-24 h-20 w-20 flex items-center justify-center`}
               >
-                <img src={isHovered ? "/logo2.png" : "/logo.png"} alt="logo" />
+                <img src={isHovered ? "/logos/logo-with-hover.png" : "/logos/logo-without-hover.png"} alt="logo" />
               </div>
             </Link>
           </div>

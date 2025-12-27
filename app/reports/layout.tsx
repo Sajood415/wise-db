@@ -77,7 +77,7 @@ const DashboardHeader = ({
   }
 
   return (
-    <header className="bg-white border-b border-gray-200 px-6 py-4">
+    <header className="bg-white border-b border-gray-200 px-4 py-2">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           {pathname !== homePath && (
@@ -110,8 +110,8 @@ const DashboardHeader = ({
             </Link>
           )}
           <Link href={"/"}>
-            <div className="md:h-16 md:w-16 h-12 w-12">
-              <img src="/logo.png" alt="logo" />
+            <div className="md:h-24 md:w-24 h-20 w-20 flex items-center">
+              <img src="/logos/logo-without-hover.png" alt="logo" className="w-full h-full object-contain" />
             </div>
           </Link>
         </div>

@@ -698,7 +698,7 @@ export default function DashboardPage() {
                   </span>
                 </button>
               )}
-              <button
+              {/* <button
                 onClick={() =>
                   showToast("Export will be available soon", "info")
                 }
@@ -718,7 +718,7 @@ export default function DashboardPage() {
                   <line x1="12" y1="15" x2="12" y2="3" />
                 </svg>
                 <span className="font-medium">Export My Data</span>
-              </button>
+              </button> */}
             </div>
           </section>
 

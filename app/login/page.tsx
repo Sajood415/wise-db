@@ -69,8 +69,8 @@ function LoginPageInner() {
     <div className="min-h-screen bg-gradient-to-br from-[#1c2736] via-[#006d5b]/10 to-[#43d49d]/5 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-[#006d5b] rounded-lg mb-4 shadow-sm">
-            <span className="text-white font-bold text-sm">FS</span>
+          <div className="inline-flex items-center justify-center mb-4">
+            <img src="/logos/icon-light.png" alt="Fraud Scan Logo" className="w-20 h-20" />
           </div>
           <h2 className="text-3xl font-bold text-white mb-2">Welcome Back</h2>
           <p className="text-gray-200">Sign in to your Fraud Scan account</p>
