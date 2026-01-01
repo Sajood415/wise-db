@@ -187,42 +187,42 @@ export default function About() {
             </div>
 
             {/* RIGHT COLUMN: Vision and Metrics (PROFESSIONAL CARD STYLE) */}
-            <div className="relative pt-8 mt-8">
+            <div className="relative pt-8 mt-8 md:pb-2 pb-4">
               {/* The main card container - using slate/gray gradient for premium look */}
               <div
                 className="relative aspect-[3/2] w-full max-w-lg mx-auto rounded-3xl p-8 shadow-2xl transition-transform duration-500 hover:scale-[1.03] cursor-pointer
               bg-gradient-to-br from-slate-800 to-gray-900 border border-slate-700/50"
               >
                 {/* Card Title/Logo Spot */}
-                <div className="flex items-center justify-between mb-8">
-                  <h3 className="text-2xl font-extrabold text-white uppercase tracking-widest">
+                <div className="flex items-center justify-between mb-4 sm:mb-6 md:mb-8">
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-extrabold text-white uppercase tracking-wider">
                     Fraud Scan <span className="text-[#43d49d]">VISION</span>
                   </h3>
                   {/* Visual Accent: Brand Logo/Chip Icon */}
-                  <ShieldCheck className="w-8 h-8 text-[#43d49d] transform rotate-12" />
+                  <ShieldCheck className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-[#43d49d] transform rotate-12" />
                 </div>
 
                 {/* Vision Statement */}
-                <p className="text-white/80 mb-6 text-lg font-medium">
+                <p className="text-white/80 mb-4 sm:mb-6 text-sm sm:text-base md:text-lg font-medium">
                   Our vision is the elimination of digital fraud worldwide
                   through **collaborative intelligence**.
                 </p>
 
                 {/* Key Metric Card - Embedded for Security Look */}
-                <div className="absolute bottom-8 left-8 right-8">
-                  <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-                    <span className="text-xs uppercase tracking-widest text-white/70 block mb-1">
+                <div className="absolute bottom-3 sm:bottom-6 md:bottom-8 left-4 sm:left-6 md:left-8 right-4 sm:right-6 md:right-8">
+                  <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 sm:p-4 border border-white/20">
+                    <span className="text-xs uppercase tracking-widest text-white/70 block mb-1 sm:mb-2 mt-2">
                       Fraud Prevented
                     </span>
                     <div className="flex items-end justify-between">
-                      <span className="text-4xl font-black text-white">
+                      <span className="text-2xl sm:text-3xl md:text-4xl font-black text-white">
                         $1M+
                       </span>
                       {/* Visual: Progress Bar */}
-                      <div className="w-1/3">
-                        <div className="w-full bg-white/30 rounded-full h-2 mb-1">
+                      <div className="w-1/4 sm:w-1/3">
+                        <div className="w-full bg-white/30 rounded-full h-1.5 sm:h-2 mb-1">
                           <div
-                            className="bg-[#43d49d] rounded-full h-2 shadow-inner"
+                            className="bg-[#43d49d] rounded-full h-1.5 sm:h-2 shadow-inner"
                             style={{ width: "75%" }}
                           ></div>
                         </div>
@@ -232,8 +232,8 @@ export default function About() {
                 </div>
 
                 {/* Decorative Card Elements (like an RFID chip or hologram) */}
-                <div className="absolute top-4 left-4 w-12 h-12 bg-[#43d49d]/50 rounded-lg blur-sm opacity-50"></div>
-                <div className="absolute top-6 right-6 w-16 h-8 bg-white/10 rounded-full blur-xs opacity-50"></div>
+                <div className="absolute top-2 sm:top-3 md:top-4 left-2 sm:left-3 md:left-4 w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-[#43d49d]/50 rounded-lg blur-sm opacity-50"></div>
+                <div className="absolute top-3 sm:top-4 md:top-6 right-3 sm:right-4 md:right-6 w-12 h-6 sm:w-14 sm:h-7 md:w-16 md:h-8 bg-white/10 rounded-full blur-xs opacity-50"></div>
               </div>
             </div>
           </div>
@@ -256,7 +256,9 @@ export default function About() {
 
           {/* What We Do - Cards */}
           <div className="mb-16">
-            <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 border-l-4 border-[#006d5b] pl-4 leading-tight">What We Do</h3>
+            <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 border-l-4 border-[#006d5b] pl-4 leading-tight">
+              What We Do
+            </h3>
             <div className="grid md:grid-cols-3 gap-6">
               <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm hover:shadow-lg hover:border-[#006d5b] transition-all duration-300 group relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#006d5b] to-[#43d49d] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -269,7 +271,8 @@ export default function About() {
                       Comprehensive Fraud Database
                     </h4>
                     <p className="text-gray-600">
-                      Updated intelligence on fraudulent entities and scam patterns.
+                      Updated intelligence on fraudulent entities and scam
+                      patterns.
                     </p>
                   </div>
                 </div>
@@ -285,7 +288,8 @@ export default function About() {
                       Advanced Screening Tools
                     </h4>
                     <p className="text-gray-600">
-                      API-ready screening with automated monitoring and risk checks.
+                      API-ready screening with automated monitoring and risk
+                      checks.
                     </p>
                   </div>
                 </div>
@@ -311,16 +315,24 @@ export default function About() {
 
           {/* Why Choose Us - Card */}
           <div className="bg-[#006d5b] p-10 md:p-12 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group">
-            <h3 className="text-2xl md:text-3xl font-bold mb-10">Why Choose Us?</h3>
+            <h3 className="text-2xl md:text-3xl font-bold mb-10">
+              Why Choose Us?
+            </h3>
             <div className="grid md:grid-cols-3 gap-6 mb-10">
               <div className="p-4 rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-300 hover:translate-x-1 cursor-default">
-                <p className="text-white/95 font-medium">Trusted by global compliance teams.</p>
+                <p className="text-white/95 font-medium">
+                  Trusted by global compliance teams.
+                </p>
               </div>
               <div className="p-4 rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-300 hover:translate-x-1 cursor-default">
-                <p className="text-white/95 font-medium">Built on proven AML/CFT frameworks.</p>
+                <p className="text-white/95 font-medium">
+                  Built on proven AML/CFT frameworks.
+                </p>
               </div>
               <div className="p-4 rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-300 hover:translate-x-1 cursor-default">
-                <p className="text-white/95 font-medium">Scalable for startups & enterprises.</p>
+                <p className="text-white/95 font-medium">
+                  Scalable for startups & enterprises.
+                </p>
               </div>
             </div>
             <div className="pt-8 border-t border-white/20">
