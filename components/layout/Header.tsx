@@ -18,6 +18,7 @@ const Header = () => {
     { name: "How It Works", href: "/how-it-works" },
     { name: "Report Fraud", href: "/report-fraud" },
     { name: "Contact", href: "/help" },
+    { name: "Pricing", href: "/pricing" },
   ];
 
   // Get dashboard path based on user role
@@ -81,7 +82,14 @@ const Header = () => {
               <div
                 className={`logo md:w-24 md:h-24 h-20 w-20 flex items-center justify-center`}
               >
-                <img src={isHovered ? "/logos/logo-with-hover.png" : "/logos/logo-without-hover.png"} alt="logo" />
+                <img
+                  src={
+                    isHovered
+                      ? "/logos/logo-with-hover.png"
+                      : "/logos/logo-without-hover.png"
+                  }
+                  alt="logo"
+                />
               </div>
             </Link>
           </div>
