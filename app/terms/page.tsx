@@ -1,7 +1,3 @@
-"use client";
-
-import UniversalHero from "@/components/ui/UniversalHero";
-
 export default function TermsOfServicePage() {
   const sections = [
     {
@@ -25,7 +21,8 @@ export default function TermsOfServicePage() {
     {
       id: "services",
       title: "4. Services Overview",
-      content: null,
+      content:
+        "Our platform provides comprehensive fraud prevention and intelligence services:",
       subItems: [
         "Fraud Reporting: Users can submit fraud reports (including evidence). Anonymous reporting is available; however, certain features may require registration.",
         "Verification & Search: Registered users may query our database for real-time verification and risk indicators.",
@@ -140,97 +137,87 @@ export default function TermsOfServicePage() {
     },
     {
       id: "contact",
-      title: "18. Contact",
+      title: "18. Contact Us",
       content:
         "Questions about these Terms or privacy practices? Contact us via Contact page in Site footer.",
     },
   ];
 
   return (
-    <>
-      <UniversalHero
-        title="Terms and Conditions"
-        description="Please read these terms carefully before using our platform."
-      />
+    <div className="min-h-screen bg-gray-50 pb-16">
+      {/* Header Section */}
+      <div className="bg-primary py-20 shadow-lg">
+        <h1 className="text-center text-4xl font-bold text-white tracking-wide">
+          Terms and Conditions
+        </h1>
+      </div>
 
-      <div className="min-h-screen bg-gray-50 py-12">
-        <div className="max-w-4xl mx-auto px-6">
-          {/* Header Info */}
-          <div className="bg-white rounded-2xl shadow-lg p-8 mb-8 border border-gray-100">
-            <div className="text-center">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                FraudScans – Terms and Conditions
-              </h1>
-              <p className="text-gray-600">Last updated: 5 January 2026</p>
-            </div>
-          </div>
+      {/* Content Container */}
+      <div className="max-w-4xl mx-auto px-6 pt-8">
+        <div className="bg-white rounded-2xl shadow-xl p-10 border border-gray-100">
+          <div className="space-y-10">
+            {sections.map((section) => (
+              <section key={section.id} id={section.id} className="scroll-mt-4">
+                <h2 className="text-2xl font-semibold text-gray-900 mb-3">
+                  {section.title}
+                </h2>
 
-          {/* Content */}
-          <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12 border border-gray-100">
-            <div className="space-y-12">
-              {sections.map((section) => (
-                <section
-                  key={section.id}
-                  id={section.id}
-                  className="scroll-mt-4"
-                >
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6 pb-3 border-b border-gray-200">
-                    {section.title}
-                  </h2>
+                <div className="space-y-4">
+                  {section.content && (
+                    <p className="text-gray-700 leading-relaxed">
+                      {section.content}
+                    </p>
+                  )}
 
-                  <div className="space-y-4">
-                    {section.content && (
-                      <p className="text-gray-700 leading-relaxed text-lg">
-                        {section.content}
-                      </p>
-                    )}
+                  {section.subItems && (
+                    <div className="space-y-3">
+                      {section.subItems.map((item, index) => (
+                        <div key={index} className="ml-4">
+                          {typeof item === "object" ? (
+                            <div>
+                              <h4 className="font-semibold text-gray-900 mb-2">
+                                {item.title}
+                              </h4>
+                              <p className="text-gray-700 leading-relaxed">
+                                {item.content}
+                              </p>
+                            </div>
+                          ) : (
+                            <div className="flex items-start">
+                              <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 mr-3 shrink-0"></div>
+                              <p className="text-gray-700 leading-relaxed">
+                                {item}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </section>
+            ))}
 
-                    {section.subItems && (
-                      <div className="space-y-4">
-                        {section.subItems.map((item, index) => (
-                          <div key={index} className="ml-4">
-                            {typeof item === "object" ? (
-                              <div>
-                                <h4 className="font-semibold text-gray-900 mb-2">
-                                  {item.title}
-                                </h4>
-                                <p className="text-gray-700 leading-relaxed">
-                                  {item.content}
-                                </p>
-                              </div>
-                            ) : (
-                              <div className="flex items-start">
-                                <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 mr-3 shrink-0"></div>
-                                <p className="text-gray-700 leading-relaxed">
-                                  {item}
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </section>
-              ))}
-            </div>
+            {/* Contact Section */}
+            <section className="pt-6 border-t border-gray-200">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-3">
+                Need Help?
+              </h2>
+              <p className="text-gray-700 mb-4">
+                If you have any questions about these Terms and Conditions or
+                our privacy practices, please don't hesitate to contact us
+                through the contact page in the site footer.
+              </p>
 
-            {/* Footer Note */}
-            <div className="mt-16 pt-8 border-t border-gray-200">
-              <div className="bg-blue-50 rounded-xl p-6 border border-blue-100">
-                <h3 className="text-lg font-semibold text-blue-900 mb-2">
-                  Need Help?
-                </h3>
-                <p className="text-blue-800">
-                  If you have any questions about these Terms and Conditions or
-                  our privacy practices, please don't hesitate to contact us
-                  through the contact page in the site footer.
+              <div className="bg-secondary/10 p-5 rounded-xl border border-secondary/40 text-gray-700">
+                <p>
+                  <strong>Email:</strong> support@fraudscans.com
                 </p>
               </div>
-            </div>
+            </section>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

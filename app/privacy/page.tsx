@@ -1,18 +1,15 @@
 export default function PrivacyPolicyPage() {
   return (
-    <div className="min-h-screen bg-gray-50 py-16">
+    <div className="min-h-screen bg-gray-50 pb-16">
       {/* Header Section */}
       <div className="bg-primary py-20 shadow-lg">
         <h1 className="text-center text-4xl font-bold text-white tracking-wide">
           Privacy Policy
         </h1>
-        <p className="text-center text-blue-100 mt-3 text-lg">
-          Last Updated: January 2025
-        </p>
       </div>
 
       {/* Content Container */}
-      <div className="max-w-4xl mx-auto px-6 -mt-12">
+      <div className="max-w-4xl mx-auto px-6 pt-8">
         <div className="bg-white rounded-2xl shadow-xl p-10 border border-gray-100">
           <div className="space-y-10">
             {/* Section 1 */}
