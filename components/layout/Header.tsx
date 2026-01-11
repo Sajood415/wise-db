@@ -80,7 +80,7 @@ const Header = () => {
           <div className="">
             <Link href="/" className="">
               <div
-                className={`logo md:w-24 md:h-24 h-20 w-20 flex items-center justify-center`}
+                className={`logo md:w-26 md:h-26 h-22 w-22 flex items-center justify-center`}
               >
                 <img
                   src={
@@ -96,7 +96,7 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:block">
-            <div className="ml-6 flex items-baseline space-x-8">
+            <div className="ml-4 flex items-baseline space-x-4">
               {navigation.map((item) => {
                 const isActive = pathname === item.href;
                 return (
