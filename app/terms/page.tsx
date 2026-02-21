@@ -211,7 +211,7 @@ export default function TermsOfServicePage() {
 
               <div className="bg-secondary/10 p-5 rounded-xl border border-secondary/40 text-gray-700">
                 <p>
-                  <strong>Email:</strong> support@fraudscans.com
+                  <strong>Email:</strong> contact.fraudscans@gmail.com
                 </p>
               </div>
             </section>

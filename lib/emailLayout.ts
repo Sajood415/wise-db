@@ -69,7 +69,7 @@ export function buildEmailLayout(args: {
   const title = escHtml(args.title)
   const alertType = args.alertType
 
-  const supportEmail = (process.env.SMTP_USER || 'support@fraudscans.com').trim()
+  const supportEmail = (process.env.SMTP_USER || 'contact.fraudscans@gmail.com').trim()
   const websiteUrl = 'https://fraudscans.com'
 
   const alertBorder = alertType === 'error' ? BRAND.error : BRAND.primary
