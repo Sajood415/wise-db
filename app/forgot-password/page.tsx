@@ -4,16 +4,24 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useToast } from '@/contexts/ToastContext'
+import { RecaptchaWidget } from '@/components/ui/RecaptchaWidget'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
   const { showToast } = useToast()
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!recaptchaToken) {
+      showToast('Please complete the reCAPTCHA challenge.', 'error')
+      return
+    }
+
     setLoading(true)
     
     try {
@@ -22,18 +30,21 @@ export default function ForgotPasswordPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, recaptchaToken }),
       })
 
       const data = await response.json()
 
       if (response.ok) {
         setSuccess(true)
+        try { setRecaptchaToken(null) } catch {}
         showToast('Password reset link sent to your email', 'success')
       } else {
+        try { setRecaptchaToken(null) } catch {}
         showToast(data.error || 'Failed to send reset link', 'error')
       }
     } catch (error) {
+      try { setRecaptchaToken(null) } catch {}
       showToast('Network error. Please try again.', 'error')
     } finally {
       setLoading(false)
@@ -124,9 +135,15 @@ export default function ForgotPasswordPage() {
               />
             </div>
 
+            <RecaptchaWidget
+              value={recaptchaToken}
+              onChange={setRecaptchaToken}
+              className="flex justify-center"
+            />
+
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !recaptchaToken}
               className="btn-primary w-full py-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (

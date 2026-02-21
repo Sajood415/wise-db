@@ -3,12 +3,11 @@ import crypto from "crypto";
 import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 import { sendMail } from "@/lib/mailer";
+import { verifyRecaptchaToken } from "@/lib/recaptcha";
 
 export async function POST(request: NextRequest) {
   try {
-    await dbConnect();
-
-    const { email } = await request.json();
+    const { email, recaptchaToken } = await request.json();
 
     // Validate required fields
     if (!email) {
@@ -17,6 +16,16 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    const captcha = await verifyRecaptchaToken(recaptchaToken);
+    if (!captcha.ok) {
+      return NextResponse.json(
+        { error: "reCAPTCHA verification failed" },
+        { status: 400 }
+      );
+    }
+
+    await dbConnect();
 
     // Find user by email
     const user = await User.findOne({ email: email.toLowerCase() });

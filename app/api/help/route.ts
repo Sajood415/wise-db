@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import dbConnect from '@/lib/mongodb'
 import HelpRequest from '@/models/HelpRequest'
+import { verifyRecaptchaToken } from '@/lib/recaptcha'
 
 export async function POST(request: NextRequest) {
     try {
-        await dbConnect()
-
         const body = await request.json()
-        const { name, email, subject, issueType, message } = body
+        const { name, email, subject, issueType, message, recaptchaToken } = body
 
         // Validate required fields
         if (!name || !email || !subject || !issueType || !message) {
@@ -16,6 +15,13 @@ export async function POST(request: NextRequest) {
                 { status: 400 }
             )
         }
+
+        const captcha = await verifyRecaptchaToken(recaptchaToken)
+        if (!captcha.ok) {
+            return NextResponse.json({ error: 'reCAPTCHA verification failed' }, { status: 400 })
+        }
+
+        await dbConnect()
 
         // Validate email format
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/

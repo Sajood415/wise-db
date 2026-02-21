@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useToast } from "@/contexts/ToastContext";
+import { RecaptchaWidget } from "@/components/ui/RecaptchaWidget";
 
 export default function EnterpriseForm() {
   const { showToast } = useToast();
@@ -19,6 +20,7 @@ export default function EnterpriseForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [searchesRangeLabel, setSearchesRangeLabel] = useState("");
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
 
   const industries = [
     "Financial Services",
@@ -85,19 +87,25 @@ export default function EnterpriseForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
+    if (!recaptchaToken) {
+      showToast("Please complete the reCAPTCHA challenge.", "error");
+      return;
+    }
     try {
       setSubmitting(true);
       const res = await fetch("/api/enterprise", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, recaptchaToken }),
       });
       const data = await res.json();
       if (!res.ok) {
+        try { setRecaptchaToken(null); } catch {}
         showToast(data.error || "Submission failed", "error");
         return;
       }
       showToast("Request submitted successfully. We will contact you soon.", "success");
+      try { setRecaptchaToken(null); } catch {}
       setFormData({
         companyName: "",
         contactName: "",
@@ -111,6 +119,7 @@ export default function EnterpriseForm() {
       });
       setErrors({});
     } catch (err) {
+      try { setRecaptchaToken(null); } catch {}
       showToast("Network error. Please try again.", "error");
     } finally {
       setSubmitting(false);
@@ -353,10 +362,16 @@ export default function EnterpriseForm() {
           </p>
         </div>
 
+        <RecaptchaWidget
+          value={recaptchaToken}
+          onChange={setRecaptchaToken}
+          className="flex justify-center sm:justify-start"
+        />
+
         <div className="flex flex-col sm:flex-row gap-4 pt-6">
           <button
             type="submit"
-            disabled={submitting}
+            disabled={submitting || !recaptchaToken}
             className={`btn-primary flex-1 sm:flex-initial px-8 py-3 ${submitting ? "opacity-70 cursor-not-allowed" : ""}`}
           >
             {submitting ? (

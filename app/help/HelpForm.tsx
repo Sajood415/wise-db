@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useToast } from "@/contexts/ToastContext";
+import { RecaptchaWidget } from "@/components/ui/RecaptchaWidget";
 
 export default function HelpForm() {
   const { showToast } = useToast();
@@ -16,6 +17,7 @@ export default function HelpForm() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
 
   const issueTypes = [
     "General Question",
@@ -87,6 +89,11 @@ export default function HelpForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!recaptchaToken) {
+      showToast("Please complete the reCAPTCHA challenge.", "error");
+      return;
+    }
     
     // Validate all fields
     const newErrors: Record<string, string> = {};
@@ -110,13 +117,14 @@ export default function HelpForm() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, recaptchaToken }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
         showToast("Help request submitted successfully! We'll get back to you within 24 hours.", "success");
+        try { setRecaptchaToken(null); } catch {}
         // Reset form
         setFormData({
           name: "",
@@ -127,10 +135,12 @@ export default function HelpForm() {
         });
         setErrors({});
       } else {
+        try { setRecaptchaToken(null); } catch {}
         showToast(data.error || "Failed to submit help request. Please try again.", "error");
       }
     } catch (error) {
       console.error("Error submitting help request:", error);
+      try { setRecaptchaToken(null); } catch {}
       showToast("Network error. Please check your connection and try again.", "error");
     } finally {
       setIsSubmitting(false);
@@ -291,10 +301,16 @@ export default function HelpForm() {
           </div>
         </div>
 
+        <RecaptchaWidget
+          value={recaptchaToken}
+          onChange={setRecaptchaToken}
+          className="flex justify-center sm:justify-start"
+        />
+
         <div className="flex flex-col sm:flex-row gap-4 pt-6">
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !recaptchaToken}
             className="btn-primary flex-1 sm:flex-initial px-8 py-3 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? (

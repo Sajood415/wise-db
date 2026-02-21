@@ -2,12 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
+import { verifyRecaptchaToken } from '@/lib/recaptcha';
 
 export async function POST(request: NextRequest) {
     try {
-        await dbConnect();
-
-        const { firstName, lastName, email, password, company } = await request.json();
+        const { firstName, lastName, email, password, company, recaptchaToken } = await request.json();
 
         // Validate required fields
         if (!firstName || !lastName || !email || !password) {
@@ -16,6 +15,13 @@ export async function POST(request: NextRequest) {
                 { status: 400 }
             );
         }
+
+        const captcha = await verifyRecaptchaToken(recaptchaToken)
+        if (!captcha.ok) {
+            return NextResponse.json({ error: 'reCAPTCHA verification failed' }, { status: 400 })
+        }
+
+        await dbConnect();
 
         // Check if user already exists
         const existingUser = await User.findOne({ email: email.toLowerCase() });

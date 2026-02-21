@@ -3,15 +3,22 @@ import bcrypt from 'bcryptjs'
 import dbConnect from '@/lib/mongodb'
 import User from '@/models/User'
 import EnterpriseRequest from '@/models/EnterpriseRequest'
+import { verifyRecaptchaToken } from '@/lib/recaptcha'
 
 export async function POST(request: NextRequest) {
     try {
-        await dbConnect()
-        const { enterprise, token, email, firstName, lastName, password } = await request.json()
+        const { enterprise, token, email, firstName, lastName, password, recaptchaToken } = await request.json()
 
         if (!enterprise || !token || !email || !firstName || !lastName || !password) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
         }
+
+        const captcha = await verifyRecaptchaToken(recaptchaToken)
+        if (!captcha.ok) {
+            return NextResponse.json({ error: 'reCAPTCHA verification failed' }, { status: 400 })
+        }
+
+        await dbConnect()
 
         const er: any = await EnterpriseRequest.findById(enterprise).lean()
         if (!er) return NextResponse.json({ error: 'Invalid enterprise link' }, { status: 400 })

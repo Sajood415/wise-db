@@ -3,12 +3,11 @@ import bcrypt from 'bcryptjs';
 import { SignJWT } from 'jose';
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
+import { verifyRecaptchaToken } from '@/lib/recaptcha';
 
 export async function POST(request: NextRequest) {
     try {
-        await dbConnect();
-
-        const { email, password } = await request.json();
+        const { email, password, recaptchaToken } = await request.json();
 
         // Validate required fields
         if (!email || !password) {
@@ -17,6 +16,13 @@ export async function POST(request: NextRequest) {
                 { status: 400 }
             );
         }
+
+        const captcha = await verifyRecaptchaToken(recaptchaToken)
+        if (!captcha.ok) {
+            return NextResponse.json({ error: 'reCAPTCHA verification failed' }, { status: 400 })
+        }
+
+        await dbConnect();
 
         // Find user by email
         const user = await User.findOne({ email: email.toLowerCase() });

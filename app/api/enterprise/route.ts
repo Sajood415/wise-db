@@ -3,10 +3,10 @@ import dbConnect from "@/lib/mongodb";
 import EnterpriseRequest from "@/models/EnterpriseRequest";
 import { sendMail } from "@/lib/mailer";
 import { emailTemplates } from "@/lib/emailTemplates";
+import { verifyRecaptchaToken } from "@/lib/recaptcha";
 
 export async function POST(req: NextRequest) {
   try {
-    await dbConnect();
     const body = await req.json();
     const {
       companyName,
@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
       numberOfUsers,
       whenNeeded,
       message,
+      recaptchaToken,
     } = body || {};
 
     if (
@@ -35,6 +36,16 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+
+    const captcha = await verifyRecaptchaToken(recaptchaToken);
+    if (!captcha.ok) {
+      return NextResponse.json(
+        { error: "reCAPTCHA verification failed" },
+        { status: 400 }
+      );
+    }
+
+    await dbConnect();
 
     // Ensure each email can submit only one enterprise request
     const existingRequest = await EnterpriseRequest.findOne({

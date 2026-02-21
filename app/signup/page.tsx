@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useToast } from '@/contexts/ToastContext'
 import { useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { RecaptchaWidget } from '@/components/ui/RecaptchaWidget'
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -20,6 +21,7 @@ export default function SignupPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
   const router = useRouter()
   const { showToast } = useToast()
   const params = useSearchParams()
@@ -35,6 +37,11 @@ export default function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+
+    if (!recaptchaToken) {
+      setError('Please complete the reCAPTCHA challenge')
+      return
+    }
     
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match')
@@ -57,12 +64,14 @@ export default function SignupPage() {
         firstName: formData.firstName,
         lastName: formData.lastName,
         password: formData.password,
+        recaptchaToken,
       } : {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
         password: formData.password,
-        company: formData.company
+        company: formData.company,
+        recaptchaToken,
       }
       const response = await fetch(endpoint, {
         method: 'POST',
@@ -76,11 +85,14 @@ export default function SignupPage() {
 
       if (response.ok) {
         showToast('Account created successfully! Please login.', 'success')
+        try { setRecaptchaToken(null) } catch {}
         router.push('/login')
       } else {
+        try { setRecaptchaToken(null) } catch {}
         setError(data.error || 'Something went wrong')
       }
     } catch (error) {
+      try { setRecaptchaToken(null) } catch {}
       setError('Network error. Please try again.')
     } finally {
       setLoading(false)
@@ -244,9 +256,15 @@ export default function SignupPage() {
               </div>
             </div>
 
+            <RecaptchaWidget
+              value={recaptchaToken}
+              onChange={setRecaptchaToken}
+              className="flex justify-center"
+            />
+
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !recaptchaToken}
               className="btn-primary w-full py-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (

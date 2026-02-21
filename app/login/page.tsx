@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useToast } from '@/contexts/ToastContext'
+import { RecaptchaWidget } from '@/components/ui/RecaptchaWidget'
 
 function LoginPageInner() {
   const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ function LoginPageInner() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
   const router = useRouter()
   const searchParams = useSearchParams()
   const { showToast } = useToast()
@@ -28,6 +30,12 @@ function LoginPageInner() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+
+    if (!recaptchaToken) {
+      showToast('Please complete the reCAPTCHA challenge.', 'error')
+      return
+    }
+
     setLoading(true)
     
     try {
@@ -36,13 +44,14 @@ function LoginPageInner() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, recaptchaToken }),
       })
 
       const data = await response.json()
 
       if (response.ok) {
         showToast('Login successful!', 'success')
+        try { setRecaptchaToken(null) } catch {}
         
         // Redirect based on user role
         if (data.user.role === 'super_admin') {
@@ -56,9 +65,11 @@ function LoginPageInner() {
           router.push(redirectTo)
         }
       } else {
+        try { setRecaptchaToken(null) } catch {}
         showToast(data.error || 'Login failed', 'error')
       }
     } catch (error) {
+      try { setRecaptchaToken(null) } catch {}
       showToast('Network error. Please try again.', 'error')
     } finally {
       setLoading(false)
@@ -137,9 +148,15 @@ function LoginPageInner() {
               </div>
             </div>
 
+            <RecaptchaWidget
+              value={recaptchaToken}
+              onChange={setRecaptchaToken}
+              className="flex justify-center"
+            />
+
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !recaptchaToken}
               className="btn-primary w-full py-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
