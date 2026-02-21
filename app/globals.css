@@ -60,6 +60,30 @@ body {
   font-family: Inter, sans-serif;
 }
 
+/* Pointer cursor for buttons, links, and interactive elements */
+button,
+a,
+[role="button"],
+[role="link"],
+input[type="submit"],
+input[type="button"],
+input[type="reset"],
+input[type="checkbox"],
+input[type="radio"],
+select,
+summary,
+label[for],
+[tabindex]:not([tabindex="-1"]) {
+  cursor: pointer;
+}
+
+/* Disabled elements keep not-allowed when explicitly set */
+button:disabled,
+input:disabled,
+select:disabled {
+  cursor: not-allowed;
+}
+
 /* Custom Utility Classes */
 .gradient-text {
   background: linear-gradient(to right, #006d5b, #43d49d);

@@ -6,45 +6,349 @@ export type EmailTemplate = {
     html: (p: TemplatePayload) => string
 }
 
-function esc(value: unknown): string {
-    return String(value ?? '')
+import { buildEmailLayout, EmailUi } from './emailLayout'
+
+const e = EmailUi.escHtml
+
+function para(html: string): string {
+    return `<p style="margin:0 0 12px 0;">${html}</p>`
+}
+
+function subtle(html: string): string {
+    return `<p style="margin:0 0 12px 0;color:#4A4A4A;">${html}</p>`
+}
+
+function kvTable(rows: Array<{ k: string, v: string }>): string {
+    const body = rows
+        .map(({ k, v }) => {
+            return `<tr>
+  <td style="padding:10px 12px;border-bottom:1px solid #E0E0E0;color:#4A4A4A;font-size:14px;line-height:1.5;"><strong style="color:#0A0A0A;">${e(k)}</strong></td>
+  <td align="right" style="padding:10px 12px;border-bottom:1px solid #E0E0E0;color:#4A4A4A;font-size:14px;line-height:1.5;">${v}</td>
+</tr>`
+        })
+        .join('')
+        .replace(/<\/tr>$/, '</tr>') // keep structure stable
+
+    return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 14px 0;border:1px solid #E0E0E0;border-radius:8px;overflow:hidden;">
+${body}
+</table>`
+}
+
+function baseUrl(): string {
+    const raw = String(process.env.NEXT_PUBLIC_BASE_URL || '').trim()
+    return raw ? raw.replace(/\/+$/, '') : ''
 }
 
 export const emailTemplates = {
     lowQuotaIndividual: {
         subject: () => 'Fraud Scan: You have 10% searches remaining',
-        text: (p) => `Hi ${esc(p.firstName)},\n\nYour search allowance is almost used up.\nUsed: ${esc(p.used)} of ${esc(p.limit)}. Remaining: ${esc(p.remaining)}.\n\nUpgrade or top up to avoid interruptions.\n\n— Fraud Scan`,
-        html: (p) => `<p>Hi ${esc(p.firstName)},</p><p>Your search allowance is almost used up.</p><p><strong>Used:</strong> ${esc(p.used)} of ${esc(p.limit)}. <strong>Remaining:</strong> ${esc(p.remaining)}.</p><p>Upgrade or top up to avoid interruptions.</p><p>— Fraud Scan</p>`
+        text: (p) => {
+            const dash = baseUrl() ? `${baseUrl()}/dashboard` : ''
+            return [
+                `Hi ${e(p.firstName)},`,
+                ``,
+                `You’re close to your search limit.`,
+                ``,
+                `Used: ${e(p.used)} of ${e(p.limit)}`,
+                `Remaining: ${e(p.remaining)}`,
+                ``,
+                dash ? `Open dashboard: ${dash}` : `Log in to your dashboard to upgrade or top up.`,
+                ``,
+                `— FraudScans`,
+            ].join('\n')
+        },
+        html: (p) => {
+            const dash = baseUrl() ? `${baseUrl()}/dashboard` : ''
+            const content = [
+                para(`Hi ${e(p.firstName)},`),
+                subtle(`You’re close to your search limit. To avoid interruptions, please upgrade or top up.`),
+                kvTable([
+                    { k: 'Used', v: `${e(p.used)} / ${e(p.limit)}` },
+                    { k: 'Remaining', v: `${e(p.remaining)}` },
+                ]),
+                para(dash ? `Open your dashboard to manage your plan.` : `Open your dashboard to manage your plan.`),
+            ].join('')
+
+            return buildEmailLayout({
+                previewText: `You have 10% searches remaining.`,
+                title: `You’re nearing your search limit`,
+                content,
+                ctaLabel: dash ? 'Open dashboard' : undefined,
+                ctaUrl: dash || undefined,
+                alertType: 'info',
+            })
+        }
     } as EmailTemplate,
     lowQuotaEnterpriseAdmin: {
         subject: () => 'Fraud Scan: You have 10% searches remaining',
-        text: (p) => `Hi ${esc(p.firstName)},\n\nYour enterprise search allowance is almost used up.\nUsed: ${esc(p.used)} of ${esc(p.limit)}. Remaining: ${esc(p.remaining)}.\n\nConsider topping up or contacting sales.\n\n— Fraud Scan`,
-        html: (p) => `<p>Hi ${esc(p.firstName)},</p><p>Your enterprise search allowance is almost used up.</p><p><strong>Used:</strong> ${esc(p.used)} of ${esc(p.limit)}. <strong>Remaining:</strong> ${esc(p.remaining)}.</p><p>Consider topping up or contacting sales.</p><p>— Fraud Scan</p>`
+        text: (p) => {
+            const dash = baseUrl() ? `${baseUrl()}/dashboard` : ''
+            return [
+                `Hi ${e(p.firstName)},`,
+                ``,
+                `Your enterprise search allowance is almost used up.`,
+                ``,
+                `Used: ${e(p.used)} of ${e(p.limit)}`,
+                `Remaining: ${e(p.remaining)}`,
+                ``,
+                dash ? `Open dashboard: ${dash}` : `Top up or contact sales to avoid interruptions.`,
+                ``,
+                `— FraudScans`,
+            ].join('\n')
+        },
+        html: (p) => {
+            const dash = baseUrl() ? `${baseUrl()}/dashboard` : ''
+            const content = [
+                para(`Hi ${e(p.firstName)},`),
+                subtle(`Your enterprise search allowance is almost used up. Consider topping up to avoid interruptions.`),
+                kvTable([
+                    { k: 'Used', v: `${e(p.used)} / ${e(p.limit)}` },
+                    { k: 'Remaining', v: `${e(p.remaining)}` },
+                ]),
+                para(`If you need assistance, reply to this email and we’ll help.`),
+            ].join('')
+
+            return buildEmailLayout({
+                previewText: `Your enterprise allowance is running low.`,
+                title: `Enterprise allowance running low`,
+                content,
+                ctaLabel: dash ? 'Open dashboard' : undefined,
+                ctaUrl: dash || undefined,
+                alertType: 'info',
+            })
+        }
     } as EmailTemplate,
     enterpriseStripePaymentAndSignup: {
         subject: () => 'Fraud Scan Enterprise — Payment & Signup',
-        text: (p) => `Pay: ${esc(p.stripeUrl)}\nSignup: ${esc(p.signupLink)}`,
-        html: (p) => `<div style="font-family:Inter,Arial,sans-serif;line-height:1.7;color:#0f172a">\n  <p style="margin:0 0 12px 0">Hello${p.contactName ? ' ' + esc(p.contactName) : ''},</p>\n  <p style="margin:0 0 12px 0;color:#334155">Thank you for choosing <strong>Fraud Scan</strong>. Please complete the payment and then finish your enterprise admin signup.</p>\n  <div style="margin:16px 0;padding:14px;border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc">\n    ${p.companyName ? `<div style=\"margin-bottom:6px\"><strong>Company:</strong> ${esc(p.companyName)}</div>` : ''}\n    <div style="margin-bottom:6px"><strong>Amount:</strong> ${esc(p.amount)} ${esc(p.currency)}</div>\n    <div style="margin-bottom:0"><strong>Includes:</strong> ${esc(p.searches)} searches • ${esc(p.users)} users</div>\n  </div>\n  <div style="margin:14px 0">\n    <a href="${esc(p.stripeUrl)}" style="display:inline-block;background:#0f172a;color:#fff;text-decoration:none;padding:10px 14px;border-radius:8px;">Pay with Stripe</a>\n    <div style="margin-top:6px;color:#475569;font-size:13px"><strong>Link:</strong> <a href="${esc(p.stripeUrl)}" style="color:#1d4ed8;text-decoration:underline">${esc(p.shortStripeUrl)}</a></div>\n  </div>\n  <div style="margin:16px 0 12px 0">\n    <div style="margin:0 0 6px 0"><strong>Admin signup (after payment confirmation):</strong></div>\n    <a href="${esc(p.signupLink)}" style="display:inline-block;background:#1d4ed8;color:#fff;text-decoration:none;padding:10px 14px;border-radius:8px;">Open Signup</a>\n    <div style="margin-top:6px;color:#475569;font-size:13px"><strong>Link:</strong> <a href="${esc(p.signupLink)}" style="color:#1d4ed8;text-decoration:underline">${esc(p.shortSignupLink)}</a></div>\n  </div>\n  <p style="margin:12px 0 0 0;color:#334155">Regards,<br/>Fraud Scan Team</p>\n  <hr style="border:none;border-top:1px solid #e5e7eb;margin:16px 0"/>\n  <p style="margin:0;color:#94a3b8;font-size:12px">If you've already paid, the signup link will work once payment is confirmed automatically.</p>\n</div>`
+        text: (p) => [
+            `Hello${p.contactName ? ' ' + e(p.contactName) : ''},`,
+            ``,
+            `Please complete payment and then finish your enterprise admin signup.`,
+            ``,
+            `Company: ${e(p.companyName)}`,
+            `Amount: ${e(p.amount)} ${e(p.currency)}`,
+            `Includes: ${e(p.searches)} searches • ${e(p.users)} users`,
+            ``,
+            `Pay with Stripe: ${e(p.stripeUrl)}`,
+            `Admin signup: ${e(p.signupLink)}`,
+            ``,
+            `— FraudScans`,
+        ].join('\n'),
+        html: (p) => {
+            const stripeUrl = String(p.stripeUrl || '')
+            const signupLink = String(p.signupLink || '')
+
+            const content = [
+                para(`Hello${p.contactName ? ' ' + e(p.contactName) : ''},`),
+                subtle(`Thank you for choosing <strong>FraudScans Enterprise</strong>. Please complete payment, then finish your admin signup.`),
+                kvTable([
+                    { k: 'Company', v: e(p.companyName) },
+                    { k: 'Amount', v: `${e(p.amount)} ${e(p.currency)}` },
+                    { k: 'Includes', v: `${e(p.searches)} searches • ${e(p.users)} users` },
+                ]),
+                para(`Payment link: ${EmailUi.link(stripeUrl, e(p.shortStripeUrl || 'Open Stripe'))}`),
+                para(`Admin signup (after payment confirmation): ${EmailUi.link(signupLink, e(p.shortSignupLink || 'Open signup'))}`),
+                subtle(`If you’ve already paid, the signup link will work once payment is confirmed automatically.`),
+            ].join('')
+
+            return buildEmailLayout({
+                previewText: 'Complete payment and finish enterprise signup.',
+                title: 'Payment & admin signup',
+                content,
+                ctaLabel: 'Pay with Stripe',
+                ctaUrl: stripeUrl,
+                alertType: 'info',
+            })
+        }
     } as EmailTemplate,
     enterpriseBankAndSignup: {
         subject: () => 'Fraud Scan Enterprise — Bank Details & Signup',
-        text: (p) => `Amount: ${esc(p.amount)} ${esc(p.currency)}\nIncludes: ${esc(p.searches)} searches / ${esc(p.users)} users\nSignup: ${esc(p.signupLink)}`,
-        html: (p) => `<div style="font-family:Inter,Arial,sans-serif;line-height:1.7;color:#0f172a">\n  <p style="margin:0 0 12px 0">Hello${p.contactName ? ' ' + esc(p.contactName) : ''},</p>\n  <p style="margin:0 0 12px 0;color:#334155">Please complete your <strong>Fraud Scan</strong> enterprise purchase via bank transfer, then finish your admin signup.</p>\n  <div style="margin:16px 0;padding:14px;border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc">\n    ${p.companyName ? `<div style=\"margin-bottom:6px\"><strong>Company:</strong> ${esc(p.companyName)}</div>` : ''}\n    <div style="margin-bottom:6px"><strong>Amount:</strong> ${esc(p.amount)} ${esc(p.currency)}</div>\n    <div style="margin-bottom:0"><strong>Includes:</strong> ${esc(p.searches)} searches • ${esc(p.users)} users</div>\n  </div>\n  <div style="margin:16px 0;padding:14px;border:1px dashed #e5e7eb;border-radius:12px;background:#fff">\n    <div style="margin-bottom:6px"><strong>Account Name:</strong> ${esc(p.bankAccountName)}</div>\n    <div style="margin-bottom:6px"><strong>Account / IBAN:</strong> ${esc(p.bankAccountNumber)}</div>\n    <div style="margin-bottom:6px"><strong>Bank:</strong> ${esc(p.bankName)}</div>\n    <div style="margin-bottom:6px"><strong>SWIFT/BIC:</strong> ${esc(p.bankSwift)}</div>\n    <div style="margin-bottom:0"><strong>Reference:</strong> ${esc(p.paymentReference)}</div>\n  </div>\n  <div style="margin:12px 0 0 0"><strong>Admin signup (after payment is confirmed):</strong></div>\n  <div style="margin:6px 0 0 0;color:#475569;font-size:13px"><strong>Link:</strong> <a href="${esc(p.signupLink)}" style="color:#1d4ed8;text-decoration:underline">${esc(p.shortSignupLink)}</a></div>\n  <p style="margin:16px 0 0 0;color:#334155">Regards,<br/>Fraud Scan Team</p>\n  <hr style="border:none;border-top:1px solid #e5e7eb;margin:16px 0"/>\n  <p style="margin:0;color:#94a3b8;font-size:12px">We'll enable the signup link once we confirm your transfer.</p>\n</div>`
+        text: (p) => [
+            `Hello${p.contactName ? ' ' + e(p.contactName) : ''},`,
+            ``,
+            `Please complete your enterprise purchase via bank transfer.`,
+            ``,
+            `Company: ${e(p.companyName)}`,
+            `Amount: ${e(p.amount)} ${e(p.currency)}`,
+            `Includes: ${e(p.searches)} searches • ${e(p.users)} users`,
+            ``,
+            `Bank details`,
+            `- Account Name: ${e(p.bankAccountName)}`,
+            `- Account / IBAN: ${e(p.bankAccountNumber)}`,
+            `- Bank: ${e(p.bankName)}`,
+            `- SWIFT/BIC: ${e(p.bankSwift)}`,
+            `- Reference: ${e(p.paymentReference)}`,
+            ``,
+            `Admin signup (after payment is confirmed): ${e(p.signupLink)}`,
+            ``,
+            `— FraudScans`,
+        ].join('\n'),
+        html: (p) => {
+            const signupLink = String(p.signupLink || '')
+            const content = [
+                para(`Hello${p.contactName ? ' ' + e(p.contactName) : ''},`),
+                subtle(`Please complete your <strong>FraudScans Enterprise</strong> purchase via bank transfer. After payment is confirmed, finish your admin signup.`),
+                kvTable([
+                    { k: 'Company', v: e(p.companyName) },
+                    { k: 'Amount', v: `${e(p.amount)} ${e(p.currency)}` },
+                    { k: 'Includes', v: `${e(p.searches)} searches • ${e(p.users)} users` },
+                ]),
+                para(`<strong style="color:#0A0A0A;">Bank details</strong>`),
+                kvTable([
+                    { k: 'Account Name', v: e(p.bankAccountName) },
+                    { k: 'Account / IBAN', v: e(p.bankAccountNumber) },
+                    { k: 'Bank', v: e(p.bankName) },
+                    { k: 'SWIFT/BIC', v: e(p.bankSwift) },
+                    { k: 'Reference', v: e(p.paymentReference) },
+                ]),
+                para(`Admin signup (after payment is confirmed): ${EmailUi.link(signupLink, e(p.shortSignupLink || 'Open signup'))}`),
+                subtle(`We’ll enable the signup flow once we confirm your transfer.`),
+            ].join('')
+
+            return buildEmailLayout({
+                previewText: 'Bank transfer details for your enterprise purchase.',
+                title: 'Bank details & admin signup',
+                content,
+                ctaLabel: signupLink ? 'Open signup' : undefined,
+                ctaUrl: signupLink || undefined,
+                alertType: 'info',
+            })
+        }
     } as EmailTemplate,
     enterpriseSignupLink: {
         subject: () => 'Your Fraud Scan Enterprise Admin Signup Link',
-        text: (p) => `Signup link: ${esc(p.signupLink)}`,
-        html: (p) => `<p>Hello,</p><p>Your enterprise admin signup link is ready:</p><p><a href="${esc(p.signupLink)}">${esc(p.signupLink)}</a></p><p>This link expires on ${esc(p.expires)}.</p>`
+        text: (p) => [
+            `Hello,`,
+            ``,
+            `Your enterprise admin signup link is ready.`,
+            `Signup: ${e(p.signupLink)}`,
+            `Expires: ${e(p.expires)}`,
+            ``,
+            `— FraudScans`,
+        ].join('\n'),
+        html: (p) => {
+            const signupLink = String(p.signupLink || '')
+            const content = [
+                para(`Hello,`),
+                subtle(`Your enterprise admin signup link is ready.`),
+                para(`This link expires on <strong style="color:#0A0A0A;">${e(p.expires)}</strong>.`),
+            ].join('')
+
+            return buildEmailLayout({
+                previewText: 'Your admin signup link is ready.',
+                title: 'Enterprise admin signup link',
+                content,
+                ctaLabel: 'Open signup',
+                ctaUrl: signupLink,
+                alertType: 'info',
+            })
+        }
     } as EmailTemplate,
     enterprisePaymentReceivedSignup: {
         subject: () => 'Payment received — complete your Fraud Scan enterprise admin signup',
-        text: (p) => `Complete signup: ${esc(p.signupLink)}`,
-        html: (p) => `<p>Your payment has been recorded.</p>${p.signupLink ? `<p>Complete signup: <a href=\"${esc(p.signupLink)}\">${esc(p.signupLink)}</a></p>` : ''}`
+        text: (p) => {
+            const link = String(p.signupLink || '')
+            return [
+                `Your payment has been recorded.`,
+                ``,
+                link ? `Complete signup: ${e(link)}` : `If you need help, reply to this email.`,
+                ``,
+                `— FraudScans`,
+            ].join('\n')
+        },
+        html: (p) => {
+            const signupLink = String(p.signupLink || '').trim()
+            const content = [
+                subtle(`Your payment has been recorded.`),
+                signupLink ? para(`Complete your admin signup when you’re ready.`) : para(`If you need help, reply to this email.`),
+            ].join('')
+
+            return buildEmailLayout({
+                previewText: 'Payment received. Complete your enterprise signup.',
+                title: 'Payment received',
+                content,
+                ctaLabel: signupLink ? 'Complete signup' : undefined,
+                ctaUrl: signupLink || undefined,
+                alertType: 'info',
+            })
+        }
+    } as EmailTemplate,
+    enterpriseLeadNotification: {
+        subject: (p) => `New enterprise lead: ${e(p.companyName)}`,
+        text: (p) => [
+            `New enterprise request received.`,
+            ``,
+            `Company: ${e(p.companyName)}`,
+            `Contact: ${e(p.contactName)}`,
+            `Email: ${e(p.businessEmail)}`,
+            `Phone: ${e(p.phoneNumber)}`,
+            `Industry: ${e(p.industry)}`,
+            `Searches: ${e(p.numberOfSearches)}`,
+            `Users: ${e(p.numberOfUsers)}`,
+            `When needed: ${e(p.whenNeeded)}`,
+            p.message ? `` : '',
+            p.message ? `Message: ${e(p.message)}` : '',
+            ``,
+            `— FraudScans`,
+        ].filter(Boolean).join('\n'),
+        html: (p) => {
+            const email = String(p.businessEmail || '').trim()
+            const mailto = email ? `mailto:${email}` : ''
+            const content = [
+                subtle(`A new enterprise request was submitted.`),
+                kvTable([
+                    { k: 'Company', v: e(p.companyName) },
+                    { k: 'Contact', v: e(p.contactName) },
+                    { k: 'Email', v: email ? EmailUi.link(mailto, e(email)) : e(email) },
+                    { k: 'Phone', v: e(p.phoneNumber) },
+                    { k: 'Industry', v: e(p.industry) },
+                    { k: 'Searches', v: e(p.numberOfSearches) },
+                    { k: 'Users', v: e(p.numberOfUsers) },
+                    { k: 'When needed', v: e(p.whenNeeded) },
+                ]),
+                p.message ? para(`<strong style="color:#0A0A0A;">Message</strong><br/>${e(p.message)}`) : '',
+            ].join('')
+
+            return buildEmailLayout({
+                previewText: `New enterprise lead received.`,
+                title: 'New enterprise lead',
+                content,
+                ctaLabel: email ? 'Email contact' : undefined,
+                ctaUrl: mailto || undefined,
+                alertType: 'info',
+            })
+        }
     } as EmailTemplate,
     packageExpiryReminder: {
         subject: () => 'Fraud Scan: Your plan expires in 7 days',
-        text: (p) => `Hi ${esc(p.firstName)},\n\nYour Fraud Scan plan will expire on ${esc(p.expiryDate)}.\nTo avoid interruptions, please renew or contact our team.\n\n— Fraud Scan`,
-        html: (p) => `<p>Hi ${esc(p.firstName)},</p><p>Your Fraud Scan plan will expire on <strong>${esc(p.expiryDate)}</strong>.</p><p>To avoid interruptions, please renew or contact our team.</p><p>— Fraud Scan</p>`
+        text: (p) => {
+            const dash = baseUrl() ? `${baseUrl()}/dashboard` : ''
+            return [
+                `Hi ${e(p.firstName)},`,
+                ``,
+                `Your plan expires on ${e(p.expiryDate)}.`,
+                `To avoid interruptions, please renew or contact our team.`,
+                ``,
+                dash ? `Open dashboard: ${dash}` : '',
+                ``,
+                `— FraudScans`,
+            ].filter(Boolean).join('\n')
+        },
+        html: (p) => {
+            const dash = baseUrl() ? `${baseUrl()}/dashboard` : ''
+            const content = [
+                para(`Hi ${e(p.firstName)},`),
+                subtle(`Your plan expires on <strong style="color:#0A0A0A;">${e(p.expiryDate)}</strong>. To avoid interruptions, please renew or contact our team.`),
+            ].join('')
+            return buildEmailLayout({
+                previewText: `Your plan expires in 7 days.`,
+                title: 'Plan expiry reminder',
+                content,
+                ctaLabel: dash ? 'Open dashboard' : undefined,
+                ctaUrl: dash || undefined,
+                alertType: 'info',
+            })
+        }
     } as EmailTemplate,
 }
 
