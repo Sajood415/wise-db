@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# fraud import
+fraud-import-data.json
+import-fraud-data.js
