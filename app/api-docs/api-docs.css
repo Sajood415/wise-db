@@ -1,0 +1,42 @@
+/* API Docs page - Swagger UI theme overrides */
+.api-docs-wrapper .topbar {
+  display: none;
+}
+
+.api-docs-wrapper .info .title {
+  display: none;
+}
+
+.api-docs-wrapper .info {
+  margin: 0;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.api-docs-wrapper .opblock.opblock-post {
+  border-color: #006d5b;
+  background: rgba(0, 109, 91, 0.05);
+}
+
+.api-docs-wrapper .opblock.opblock-post .opblock-summary-method {
+  background: #006d5b;
+}
+
+.api-docs-wrapper .opblock.opblock-get {
+  border-color: #1c2736;
+  background: rgba(28, 39, 54, 0.05);
+}
+
+.api-docs-wrapper .opblock.opblock-get .opblock-summary-method {
+  background: #1c2736;
+}
+
+.api-docs-wrapper .btn.execute {
+  background: #006d5b;
+  border-color: #006d5b;
+}
+
+.api-docs-wrapper .btn.execute:hover {
+  background: #005a4a;
+  border-color: #005a4a;
+}
