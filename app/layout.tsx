@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Inter, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/contexts/ToastContext";
 import ConditionalLayout from "@/components/layout/ConditionalLayout";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 
 const interSans = Inter({
   variable: "--font-inter-sans",
@@ -67,9 +69,28 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const gaId = "G-0FZ84F6HWZ";
+
   return (
     <html lang="en">
       <body className={`${interSans.className} ${robotoMono.variable} antialiased`}>
+        <Script
+          id="ga-config"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${gaId}');
+            `,
+          }}
+        />
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+          strategy="afterInteractive"
+        />
+        <GoogleAnalytics />
         <ToastProvider>
           <ConditionalLayout>{children}</ConditionalLayout>
         </ToastProvider>
