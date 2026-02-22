@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Fraud Scan API",
-    "description": "API for fraud reporting, search, and enterprise features.",
+    "description": "API for fraud reporting, search, and enterprise features. Web: JWT in cookie. Flutter: X-API-Key header + Authorization Bearer JWT (from login). External: enterprise Bearer only.",
     "version": "1.0.0"
   },
   "servers": [
@@ -40,7 +40,7 @@
           }
         },
         "responses": {
-          "200": { "description": "Success, Set-Cookie auth-token" },
+          "200": { "description": "Success. Set-Cookie + token in body for Flutter (use as Bearer)" },
           "400": { "description": "Bad request / reCAPTCHA failed" },
           "401": { "description": "Invalid credentials" }
         }
@@ -434,13 +434,19 @@
         "type": "apiKey",
         "in": "cookie",
         "name": "auth-token",
-        "description": "JWT in HTTP-only cookie (set by /auth/login or /auth/signup)"
+        "description": "Web: JWT in HTTP-only cookie"
+      },
+      "flutterApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "Flutter: shared key from env"
       },
       "bearerAuth": {
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT",
-        "description": "API key from /enterprise/key (Authorization: Bearer <key>)"
+        "description": "Flutter: JWT from login. External: enterprise token from /enterprise/key"
       }
     }
   },

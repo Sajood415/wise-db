@@ -1,144 +1,86 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
+const staticAssetRegex = /\.(png|jpe?g|gif|svg|ico|webp|avif|css|js|map|txt|woff2?|ttf|eot)$/i;
+const publicPaths = [
+  "/", "/login", "/signup", "/about", "/help", "/how-it-works", "/services",
+  "/report-fraud", "/enterprise", "/pricing", "/privacy", "/terms", "/contact",
+  "/docs", "/api-docs", "/forgot-password", "/reset-password",
+  "/api/auth/login", "/api/auth/signup", "/api/auth/enterprise-signup",
+  "/api/auth/forgot-password", "/api/auth/reset-password",
+  "/api/fraud", "/api/external", "/api/help", "/api/enterprise$",
+  "/dashboard/payment/success", "/dashboard/payment/cancel",
+  "/api/payment/enterprise/verify", "/api/webhooks/stripe", "/uploads",
+];
+
+function isPublicPath(pathname: string): boolean {
+  return publicPaths.some((p) => {
+    if (p.endsWith("$")) return pathname === p.slice(0, -1);
+    return pathname === p || pathname.startsWith(p + "/");
+  });
+}
+
+function failAuth(isApi: boolean, request: NextRequest, pathname: string) {
+  if (isApi) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const url = new URL("/login", request.url);
+  url.searchParams.set("redirect", pathname);
+  return NextResponse.redirect(url);
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Allow static assets (images, fonts, etc.) to bypass auth
-  // This is important so things like /logo.png work even when user is logged out
-  const staticAssetExtensions =
-    /\.(png|jpe?g|gif|svg|ico|webp|avif|css|js|map|txt|woff2?|ttf|eot)$/i;
-  if (staticAssetExtensions.test(pathname)) {
+  if (staticAssetRegex.test(pathname)) return NextResponse.next();
+  if (pathname.startsWith("/_next") || pathname.startsWith("/api/public") || pathname.startsWith("/uploads/")) {
     return NextResponse.next();
   }
+  if (isPublicPath(pathname)) return NextResponse.next();
+  if (pathname.startsWith("/dashboard/payment/")) return NextResponse.next();
 
-  // Public routes that don't require authentication
-  const publicPaths = [
-    "/",
-    "/login",
-    "/signup",
-    "/about",
-    "/help",
-    "/how-it-works",
-    "/services",
-    "/report-fraud",
-    "/enterprise",
-    "/pricing",
-    "/privacy",
-    "/terms",
-    "/contact",
-    "/docs",
-    "/api-docs",
-    "/forgot-password",
-    "/reset-password",
-    "/api/auth/login",
-    "/api/auth/signup",
-    "/api/auth/enterprise-signup",
-    "/api/auth/forgot-password",
-    "/api/auth/reset-password",
-    "/api/fraud",
-    "/api/external",
-    "/api/help",
-    "/api/enterprise$",
-    "/dashboard/payment/success",
-    "/dashboard/payment/cancel",
-    "/api/payment/enterprise/verify",
-    "/api/webhooks/stripe",
-    // public uploads
-    "/uploads",
-  ];
+  const isApi = pathname.startsWith("/api/");
+  const cookieToken = request.cookies.get("auth-token")?.value;
+  const authHeader = request.headers.get("authorization") || "";
+  const bearerToken = authHeader.toLowerCase().startsWith("bearer ") ? authHeader.slice(7).trim() : "";
+  const apiKey = request.headers.get("x-api-key")?.trim();
+  const flutterKey = process.env.FLUTTER_API_KEY?.trim();
 
-  // Check if the current path is public
-  const isPublicPath = publicPaths.some((path) => {
-    if (path.endsWith("$")) {
-      // Exact match for paths ending with $
-      return pathname === path.slice(0, -1);
-    }
-    return pathname === path || pathname.startsWith(path + "/");
-  });
-
-  // Skip authentication for public paths and static files
-  if (
-    isPublicPath ||
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/api/public") ||
-    pathname.startsWith("/uploads/")
-  ) {
-    return NextResponse.next();
+  let token = cookieToken;
+  if (!token && flutterKey && apiKey === flutterKey && bearerToken) token = bearerToken;
+  if (!token) return failAuth(isApi, request, pathname);
+  if (bearerToken && !cookieToken && (!flutterKey || apiKey !== flutterKey)) {
+    return failAuth(isApi, request, pathname);
   }
 
-  // Get token from cookies
-  const token = request.cookies.get("auth-token")?.value;
-
-  // Special handling for payment success/cancel pages
-  if (pathname.startsWith("/dashboard/payment/")) {
-    // Allow access to payment pages even without token (user might be coming from Stripe)
-    // The payment verification API will handle authentication
-    return NextResponse.next();
-  }
-
-  // Redirect to login if no token
-  if (!token) {
-    const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("redirect", pathname);
-    return NextResponse.redirect(loginUrl);
-  }
-
+  const secret = new TextEncoder().encode(process.env.NEXTAUTH_SECRET || "your-secret-key");
+  let decoded: { userId?: string; email?: string; role?: string };
   try {
-    // Verify JWT token using jose (Edge Runtime compatible)
-    const secret = new TextEncoder().encode(
-      process.env.NEXTAUTH_SECRET || "your-secret-key"
-    );
-    const { payload: decoded } = await jwtVerify(token, secret);
-
-    // Role-based access control
-    const userRole = decoded.role as string;
-
-    // Super admin routes
-    if (pathname.startsWith("/admin") && userRole !== "super_admin") {
-      return NextResponse.redirect(new URL("/unauthorized", request.url));
-    }
-
-    // Enterprise admin routes - none gated at /enterprise (public landing/form)
-
-    // Sub admin routes
-    if (
-      pathname.startsWith("/manage") &&
-      !["sub_admin", "enterprise_admin", "super_admin"].includes(userRole)
-    ) {
-      return NextResponse.redirect(new URL("/unauthorized", request.url));
-    }
-
-    // Add user info to headers for API routes
-    const requestHeaders = new Headers(request.headers);
-    requestHeaders.set("x-user-id", decoded.userId as string);
-    requestHeaders.set("x-user-email", decoded.email as string);
-    requestHeaders.set("x-user-role", decoded.role as string);
-
-    return NextResponse.next({
-      request: {
-        headers: requestHeaders,
-      },
-    });
-  } catch (error) {
-    console.error("Token verification failed:", error);
-    // Invalid token, redirect to login
-    const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("redirect", pathname);
-    const response = NextResponse.redirect(loginUrl);
-    response.cookies.delete("auth-token");
-    return response;
+    const { payload } = await jwtVerify(token, secret);
+    decoded = payload as { userId?: string; email?: string; role?: string };
+  } catch {
+    if (isApi) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const res = NextResponse.redirect(new URL("/login", request.url));
+    res.cookies.delete("auth-token");
+    return res;
   }
+
+  const role = decoded.role || "";
+  if (pathname.startsWith("/admin") && role !== "super_admin") {
+    if (isApi) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.redirect(new URL("/unauthorized", request.url));
+  }
+  if (pathname.startsWith("/manage") && !["sub_admin", "enterprise_admin", "super_admin"].includes(role)) {
+    if (isApi) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.redirect(new URL("/unauthorized", request.url));
+  }
+
+  const headers = new Headers(request.headers);
+  headers.set("x-user-id", String(decoded.userId ?? ""));
+  headers.set("x-user-email", String(decoded.email ?? ""));
+  headers.set("x-user-role", String(decoded.role ?? ""));
+
+  return NextResponse.next({ request: { headers } });
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    "/((?!_next/static|_next/image|favicon.ico).*)",
-  ],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
