@@ -13,7 +13,7 @@
     { "name": "Auth", "description": "Login, signup, password, session" },
     { "name": "User", "description": "Profile and dashboard" },
     { "name": "Search", "description": "Fraud database search" },
-    { "name": "External", "description": "Public/API key auth (e.g. Flutter)" },
+    { "name": "External", "description": "Enterprise Bearer token (API key from /enterprise/key)" },
     { "name": "Enterprise", "description": "Enterprise users and key" },
     { "name": "Fraud", "description": "Report and read fraud reports" },
     { "name": "Help", "description": "Contact / help form" }
@@ -252,7 +252,7 @@
     "/external/frauds": {
       "get": {
         "tags": ["External"],
-        "summary": "Search frauds (Bearer token – for Flutter/API clients)",
+        "summary": "Search frauds (Bearer token – enterprise API key only)",
         "security": [{ "bearerAuth": [] }],
         "parameters": [
           { "name": "q", "in": "query", "schema": { "type": "string" } },
