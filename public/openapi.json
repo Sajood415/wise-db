@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Fraud Scan API",
-    "description": "API for fraud reporting, search, and enterprise features. Web: JWT in cookie. Flutter: X-API-Key header + Authorization Bearer JWT (from login). External: enterprise Bearer only.",
+    "description": "API for fraud reporting, search, and enterprise features.\n\n**Auth methods:**\n- **Web:** JWT in `auth-token` cookie (set by login/signup).\n- **Mobile app / API clients:** See *X-API-Key + Bearer* below.\n- **External (enterprise):** Bearer token from `/enterprise/key` only.\n\n---\n\n## X-API-Key + Bearer (mobile app)\n\nEvery request must include:\n\n1. **Header: `X-API-Key`** — Shared secret key (obtain from backend team). Add to every request.\n\n2. **Header: `Authorization: Bearer <token>`** — JWT from login response. Required for protected routes (profile, search, dashboard, etc.).\n\n**Flow:**\n1. Call `POST /auth/login` with `email`, `password`, `recaptchaToken`.\n2. Read `token` from the JSON response body.\n3. Store the token and send it as `Authorization: Bearer <token>` on all protected requests.\n4. Add `X-API-Key: <your-key>` to every request.\n\n**Example headers:**\n```\nX-API-Key: <shared-key-from-backend>\nAuthorization: Bearer <jwt-from-login>\nContent-Type: application/json\n```\n\nUse the **Authorize** button above to set these and try endpoints.",
     "version": "1.0.0"
   },
   "servers": [
@@ -40,7 +40,7 @@
           }
         },
         "responses": {
-          "200": { "description": "Success. Set-Cookie + token in body for Flutter (use as Bearer)" },
+          "200": { "description": "Success. Set-Cookie + token in body for mobile clients (use as Bearer)" },
           "400": { "description": "Bad request / reCAPTCHA failed" },
           "401": { "description": "Invalid credentials" }
         }
@@ -154,7 +154,8 @@
     "/auth/me": {
       "get": {
         "tags": ["Auth"],
-        "summary": "Current user (cookie auth)",
+        "summary": "Current user (cookie or X-API-Key+Bearer)",
+        "security": [{ "cookieAuth": [] }, { "xApiKey": [], "bearerAuth": [] }],
         "responses": {
           "200": { "description": "User object" },
           "401": { "description": "Not logged in" }
@@ -164,14 +165,16 @@
     "/auth/logout": {
       "post": {
         "tags": ["Auth"],
-        "summary": "Logout (clears cookie)",
+        "summary": "Logout (cookie or X-API-Key+Bearer)",
+        "security": [{ "cookieAuth": [] }, { "xApiKey": [], "bearerAuth": [] }],
         "responses": { "200": { "description": "OK" } }
       }
     },
     "/user/profile": {
       "get": {
         "tags": ["User"],
-        "summary": "Get profile (cookie auth)",
+        "summary": "Get profile (cookie or X-API-Key+Bearer)",
+        "security": [{ "cookieAuth": [] }, { "xApiKey": [], "bearerAuth": [] }],
         "responses": {
           "200": { "description": "Profile" },
           "401": { "description": "Unauthorized" }
@@ -181,7 +184,8 @@
     "/dashboard/overview": {
       "get": {
         "tags": ["User"],
-        "summary": "Dashboard stats (cookie auth)",
+        "summary": "Dashboard stats (cookie or X-API-Key+Bearer)",
+        "security": [{ "cookieAuth": [] }, { "xApiKey": [], "bearerAuth": [] }],
         "responses": {
           "200": { "description": "Overview counts" },
           "401": { "description": "Unauthorized" }
@@ -191,7 +195,8 @@
     "/dashboard/recent-activity": {
       "get": {
         "tags": ["User"],
-        "summary": "Recent activity",
+        "summary": "Recent activity (cookie or X-API-Key+Bearer)",
+        "security": [{ "cookieAuth": [] }, { "xApiKey": [], "bearerAuth": [] }],
         "parameters": [
           { "name": "limit", "in": "query", "schema": { "type": "integer" } }
         ],
@@ -204,7 +209,8 @@
     "/dashboard/my-reports": {
       "get": {
         "tags": ["User"],
-        "summary": "My reports",
+        "summary": "My reports (cookie or X-API-Key+Bearer)",
+        "security": [{ "cookieAuth": [] }, { "xApiKey": [], "bearerAuth": [] }],
         "parameters": [
           { "name": "page", "in": "query", "schema": { "type": "integer" } },
           { "name": "pageSize", "in": "query", "schema": { "type": "integer" } },
@@ -219,7 +225,8 @@
     "/search": {
       "get": {
         "tags": ["Search"],
-        "summary": "Search fraud DB (cookie auth, consumes quota)",
+        "summary": "Search fraud DB (cookie or X-API-Key+Bearer, consumes quota)",
+        "security": [{ "cookieAuth": [] }, { "xApiKey": [], "bearerAuth": [] }],
         "parameters": [
           { "name": "q", "in": "query", "schema": { "type": "string" } },
           { "name": "type", "in": "query", "schema": { "type": "string" } },
@@ -242,7 +249,8 @@
     "/search/status": {
       "get": {
         "tags": ["Search"],
-        "summary": "Search quota/status (cookie auth)",
+        "summary": "Search quota/status (cookie or X-API-Key+Bearer)",
+        "security": [{ "cookieAuth": [] }, { "xApiKey": [], "bearerAuth": [] }],
         "responses": {
           "200": { "description": "searchLimit, searchesUsed, type, etc." },
           "401": { "description": "Unauthorized" }
@@ -436,17 +444,17 @@
         "name": "auth-token",
         "description": "Web: JWT in HTTP-only cookie"
       },
-      "flutterApiKey": {
+      "xApiKey": {
         "type": "apiKey",
         "in": "header",
         "name": "X-API-Key",
-        "description": "Flutter: shared key from env"
+        "description": "Add header X-API-Key with the shared secret (get from backend team). Required on every request."
       },
       "bearerAuth": {
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT",
-        "description": "Flutter: JWT from login. External: enterprise token from /enterprise/key"
+        "description": "JWT from login response body (Authorization: Bearer <token>) or enterprise API key from /enterprise/key."
       }
     }
   },

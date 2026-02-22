@@ -45,6 +45,16 @@ export default function ApiDocsPage() {
       </div>
 
       <div className="max-w-5xl mx-auto px-4 py-8 -mt-6">
+        <div className="mb-6 p-5 rounded-xl border-2 border-emerald-200 bg-emerald-50/80">
+          <h3 className="font-semibold text-emerald-900 mb-2">Mobile app / API clients</h3>
+          <p className="text-sm text-emerald-800 mb-3">
+            Use <strong>X-API-Key</strong> header (shared key from backend) and <strong>Authorization: Bearer</strong> with the JWT from login. Both required on every request. Click <strong>Authorize</strong> below to set them.
+          </p>
+          <ol className="text-sm text-emerald-800 list-decimal list-inside space-y-1">
+            <li>Login → read <code className="bg-white/70 px-1 rounded">token</code> from response</li>
+            <li>Add <code className="bg-white/70 px-1 rounded">X-API-Key</code> + <code className="bg-white/70 px-1 rounded">Authorization: Bearer &lt;token&gt;</code> to all requests</li>
+          </ol>
+        </div>
         <div className="api-docs-wrapper bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
           <SwaggerUI spec={spec as object} />
         </div>

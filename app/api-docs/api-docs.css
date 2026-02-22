@@ -40,3 +40,28 @@
   background: #005a4a;
   border-color: #005a4a;
 }
+
+.api-docs-wrapper .info .markdown p,
+.api-docs-wrapper .info .markdown ul,
+.api-docs-wrapper .info .markdown ol {
+  margin-bottom: 0.75rem;
+}
+
+.api-docs-wrapper .info .markdown code {
+  background: #f3f4f6;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+}
+
+.api-docs-wrapper .info .markdown h2 {
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.125rem;
+}
+
+.api-docs-wrapper .info .markdown hr {
+  margin: 1rem 0;
+  border: 0;
+  border-top: 1px solid #e5e7eb;
+}
