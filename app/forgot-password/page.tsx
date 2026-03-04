@@ -17,10 +17,6 @@ export default function ForgotPasswordPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!recaptchaToken) {
-      showToast('Please complete the reCAPTCHA challenge.', 'error')
-      return
-    }
 
     setLoading(true)
     
@@ -143,7 +139,7 @@ export default function ForgotPasswordPage() {
 
             <button
               type="submit"
-              disabled={loading || !recaptchaToken}
+              disabled={loading}
               className="btn-primary w-full py-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (

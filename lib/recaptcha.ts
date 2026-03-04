@@ -5,7 +5,7 @@ export type RecaptchaVerifyResult =
 export async function verifyRecaptchaToken(
   recaptchaToken: string | null | undefined
 ): Promise<RecaptchaVerifyResult> {
-  if (!recaptchaToken) return { ok: false, reason: 'missing_token' }
+  if (!recaptchaToken?.trim()) return { ok: true }
 
   const secret = process.env.RECAPTCHA_SECRET_KEY
   if (!secret) return { ok: false, reason: 'missing_secret' }

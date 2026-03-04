@@ -90,10 +90,6 @@ export default function HelpForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!recaptchaToken) {
-      showToast("Please complete the reCAPTCHA challenge.", "error");
-      return;
-    }
     
     // Validate all fields
     const newErrors: Record<string, string> = {};
@@ -310,7 +306,7 @@ export default function HelpForm() {
         <div className="flex flex-col sm:flex-row gap-4 pt-6">
           <button
             type="submit"
-            disabled={isSubmitting || !recaptchaToken}
+            disabled={isSubmitting}
             className="btn-primary flex-1 sm:flex-initial px-8 py-3 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? (

@@ -361,10 +361,6 @@ export default function ReportFraudForm() {
       markStepTouched(5)
       return
     }
-    if (!recaptchaToken) {
-      showToast('Please complete the reCAPTCHA challenge.', 'error')
-      return
-    }
     setSubmitting(true)
     try {
       // Build multipart form data
@@ -1379,9 +1375,9 @@ export default function ReportFraudForm() {
             ) : (
               <button
                 type="submit"
-                disabled={!isStepValid(5) || submitting || !recaptchaToken}
+                disabled={!isStepValid(5) || submitting}
                 className={`px-10 py-3 rounded-xl font-medium transition-all duration-200 ${
-                  isStepValid(5) && !!recaptchaToken
+                  isStepValid(5)
                     ? "btn-primary hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                     : "bg-gray-100 text-gray-400 cursor-not-allowed"
                 }`}

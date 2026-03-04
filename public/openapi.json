@@ -29,7 +29,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["email", "password", "recaptchaToken"],
+                "required": ["email", "password"],
                 "properties": {
                   "email": { "type": "string", "format": "email" },
                   "password": { "type": "string" },
@@ -56,7 +56,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["firstName", "lastName", "email", "password", "recaptchaToken"],
+                "required": ["firstName", "lastName", "email", "password"],
                 "properties": {
                   "firstName": { "type": "string" },
                   "lastName": { "type": "string" },
@@ -84,7 +84,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["token", "firstName", "lastName", "email", "password", "recaptchaToken"],
+                "required": ["token", "firstName", "lastName", "email", "password"],
                 "properties": {
                   "token": { "type": "string" },
                   "firstName": { "type": "string" },
@@ -112,7 +112,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["email", "recaptchaToken"],
+                "required": ["email"],
                 "properties": {
                   "email": { "type": "string", "format": "email" },
                   "recaptchaToken": { "type": "string" }
@@ -416,7 +416,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["name", "email", "subject", "message", "recaptchaToken"],
+                "required": ["name", "email", "subject", "message"],
                 "properties": {
                   "name": { "type": "string" },
                   "email": { "type": "string", "format": "email" },

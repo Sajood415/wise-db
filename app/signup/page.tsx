@@ -38,10 +38,6 @@ export default function SignupPage() {
     e.preventDefault()
     setError('')
 
-    if (!recaptchaToken) {
-      setError('Please complete the reCAPTCHA challenge')
-      return
-    }
     
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match')
@@ -264,7 +260,7 @@ export default function SignupPage() {
 
             <button
               type="submit"
-              disabled={loading || !recaptchaToken}
+              disabled={loading}
               className="btn-primary w-full py-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (

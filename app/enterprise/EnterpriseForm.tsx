@@ -87,10 +87,6 @@ export default function EnterpriseForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
-    if (!recaptchaToken) {
-      showToast("Please complete the reCAPTCHA challenge.", "error");
-      return;
-    }
     try {
       setSubmitting(true);
       const res = await fetch("/api/enterprise", {
@@ -371,7 +367,7 @@ export default function EnterpriseForm() {
         <div className="flex flex-col sm:flex-row gap-4 pt-6">
           <button
             type="submit"
-            disabled={submitting || !recaptchaToken}
+            disabled={submitting}
             className={`btn-primary flex-1 sm:flex-initial px-8 py-3 ${submitting ? "opacity-70 cursor-not-allowed" : ""}`}
           >
             {submitting ? (

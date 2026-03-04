@@ -31,10 +31,6 @@ function LoginPageInner() {
     e.preventDefault()
     setError('')
 
-    if (!recaptchaToken) {
-      showToast('Please complete the reCAPTCHA challenge.', 'error')
-      return
-    }
 
     setLoading(true)
     
@@ -156,7 +152,7 @@ function LoginPageInner() {
 
             <button
               type="submit"
-              disabled={loading || !recaptchaToken}
+              disabled={loading}
               className="btn-primary w-full py-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
