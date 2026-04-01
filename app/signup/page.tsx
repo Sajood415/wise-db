@@ -26,6 +26,7 @@ export default function SignupPage() {
   const { showToast } = useToast()
   const params = useSearchParams()
   const isEnterpriseSignup = useMemo(() => !!(params.get('enterprise') && params.get('token')), [params])
+  const captchaRequired = Boolean(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY?.trim())
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
@@ -46,6 +47,10 @@ export default function SignupPage() {
     
     if (formData.password.length < 6) {
       setError('Password must be at least 6 characters')
+      return
+    }
+    if (captchaRequired && !recaptchaToken) {
+      setError('Please complete the reCAPTCHA challenge')
       return
     }
 
@@ -260,7 +265,7 @@ export default function SignupPage() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || (captchaRequired && !recaptchaToken)}
               className="btn-primary w-full py-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (

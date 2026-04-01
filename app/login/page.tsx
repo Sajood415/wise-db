@@ -19,6 +19,7 @@ function LoginPageInner() {
   const searchParams = useSearchParams()
   const { showToast } = useToast()
   const redirectTo = searchParams.get('redirect') || '/dashboard'
+  const captchaRequired = Boolean(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY?.trim())
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
@@ -30,7 +31,10 @@ function LoginPageInner() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-
+    if (captchaRequired && !recaptchaToken) {
+      showToast('Please complete the reCAPTCHA challenge.', 'error')
+      return
+    }
 
     setLoading(true)
     
@@ -152,7 +156,7 @@ function LoginPageInner() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || (captchaRequired && !recaptchaToken)}
               className="btn-primary w-full py-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (

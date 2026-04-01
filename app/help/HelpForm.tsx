@@ -18,6 +18,7 @@ export default function HelpForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+  const captchaRequired = Boolean(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY?.trim());
 
   const issueTypes = [
     "General Question",
@@ -102,6 +103,10 @@ export default function HelpForm() {
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
+      return;
+    }
+    if (captchaRequired && !recaptchaToken) {
+      showToast("Please complete the reCAPTCHA challenge.", "error");
       return;
     }
 
@@ -306,7 +311,7 @@ export default function HelpForm() {
         <div className="flex flex-col sm:flex-row gap-4 pt-6">
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || (captchaRequired && !recaptchaToken)}
             className="btn-primary flex-1 sm:flex-initial px-8 py-3 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? (

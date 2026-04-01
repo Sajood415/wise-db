@@ -13,10 +13,14 @@ export default function ForgotPasswordPage() {
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
   const { showToast } = useToast()
   const router = useRouter()
+  const captchaRequired = Boolean(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY?.trim())
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
+    if (captchaRequired && !recaptchaToken) {
+      showToast('Please complete the reCAPTCHA challenge.', 'error')
+      return
+    }
 
     setLoading(true)
     
@@ -139,7 +143,7 @@ export default function ForgotPasswordPage() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || (captchaRequired && !recaptchaToken)}
               className="btn-primary w-full py-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (

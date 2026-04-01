@@ -21,6 +21,7 @@ export default function EnterpriseForm() {
   const [submitting, setSubmitting] = useState(false);
   const [searchesRangeLabel, setSearchesRangeLabel] = useState("");
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+  const captchaRequired = Boolean(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY?.trim());
 
   const industries = [
     "Financial Services",
@@ -87,6 +88,10 @@ export default function EnterpriseForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
+    if (captchaRequired && !recaptchaToken) {
+      showToast("Please complete the reCAPTCHA challenge.", "error");
+      return;
+    }
     try {
       setSubmitting(true);
       const res = await fetch("/api/enterprise", {
@@ -367,7 +372,7 @@ export default function EnterpriseForm() {
         <div className="flex flex-col sm:flex-row gap-4 pt-6">
           <button
             type="submit"
-            disabled={submitting}
+            disabled={submitting || (captchaRequired && !recaptchaToken)}
             className={`btn-primary flex-1 sm:flex-initial px-8 py-3 ${submitting ? "opacity-70 cursor-not-allowed" : ""}`}
           >
             {submitting ? (
