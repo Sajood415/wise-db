@@ -6,6 +6,7 @@ import Fraud from "@/models/Fraud";
 import User from "@/models/User";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { resolveStoredFileUrls } from "@/lib/s3";
 
 async function getUserFromRequest(req: NextRequest) {
   const headersUserId = req.headers.get("x-user-id") || "";
@@ -108,7 +109,17 @@ export async function GET(
       // return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
-    return NextResponse.json({ report: doc, item: doc }, { status: 200 });
+    const evidenceResolved = doc.evidence
+      ? {
+          screenshots: await resolveStoredFileUrls(doc.evidence.screenshots),
+          documents: await resolveStoredFileUrls(doc.evidence.documents),
+        }
+      : undefined;
+
+    return NextResponse.json(
+      { report: { ...doc, evidenceResolved }, item: { ...doc, evidenceResolved } },
+      { status: 200 }
+    );
   } catch (err) {
     console.error("Get report error:", err);
     return NextResponse.json(
