@@ -3,9 +3,7 @@ import mongoose from 'mongoose'
 import { jwtVerify } from 'jose'
 import connectToDatabase from '@/lib/mongodb'
 import Fraud from '@/models/Fraud'
-import { put } from '@vercel/blob'
-import { writeFile, mkdir } from 'fs/promises'
-import path from 'path'
+import { isS3Configured, uploadEvidenceToS3 } from '@/lib/s3'
 
 function mapFraudType(inputType?: string): 'email' | 'phone' | 'website' | 'identity' | 'financial' | 'other' {
     const type = (inputType || '').toLowerCase()
@@ -30,9 +28,39 @@ function mapFraudType(inputType?: string): 'email' | 'phone' | 'website' | 'iden
     return direct[type] ?? 'other'
 }
 
+function getExtensionForMimeType(type: string) {
+    if (type === 'image/png') return '.png'
+    if (type === 'image/jpeg') return '.jpg'
+    if (type === 'application/pdf') return '.pdf'
+    return ''
+}
+
+function parseBase64File(file: any) {
+    const rawData = typeof file?.data === 'string' ? file.data : ''
+    const mime = typeof file?.type === 'string' ? file.type : ''
+    const name = typeof file?.name === 'string' ? file.name : 'file'
+
+    if (!rawData || !mime) return null
+
+    const dataUriMatch = /^data:(.+?);base64,(.+)$/.exec(rawData)
+    const base64Payload = dataUriMatch ? dataUriMatch[2] : rawData
+
+    try {
+        const buffer = Buffer.from(base64Payload, 'base64')
+        if (!buffer.length) return null
+        return { buffer, mime, name }
+    } catch {
+        return null
+    }
+}
+
 export async function POST(req: NextRequest) {
     try {
         await connectToDatabase()
+
+        if (!isS3Configured()) {
+            return NextResponse.json({ error: 'File storage is not configured' }, { status: 500 })
+        }
 
         const contentType = req.headers.get('content-type') || ''
 
@@ -128,7 +156,6 @@ export async function POST(req: NextRequest) {
                 'image/jpeg',
             ])
 
-            const uploadRoot = path.join(process.cwd(), 'public', 'uploads', 'evidence')
             const files = form.getAll('evidenceFiles') as unknown as File[]
             for (const file of files) {
                 if (!file) continue
@@ -155,20 +182,12 @@ export async function POST(req: NextRequest) {
                 const unique = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
                 const filename = `${unique}_${safeBase}`
 
-                let publicUrl: string
-                try {
-                    const { url } = await put(`uploads/evidence/${filename}`, buffer, {
-                        access: 'public',
-                        contentType: type || undefined,
-                    })
-                    publicUrl = url
-                } catch (err) {
-                    // Fallback for local dev without Blob token
-                    await mkdir(uploadRoot, { recursive: true })
-                    const filepath = path.join(uploadRoot, filename)
-                    await writeFile(filepath, buffer)
-                    publicUrl = `/uploads/evidence/${filename}`
-                }
+                const uploaded = await uploadEvidenceToS3({
+                    body: buffer,
+                    contentType: type || undefined,
+                    filename,
+                })
+                const publicUrl = uploaded.storedRef
                 if (type.startsWith('image/')) {
                     screenshots.push(publicUrl)
                 } else {
@@ -211,14 +230,41 @@ export async function POST(req: NextRequest) {
             additionalComments = body?.additionalComments
             recaptchaToken = body?.recaptchaToken
 
-            const uploadedFiles = body?.evidenceFiles || []
-            uploadedFiles.forEach((file: any) => {
-                if (file?.type && String(file.type).startsWith('image/')) {
-                    screenshots.push(file.data || file.url || '')
-                } else {
-                    documents.push(file?.data || file?.url || '')
+            const uploadedFiles = Array.isArray(body?.evidenceFiles) ? body.evidenceFiles : []
+            const MAX_BYTES = 10 * 1024 * 1024
+            const allowedMimeTypes = new Set([
+                'application/pdf',
+                'image/png',
+                'image/jpeg',
+            ])
+
+            for (const file of uploadedFiles) {
+                const parsed = parseBase64File(file)
+                if (!parsed) {
+                    return NextResponse.json({ error: 'Evidence files must be uploaded as file data' }, { status: 400 })
                 }
-            })
+                if (!allowedMimeTypes.has(parsed.mime)) {
+                    return NextResponse.json({ error: `Unsupported file type: ${parsed.mime}` }, { status: 400 })
+                }
+                if (parsed.buffer.length > MAX_BYTES) {
+                    return NextResponse.json({ error: `File exceeds 10MB limit: ${parsed.name}` }, { status: 400 })
+                }
+
+                const ext = getExtensionForMimeType(parsed.mime)
+                const safeBaseOriginal = parsed.name.replace(/[^a-zA-Z0-9._-]+/g, '_')
+                const safeBase = safeBaseOriginal.includes('.') ? safeBaseOriginal : `${safeBaseOriginal}${ext}`
+                const uploaded = await uploadEvidenceToS3({
+                    body: parsed.buffer,
+                    contentType: parsed.mime,
+                    filename: safeBase,
+                })
+
+                if (parsed.mime.startsWith('image/')) {
+                    screenshots.push(uploaded.storedRef)
+                } else {
+                    documents.push(uploaded.storedRef)
+                }
+            }
         }
 
         if (!reportTitle || !detailedDescription) {
@@ -316,5 +362,3 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Failed to submit report' }, { status: 500 })
     }
 }
-
-

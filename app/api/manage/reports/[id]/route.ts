@@ -1,6 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
 import dbConnect from '@/lib/mongodb'
 import Fraud from '@/models/Fraud'
+import { isStoredS3Ref, resolveStoredFileUrls } from '@/lib/s3'
+
+function isAllowedEvidenceValue(value: unknown, currentValues: string[]) {
+    if (typeof value !== 'string' || !value.trim()) return false
+    return isStoredS3Ref(value) || currentValues.includes(value)
+}
+
+function isValidEvidencePayload(nextEvidence: any, currentEvidence: any) {
+    if (!nextEvidence || typeof nextEvidence !== 'object') return false
+
+    const nextScreenshots = Array.isArray(nextEvidence.screenshots) ? nextEvidence.screenshots : []
+    const nextDocuments = Array.isArray(nextEvidence.documents) ? nextEvidence.documents : []
+    const currentScreenshots = Array.isArray(currentEvidence?.screenshots) ? currentEvidence.screenshots : []
+    const currentDocuments = Array.isArray(currentEvidence?.documents) ? currentEvidence.documents : []
+
+    return (
+        nextScreenshots.every((value: unknown) => isAllowedEvidenceValue(value, currentScreenshots)) &&
+        nextDocuments.every((value: unknown) => isAllowedEvidenceValue(value, currentDocuments)) &&
+        (nextEvidence.additionalInfo === undefined || typeof nextEvidence.additionalInfo === 'string')
+    )
+}
 
 export async function GET(
     request: NextRequest,
@@ -30,7 +51,16 @@ export async function GET(
             return NextResponse.json({ error: 'Report not found' }, { status: 404 })
         }
 
-        return NextResponse.json({ report })
+        const reportData = report as any
+
+        const evidenceResolved = reportData.evidence
+            ? {
+                screenshots: await resolveStoredFileUrls(reportData.evidence.screenshots),
+                documents: await resolveStoredFileUrls(reportData.evidence.documents),
+            }
+            : undefined
+
+        return NextResponse.json({ report: { ...reportData, evidenceResolved } })
 
     } catch (error) {
         console.error('Failed to fetch report:', error)
@@ -84,6 +114,9 @@ export async function PUT(
 
         for (const field of allowedFields) {
             if (body[field] !== undefined) {
+                if (field === 'evidence' && !isValidEvidencePayload(body[field], report.evidence)) {
+                    return NextResponse.json({ error: 'Evidence files must use S3-managed references' }, { status: 400 })
+                }
                 report[field] = body[field]
             }
         }

@@ -2,6 +2,7 @@ import connectToDatabase from '@/lib/mongodb'
 import Fraud from '@/models/Fraud'
 import mongoose from 'mongoose'
 import { notFound } from 'next/navigation'
+import { resolveStoredFileUrls } from '@/lib/s3'
 
 export default async function DashboardReportDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -10,6 +11,8 @@ export default async function DashboardReportDetailPage({ params }: { params: Pr
   const raw = await Fraud.findById(id).lean()
   if (!raw || Array.isArray(raw)) notFound()
   const r = raw as any
+  const screenshotLinks = await resolveStoredFileUrls(r.evidence?.screenshots)
+  const documentLinks = await resolveStoredFileUrls(r.evidence?.documents)
   const attemptedInfo = typeof r?.evidence?.additionalInfo === 'string'
     ? (r.evidence.additionalInfo.split(' | ').find((p: string) => p.startsWith('Attempted Loss: ')) || '').slice('Attempted Loss: '.length)
     : ''
@@ -85,10 +88,10 @@ export default async function DashboardReportDetailPage({ params }: { params: Pr
         <div className="text-sm text-gray-700 space-y-2">
           <div><span className="font-medium">Additional Info:</span> {r.evidence?.additionalInfo || '—'}</div>
           <div className="flex flex-wrap gap-2">
-            {r.evidence?.screenshots?.map((u: string, i: number) => (
+            {screenshotLinks.map((u: string, i: number) => (
               <span key={i} className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700">Screenshot {i+1}</span>
             ))}
-            {r.evidence?.documents?.map((u: string, i: number) => (
+            {documentLinks.map((u: string, i: number) => (
               <span key={i} className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700">Document {i+1}</span>
             ))}
           </div>
@@ -107,5 +110,4 @@ export default async function DashboardReportDetailPage({ params }: { params: Pr
     </div>
   )
 }
-
 
